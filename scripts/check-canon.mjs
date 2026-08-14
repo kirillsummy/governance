@@ -1,88 +1,115 @@
 // Сторож дрейфа канона: копии правил обязаны совпадать по ключевым фактам.
-// Родился после трёх циклов внешнего ревью подряд, каждый из которых находил
-// разъехавшиеся копии, пропущенные ручной синхронизацией.
+// Fail-closed: отсутствие обязательного файла — ошибка, а не пропуск.
+// Флаг --partial разрешает пропуски ТОЛЬКО для сознательной локальной
+// проверки; в CI он запрещён.
 //
-// Запуск: node scripts/check-canon.mjs  (из корня governance; без зависимостей)
-// Ролевые файлы живут вне этого репозитория (../context/agents) — если их нет
-// рядом, они пропускаются с пометкой.
+// Запуск из любого места: node <путь>/check-canon.mjs
+// Пути разрешаются от файла скрипта. Проверяются и ШАБЛОН памятки, и
+// НАСТОЯЩИЕ продуктовые AGENTS.md в рабочем пространстве.
 import { readFileSync, existsSync } from 'node:fs';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const read = (p) => (existsSync(p) ? readFileSync(p, 'utf8') : null);
+const HERE = dirname(fileURLToPath(import.meta.url));
+const GOV = resolve(HERE, '..');
+const WS = resolve(GOV, '..');
+const PARTIAL = process.argv.includes('--partial');
 
 const FILES = {
-  charter: 'CHARTER.md',
-  team: 'roles/TEAM.md',
-  handoff: 'templates/handoff.md',
-  stub: 'templates/AGENTS-stub.md',
-  kickoff: 'templates/kickoff.md',
-  money: 'contracts/money-dod.md',
-  architect: '../context/agents/architect.md',
-  frontend: '../context/agents/frontend-lead.md',
-  backend: '../context/agents/backend-lead.md',
-  tester: '../context/agents/tester.md',
-  devops: '../context/agents/devops.md',
+  charter: resolve(GOV, 'CHARTER.md'),
+  team: resolve(GOV, 'roles/TEAM.md'),
+  handoff: resolve(GOV, 'templates/handoff.md'),
+  stub: resolve(GOV, 'templates/AGENTS-stub.md'),
+  kickoff: resolve(GOV, 'templates/kickoff.md'),
+  money: resolve(GOV, 'contracts/money-dod.md'),
+  architect: resolve(WS, 'context/agents/architect.md'),
+  frontend: resolve(WS, 'context/agents/frontend-lead.md'),
+  backend: resolve(WS, 'context/agents/backend-lead.md'),
+  tester: resolve(WS, 'context/agents/tester.md'),
+  devops: resolve(WS, 'context/agents/devops.md'),
+  // Настоящие продуктовые памятки — то, что читают облачные сессии.
+  agentsSite: resolve(WS, 'summy.ru/AGENTS.md'),
+  agentsCrm: resolve(WS, 'adminapp/AGENTS.md'),
+  agentsBackend: resolve(WS, 'summy-data-gateway/AGENTS.md'),
+  agentsCabinet: resolve(WS, 'masterapp-react/AGENTS.md'),
 };
 
-const docs = Object.fromEntries(
-  Object.entries(FILES).map(([k, p]) => [k, read(p)])
-);
-const missing = Object.entries(docs).filter(([, v]) => v === null).map(([k]) => k);
+const docs = {};
+const absent = [];
+for (const [k, p] of Object.entries(FILES)) {
+  if (existsSync(p)) docs[k] = readFileSync(p, 'utf8');
+  else { docs[k] = null; absent.push(`${k} (${p})`); }
+}
 
 const errors = [];
-const ok = [];
+if (absent.length && !PARTIAL) {
+  errors.push(...absent.map((a) => `обязательный файл отсутствует: ${a}`));
+}
 
-/** Правило: во всех перечисленных файлах фраза либо есть (mustHave), либо запрещена (mustNot). */
-function mustHave(keys, phrase, label) {
+let rules = 0;
+function has(keys, phrase, label) {
+  rules++;
   for (const k of keys) {
     if (docs[k] === null) continue;
     if (!docs[k].includes(phrase)) errors.push(`${label}: нет «${phrase}» в ${FILES[k]}`);
   }
-  ok.push(label);
 }
-function mustNot(keys, regex, label) {
+function not(keys, regex, label) {
+  rules++;
   for (const k of keys) {
     if (docs[k] === null) continue;
     const m = docs[k].match(regex);
-    if (m) errors.push(`${label}: найдено «${m[0]}» в ${FILES[k]}`);
+    if (m) errors.push(`${label}: найдено «${m[0].slice(0, 60)}» в ${FILES[k]}`);
   }
-  ok.push(label);
 }
 
-// 1. Финальная строка хендоффа — одна на все шаблоны, и она НЕ просит выкатку.
-mustHave(['charter', 'handoff', 'stub', 'kickoff'],
+const ALL_AGENTS = ['agentsSite', 'agentsCrm', 'agentsBackend', 'agentsCabinet'];
+
+// 1. Финальная строка хендоффа — просит ревью и мерж, не выкатку.
+has(['charter', 'handoff', 'stub', 'kickoff', ...ALL_AGENTS],
   'проведи ревью и смержи', 'финальная строка хендоффа');
-mustNot(['handoff', 'stub', 'kickoff', 'team', 'tester', 'frontend', 'backend', 'devops'],
+not(['charter', 'handoff', 'stub', 'kickoff', 'team', 'tester', 'frontend',
+     'backend', 'devops', ...ALL_AGENTS],
   /Архитектору: смержи и выкати/, 'хендофф не просит выкатку');
 
 // 2. Заморозка — коммита, не ветки.
-mustHave(['charter', 'handoff'], 'коммит заморожен', 'заморозка коммита');
-mustNot(['charter', 'handoff', 'stub', 'kickoff'],
+has(['charter', 'handoff'], 'коммит заморожен', 'заморозка коммита (канон)');
+not(['charter', 'handoff', 'stub', 'kickoff', ...ALL_AGENTS],
   /отданную ветку не дописыва/, 'нет старой заморозки ветки');
 
-// 3. Никаких голых «мерж в dev» вне таблицы веток: dev — частный случай.
-mustNot(['charter', 'architect', 'stub', 'kickoff'],
-  /мерж в `dev`|мержит в `dev`|Ветка от <dev\|main>/, 'нет захардкоженного dev');
+// 3. Никакого захардкоженного dev как универсальной базы.
+not(['charter', 'architect', 'stub', 'kickoff'],
+  /мерж в `dev`|мержит в `dev`|Ветка от <dev\|main>|только через\s+`dev`/,
+  'нет захардкоженного dev');
+not(ALL_AGENTS, /пуш ветки \(не `dev`\/`main`\)|не `dev`\/`main`/,
+  'памятки не сужают запрет до dev/main');
 
-// 4. Жизнь сигнала одинакова: закрывает тестировщик после повторного прогона.
-mustHave(['team', 'tester'], 'повторного прогона', 'ретест перед закрытием');
-mustNot(['charter', 'team', 'tester'],
-  /«починили» или «отложили \+ почему»(?![\s\S]{0,200}повторн)/, 'нет старого закрытия сигнала');
+// 4. Жизнь сигнала: закрывает тестировщик после повторного прогона.
+has(['charter', 'team', 'tester'], 'повторного прогона', 'ретест перед закрытием');
 
-// 5. Полномочия по деньгам: решение владельца, архитектор не замена.
-mustHave(['team', 'backend'], 'решение владельца', 'деньги — решение владельца');
-mustNot(['backend'], /через\s+согласование с владельцем или архитектором/, 'архитектор не заменяет владельца в деньгах');
+// 5. Деньги/миграции: решение владельца; архитектор готовит, не заменяет.
+has(['charter', 'team', 'backend'], 'архитектор готовит и проверяет',
+  'деньги — решение владельца, архитектор не замена');
+not(['charter', 'team', 'backend'],
+  /только через\s+согласование с владельцем(\/| или )архитектором/,
+  'нет формулы «владелец ИЛИ архитектор» для денег');
 
-// 6. Защищённые ветки: запрет без перечисления конкретных имён в памятках.
-mustHave(['charter'], 'Пушить напрямую в защищённые ветки', 'запрет пуша в защищённые');
-mustNot(['stub'], /не `dev`\/`main`/, 'памятка не сужает запрет до dev/main');
+// 6. Защищённые ветки.
+has(['charter'], 'Пушить напрямую в защищённые ветки', 'запрет пуша в защищённые (устав)');
+has(['stub'], 'защищённую ветку продукта', 'запрет пуша в защищённые (памятка-шаблон)');
 
-// 7. Выкатку разрешает только владелец — во всех местах, где про финал.
-mustHave(['charter', 'handoff', 'stub', 'kickoff'],
-  'владел', 'упоминание владельца в релизной цепочке');
+// 7. Выкатку разрешает только явная фраза владельца.
+has(['charter', 'handoff', 'kickoff'], 'выкатку разрешает',
+  'выкатка — за владельцем (точный маркер)');
 
-const missNote = missing.length ? `\nПропущены (нет рядом): ${missing.join(', ')}` : '';
+// 8. Эстафета: файл не включает сам себя.
+has(['charter'], 'Файл сам по себе эстафету не включает', 'эстафета включается командой владельца');
+
+const checked = Object.values(docs).filter((v) => v !== null).length;
 if (errors.length) {
-  console.error(`ДРЕЙФ КАНОНА — ${errors.length} расхожд.:\n- ` + errors.join('\n- ') + missNote);
+  console.error(`ДРЕЙФ КАНОНА — ${errors.length} проблем(ы):\n- ` + errors.join('\n- '));
   process.exit(1);
 }
-console.log(`канон согласован: ${ok.length} правил, ${Object.keys(docs).length - missing.length} файлов` + missNote);
+const note = absent.length ? ` · ПРОПУЩЕНО (--partial): ${absent.join(', ')}` : '';
+console.log(`канон согласован: правил ${rules}, файлов проверено ${checked}/${Object.keys(FILES).length}${note}`);
+if (absent.length && PARTIAL) process.exit(2);
