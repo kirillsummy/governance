@@ -26,9 +26,9 @@ const FILES = {
   tester: resolve(WS, 'context/agents/tester.md'),
   devops: resolve(WS, 'context/agents/devops.md'),
   agentsSite: resolve(WS, 'summy.ru/AGENTS.md'),
-  agentsCrm: resolve(WS, 'adminapp-release/AGENTS.md'), // checkout на main
+  agentsCrm: resolve(WS, 'adminapp/AGENTS.md'), // checkout на main
   agentsBackend: resolve(WS, 'summy-data-gateway/AGENTS.md'),
-  agentsCabinet: resolve(WS, 'masterapp-react/AGENTS.md'),
+  agentsCabinet: resolve(WS, 'masterapp/AGENTS.md'), // checkout на feature/react-client
 };
 
 const docs = {};
