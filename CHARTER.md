@@ -33,11 +33,11 @@
 
 | Продукт | Что это | Репозиторий |
 |---|---|---|
-| **Кабинет мастера** | `master.summy.ru`, React-клиент (`web/`) через прослойку (`bff/`) в бэкенд. Django удалён 16.08.2026 — из репозитория и с боя вместе с базой (финальный дамп на сервере) | `kirillsummy/SUMMY` |
-| **CRM (админка)** | Дашборд управляющих и админов, `admin.summy.ru`. Целевое имя — «операционная платформа», переименуем когда дорастёт | `kirillsummy/adminapp` |
-| **Сайт** | `summy.ru` — публичная витрина | `kirillsummy/summy.ru` |
-| **Приложение клиента** | Пока не существует | `clientapp` (план) |
-| **Бэкенд** | FastAPI + наша БД (raw/core/contract, [ADR-0001](decisions/0001-data-platform.md)) — данные И продуктовая логика в одном продукте ([ADR-0002](decisions/0002-single-backend.md)) | `kirillsummy/summy-data-gateway` |
+| **Кабинет мастера** | `master.summy.ru`, React-клиент (`web/`) через прослойку (`bff/`) в бэкенд. Django удалён 16.08.2026 — из репозитория и с боя вместе с базой (финальный дамп на сервере) | `kirillsummy/master-app` |
+| **CRM (админка)** | Дашборд управляющих и админов, `admin.summy.ru`. Целевое имя — «операционная платформа», переименуем когда дорастёт | `kirillsummy/crm` |
+| **Сайт** | `summy.ru` — публичная витрина | `kirillsummy/website` |
+| **Приложение клиента** | Пока не существует | `kirillsummy/client-app` (заведён, кода нет) |
+| **Бэкенд** | FastAPI + наша БД (raw/core/contract, [ADR-0001](decisions/0001-data-platform.md)) — данные И продуктовая логика в одном продукте ([ADR-0002](decisions/0002-single-backend.md)) | `kirillsummy/backend` |
 
 Прежние имена «шлюз» и «платформа данных» означают этот же бэкенд.
 
@@ -219,7 +219,7 @@
 
 | Репозиторий | База для веток | Защищённые ветки | Релизный артефакт | Версия прода |
 |---|---|---|---|---|
-| Сайт `kirillsummy/summy.ru` | `main`; имена веток — короткий транслит без префикса (историческая конвенция) | `main` | `main` + тег `vX.Y.Z` | `git describe` на сервере |
+| Сайт `kirillsummy/website` | `main`; имена веток — короткий транслит без префикса (историческая конвенция) | `main` | `main` + тег `vX.Y.Z` | `git describe` на сервере |
 | Бэкенд `summy-data-gateway` | `dev` | `dev`, `prod` | ветка `prod` = выкаченный срез `dev` | коммит `prod` + `/health` |
 | CRM `adminapp` | `main`, финал — Pull Request | `main` | `main` + тег `vX.Y.Z` | `/api/health` (файл VERSION) |
 | Кабинет `SUMMY` | эпик `feature/react-client` (до 1.0) | `feature/react-client`, `dev`, `main` | сборка прослойки из указанного коммита эпика | коммит эпика в журнале выкатки; healthz — в работе |

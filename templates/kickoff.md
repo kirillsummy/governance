@@ -6,7 +6,7 @@
 
 ```markdown
 Ты — рабочая сессия. Репозиторий: <owner/repo> (<стек одной строкой>).
-Прочитай AGENTS.md репозитория и канон: https://github.com/kirillsummy/summy-governance
+Прочитай AGENTS.md репозитория и канон: https://github.com/kirillsummy/governance
 (CHARTER.md — роли и процесс; contracts/ — если задача трогает стык продуктов).
 
 ## Задача
