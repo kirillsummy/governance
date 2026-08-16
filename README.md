@@ -9,6 +9,7 @@
 | **С чего начать, где что искать** | [`MAP.md`](MAP.md) |
 | Кто есть кто, как устроен процесс, релизы, запреты | [`CHARTER.md`](CHARTER.md) |
 | Что значит термин (смена, грейд, опция, DayFill…) | [`GLOSSARY.md`](GLOSSARY.md) |
+| Что человеку можно доверить в работе с ИИ | [`roles/ai-levels.md`](roles/ai-levels.md) — черновик |
 | Формат QR рабочего места | [`contracts/qr-workplace.md`](contracts/qr-workplace.md) |
 | Закрытие пустых краёв смены (алгоритм, исполнитель) | [`contracts/shift-edge-closure.md`](contracts/shift-edge-closure.md) |
 | Цвета бренда, правило «мебель нейтральная» | [`contracts/brand-palette.md`](contracts/brand-palette.md) |
