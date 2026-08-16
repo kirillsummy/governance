@@ -234,7 +234,7 @@
 | Сайт `kirillsummy/website` | `main`; имена веток — короткий транслит без префикса (историческая конвенция) | `main` | `main` + тег `vX.Y.Z` | `git describe` на сервере |
 | Бэкенд `backend` | `dev` | `dev`, `prod` | ветка `prod` = выкаченный срез `dev` | коммит `prod` + `/health` |
 | CRM `crm` | `main`, финал — Pull Request | `main` | `main` + тег `vX.Y.Z` | `/api/health` (файл VERSION) |
-| Кабинет `SUMMY` | эпик `feature/react-client` (до 1.0) | `feature/react-client`, `dev`, `main` | сборка прослойки из указанного коммита эпика | коммит эпика в журнале выкатки; healthz — в работе |
+| Кабинет `master-app` | эпик `feature/react-client` (до 1.0) | `feature/react-client`, `dev`, `main` | сборка прослойки из указанного коммита эпика | коммит эпика в журнале выкатки; healthz — в работе |
 
 **Пушить напрямую в защищённые ветки таблицы не может никто, кроме
 релиз-инженера в его окне.**
