@@ -21,6 +21,7 @@ const FILES = {
   kickoff: resolve(GOV, 'templates/kickoff.md'),
   money: resolve(GOV, 'contracts/money-dod.md'),
   architect: resolve(WS, 'context/agents/architect.md'),
+  orchestrator: resolve(WS, 'context/agents/orchestrator.md'),
   frontend: resolve(WS, 'context/agents/frontend-lead.md'),
   backend: resolve(WS, 'context/agents/backend-lead.md'),
   tester: resolve(WS, 'context/agents/tester.md'),
@@ -126,7 +127,7 @@ not(ALL_AGENTS, /этот `AGENTS\.md`[^\n]*побеждает\*\* —/,
 // ── Эстафета и миграции ────────────────────────────────────────────────────
 has(['charter'], 'Файл сам по себе эстафету не включает', 'эстафета: файл не команда');
 has(['charter'], 'commit SHA этого файла — идентификатор эстафеты', 'эстафета: SHA-идентификатор');
-has(['architect'], 'commit SHA файла-приказа', 'эстафета в роли архитектора');
+has(['orchestrator'], 'commit SHA файла-приказа', 'эстафета в роли оркестратора');
 has(['charter'], 'перенумерование НОВЫМ коммитом', 'конфликт миграций: один процесс');
 not(['charter'], /merge-нод/, 'нет merge-ноды');
 
