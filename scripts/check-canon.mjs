@@ -4,14 +4,36 @@
 // Проверяются канон, роли и НАСТОЯЩИЕ продуктовые AGENTS.md — структурными
 // значениями (базовые/защищённые ветки, шаблон финальной строки), а не только
 // фразами.
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync, existsSync, statSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const GOV = resolve(HERE, '..');
-const WS = resolve(GOV, '..');
 const PARTIAL = process.argv.includes('--partial');
+
+// Где искать продукты и роли. По умолчанию — папка рядом с governance, но со
+// «стола» (worktree в ~/Projects/SUMMY-desks) соседей нет, и сторож честно
+// падал одиннадцатью «файл отсутствует». Столы должны работать полноценно:
+// проверять канон надо там же, где его правишь, а не бегать в основную копию.
+//   --ws=<путь>   явно
+//   SUMMY_WS      переменной окружения
+//   иначе         подъём вверх до папки, где лежат и governance, и context
+const WS_ARG = process.argv.find((a) => a.startsWith('--ws='));
+function najtiWorkspace() {
+  if (WS_ARG) return resolve(WS_ARG.slice(5));
+  if (process.env.SUMMY_WS) return resolve(process.env.SUMMY_WS);
+  // Стол — это git-worktree: его `.git` не папка, а файл с указателем на
+  // основную копию. По нему и находим настоящее рабочее пространство.
+  const gitPath = resolve(GOV, '.git');
+  if (existsSync(gitPath) && statSync(gitPath).isFile()) {
+    const ukazatel = readFileSync(gitPath, 'utf8').trim();
+    const sovpadenie = ukazatel.match(/^gitdir:\s*(.+?)\/\.git\/worktrees\//);
+    if (sovpadenie) return resolve(sovpadenie[1], '..');
+  }
+  return resolve(GOV, '..');
+}
+const WS = najtiWorkspace();
 
 const FILES = {
   charter: resolve(GOV, 'CHARTER.md'),
