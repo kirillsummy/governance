@@ -1,4 +1,4 @@
-# summy-governance
+# governance
 
 **Канон экосистемы SUMMY** — роли, процесс разработки, правила релизов, запреты, межпродуктовые контракты. Репозиторий **публичный**: его читает любой агент (Claude, Codex, Kimi, облачные сессии) по прямой ссылке.
 
@@ -31,6 +31,6 @@
 
 ## Продукты (4 + платформа данных)
 
-Сайт (`summymanager-rgb/summy`, `summy.ru`) · Приложение мастера (`kirillsummy/SUMMY`, `master.summy.ru`) · Приложение админа+управляющего (`kirillsummy/adminapp`, `admin.summy.ru`) · Приложение клиента (пока нет) · Платформа данных — API-шлюз + своя БД (`summy-data`, план).
+Сайт (`kirillsummy/website`, `summy.ru`) · Кабинет мастера (`kirillsummy/master-app`, `master.summy.ru`) · CRM админа и управляющего (`kirillsummy/crm`, `admin.summy.ru`) · Приложение клиента (`kirillsummy/client-app`, заведён, кода нет) · Бэкенд — FastAPI и своя БД (`kirillsummy/backend`), данные и продуктовая логика одним продуктом ([ADR-0002](decisions/0002-single-backend.md)).
 
 Архитектор — **один на все**: ценность и риск живут на стыках между продуктами.
