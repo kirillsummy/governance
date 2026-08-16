@@ -6,6 +6,7 @@
 
 | Вопрос | Документ |
 |---|---|
+| **С чего начать, где что искать** | [`MAP.md`](MAP.md) |
 | Кто есть кто, как устроен процесс, релизы, запреты | [`CHARTER.md`](CHARTER.md) |
 | Что значит термин (смена, грейд, опция, DayFill…) | [`GLOSSARY.md`](GLOSSARY.md) |
 | Формат QR рабочего места | [`contracts/qr-workplace.md`](contracts/qr-workplace.md) |
