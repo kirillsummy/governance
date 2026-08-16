@@ -30,6 +30,10 @@ const FILES = {
   agentsCrm: resolve(WS, 'crm/AGENTS.md'), // checkout на main
   agentsBackend: resolve(WS, 'backend/AGENTS.md'),
   agentsCabinet: resolve(WS, 'master-app/AGENTS.md'), // checkout на feature/react-client
+  agentsClient: resolve(WS, 'client-app/AGENTS.md'),
+  agentsRoot: resolve(WS, 'AGENTS.md'), // памятка-роутер рабочего пространства
+  map: resolve(GOV, 'MAP.md'),
+  glossary: resolve(GOV, 'GLOSSARY.md'),
 };
 
 const docs = {};
@@ -61,7 +65,7 @@ function not(keys, regex, label) {
   }
 }
 
-const ALL_AGENTS = ['agentsSite', 'agentsCrm', 'agentsBackend', 'agentsCabinet'];
+const ALL_AGENTS = ['agentsSite', 'agentsCrm', 'agentsBackend', 'agentsCabinet', 'agentsClient'];
 
 // ── Хендофф и релиз ─────────────────────────────────────────────────────────
 has(['charter', 'handoff', 'stub', 'kickoff', ...ALL_AGENTS],
