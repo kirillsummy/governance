@@ -1,9 +1,9 @@
 // Сторож дрейфа канона: копии правил обязаны совпадать по ключевым фактам.
 // Fail-closed: отсутствие обязательного файла — ошибка. Флаг --partial
 // разрешает пропуски только для сознательной локальной проверки; в CI запрещён.
-// Проверяются канон, роли и НАСТОЯЩИЕ продуктовые AGENTS.md — структурными
-// значениями (базовые/защищённые ветки, шаблон финальной строки), а не только
-// фразами.
+// Проверяются канон, роли тройки (архитектор/разработчик/релиз-инженер) и
+// НАСТОЯЩИЕ продуктовые AGENTS.md — структурными значениями (базовые и
+// защищённые ветки, шаблон финальной строки), а не только фразами.
 import { readFileSync, existsSync, statSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -43,11 +43,8 @@ const FILES = {
   kickoff: resolve(GOV, 'templates/kickoff.md'),
   money: resolve(GOV, 'contracts/money-dod.md'),
   architect: resolve(WS, 'context/agents/architect.md'),
-  orchestrator: resolve(WS, 'context/agents/orchestrator.md'),
-  frontend: resolve(WS, 'context/agents/frontend-lead.md'),
-  backend: resolve(WS, 'context/agents/backend-lead.md'),
-  tester: resolve(WS, 'context/agents/tester.md'),
-  devops: resolve(WS, 'context/agents/devops.md'),
+  developer: resolve(WS, 'context/agents/developer.md'),
+  release: resolve(WS, 'context/agents/release-engineer.md'),
   agentsSite: resolve(WS, 'website/AGENTS.md'),
   agentsCrm: resolve(WS, 'crm/AGENTS.md'), // checkout на main
   agentsBackend: resolve(WS, 'backend/AGENTS.md'),
@@ -136,10 +133,10 @@ for (const [key, baseMarker, prot] of PRODUCTS) {
 }
 
 // ── Сигналы, деньги, полномочия ────────────────────────────────────────────
-has(['charter', 'team', 'tester'], 'повторного прогона', 'ретест перед закрытием');
-has(['charter', 'team', 'backend'], 'архитектор готовит и проверяет',
+has(['charter', 'team', 'release'], 'повторного прогона', 'ретест перед закрытием');
+has(['charter', 'team', 'developer'], 'архитектор готовит и проверяет',
   'деньги — решение владельца');
-not(['charter', 'team', 'backend'],
+not(['charter', 'team', 'developer'],
   /только через\s+согласование с владельцем(\/| или )архитектором/,
   'нет формулы «владелец ИЛИ архитектор» для денег');
 has(['agentsCabinet'], 'деньги считает БЭКЕНД', 'кабинет: деньги в бэкенде');
@@ -153,7 +150,7 @@ not(ALL_AGENTS, /этот `AGENTS\.md`[^\n]*побеждает\*\* —/,
 // ── Эстафета и миграции ────────────────────────────────────────────────────
 has(['charter'], 'Файл сам по себе эстафету не включает', 'эстафета: файл не команда');
 has(['charter'], 'commit SHA этого файла — идентификатор эстафеты', 'эстафета: SHA-идентификатор');
-has(['orchestrator'], 'commit SHA файла-приказа', 'эстафета в роли оркестратора');
+has(['release'], 'commit SHA файла-приказа', 'эстафета в роли релиз-инженера');
 has(['charter'], 'перенумерование НОВЫМ коммитом', 'конфликт миграций: один процесс');
 not(['charter'], /merge-нод/, 'нет merge-ноды');
 
