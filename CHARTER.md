@@ -71,6 +71,7 @@
 | [`contracts/brand-palette.md`](contracts/brand-palette.md) | канон 10 цветов; читают все фронты, в продуктах — копии с тестом-пином |
 | [`contracts/brand-foundations.md`](contracts/brand-foundations.md) | имя, логотип, пиктограммы, движение — общее сверх палитры |
 | [`contracts/money-dod.md`](contracts/money-dod.md) | критерии готовности денежного контура; читают бэкенд и оба фронта |
+| [`contracts/master-portfolio.md`](contracts/master-portfolio.md) | витрина работ мастера; пишет бэкенд, читают приложение мастера и сайт |
 
 Внутренние контракты продукта остаются в его репозитории.
 
