@@ -13,6 +13,7 @@
 | Закрытие пустых краёв смены (алгоритм, исполнитель) | [`contracts/shift-edge-closure.md`](contracts/shift-edge-closure.md) |
 | Цвета бренда, правило «мебель нейтральная» | [`contracts/brand-palette.md`](contracts/brand-palette.md) |
 | Как связаны сотрудник и пользователь YClients, второй филиал | [`contracts/master-identity.md`](contracts/master-identity.md) |
+| Портфолио мастера: что публикуется, какие ручки, что храним | [`contracts/master-portfolio.md`](contracts/master-portfolio.md) |
 | Платформа данных (raw/core/contract, кто пишет) | [`decisions/0001-data-platform.md`](decisions/0001-data-platform.md) |
 | Памятка в `AGENTS.md` продукта | [`templates/AGENTS-stub.md`](templates/AGENTS-stub.md) |
 | Как ставить задачу рабочей сессии | [`templates/kickoff.md`](templates/kickoff.md) |
