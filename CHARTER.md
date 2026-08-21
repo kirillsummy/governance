@@ -72,6 +72,7 @@
 | [`contracts/brand-foundations.md`](contracts/brand-foundations.md) | имя, логотип, пиктограммы, движение — общее сверх палитры |
 | [`contracts/money-dod.md`](contracts/money-dod.md) | критерии готовности денежного контура; читают бэкенд и оба фронта |
 | [`contracts/master-portfolio.md`](contracts/master-portfolio.md) | витрина работ мастера; пишет бэкенд, читают приложение мастера и сайт |
+| [`contracts/master-photo.md`](contracts/master-photo.md) | фото мастера: одно на человека; пишут кабинет и CRM, читают оба и сайт |
 
 Внутренние контракты продукта остаются в его репозитории.
 
