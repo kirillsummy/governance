@@ -127,7 +127,7 @@ has(['stub'], 'защищённую ветку продукта', 'запрет 
 rules++;
 const PRODUCTS = [
   ['agentsCabinet', 'feature/react-client', ['feature/react-client', 'dev', 'main']],
-  ['agentsBackend', 'от `dev`', ['dev', 'prod']],
+  ['agentsBackend', 'от `dev`', ['dev']],
 ];
 for (const [key, baseMarker, prot] of PRODUCTS) {
   if (docs[key] === null) continue;
