@@ -11,7 +11,7 @@
 // относилось к диску, где все пять отставали от origin. Перед прогоном
 // подтяни копии (git pull в governance, context и продуктах) — иначе судишь
 // не о том, что влито.
-import { readFileSync, existsSync, statSync } from 'node:fs';
+import { readFileSync, existsSync, statSync, readdirSync } from 'node:fs';
 import { execSync } from 'node:child_process';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -221,6 +221,53 @@ const NO_REMOTE = process.argv.includes('--no-remote');
     }
   }
 }
+
+// ── Карантин техдолга: ворота в каждом репозитории, где он завёлся ─────────
+// Канон (CHARTER п.5) требовал «ворота CI репозитория» с 22.08, но прибора
+// не было: первый репо-карантин (crm#142) завёлся без ворот и тихо пережил бы
+// свой срок (находка релиз-инженера 25.08). Канонический прибор —
+// governance/scripts/check-karantin.mjs; в репозитории с карантином обязана
+// лежать его байт-в-байт копия в корне плюс проводка в CI. Копии не держатся
+// руками на веру — сверяются содержимым (урок рукописного DEFAULT_BRANCHES
+// того же дня). Чекаут без папки archive/ пропускается: нет карантина — нет
+// требования ворот.
+rules++;
+{
+  const kanonPribor = resolve(GOV, 'scripts/check-karantin.mjs');
+  const kanonText = existsSync(kanonPribor) ? readFileSync(kanonPribor, 'utf8') : null;
+  if (kanonText === null)
+    errors.push(`канонический прибор карантина отсутствует: ${kanonPribor}`);
+  const REPO_DIRS = [WS, ...['website', 'crm', 'backend', 'master-app', 'client-app'].map((p) => resolve(WS, p))];
+  for (const dir of REPO_DIRS) {
+    const arch = resolve(dir, 'archive');
+    if (!existsSync(arch)) continue;
+    if (!readdirSync(arch).some((n) => n.toLowerCase().includes('karantin'))) continue;
+    const kopiya = resolve(dir, 'check-karantin.mjs');
+    if (!existsSync(kopiya)) {
+      errors.push(`карантин в ${dir} без ворот: нет check-karantin.mjs (байт-в-байт копия governance/scripts/check-karantin.mjs)`);
+      continue;
+    }
+    if (kanonText !== null && readFileSync(kopiya, 'utf8') !== kanonText)
+      errors.push(`копия прибора карантина разъехалась с канонической: ${kopiya}`);
+    const wfDir = resolve(dir, '.github/workflows');
+    const wired = existsSync(wfDir) && readdirSync(wfDir).some((f) => {
+      try { return readFileSync(resolve(wfDir, f), 'utf8').includes('check-karantin'); }
+      catch { return false; }
+    });
+    if (!wired)
+      errors.push(`ворота карантина не проведены в CI: в ${wfDir} нет прогона check-karantin`);
+  }
+}
+
+// ── knip: настройка ровно одна ─────────────────────────────────────────────
+// Две настройки не спорят вслух — Knip молча берёт knip.json вместо
+// knip.jsonc, исключения исчезают, и сторож мёртвого кода краснеет на сотнях
+// чужих мест: отказ, замаскированный под срабатывание — следующий решит
+// «сторож сломался» и выключит его целиком (crm, 25.08, находка
+// релиз-инженера).
+rules++;
+if (existsSync(resolve(WS, 'crm/knip.json')) && existsSync(resolve(WS, 'crm/knip.jsonc')))
+  errors.push('у crm две настройки knip (knip.json И knip.jsonc) — младшая молча побеждает; оставить одну, knip.jsonc');
 
 const checked = Object.values(docs).filter((v) => v !== null).length;
 if (errors.length) {
