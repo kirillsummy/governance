@@ -12,6 +12,7 @@
 // подтяни копии (git pull в governance, context и продуктах) — иначе судишь
 // не о том, что влито.
 import { readFileSync, existsSync, statSync } from 'node:fs';
+import { execSync } from 'node:child_process';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -165,6 +166,34 @@ has(['charter'], 'commit SHA этого файла — идентификато�
 has(['release'], 'commit SHA файла-приказа', 'эстафета в роли релиз-инженера');
 has(['charter'], 'перенумерование НОВЫМ коммитом', 'конфликт миграций: один процесс');
 not(['charter'], /merge-нод/, 'нет merge-ноды');
+
+// ── Главная ветка репозитория = базовая из таблицы «Ветки» ────────────────
+// Настройка живёт в GitHub, файлам не видна, а код раздаёт каждому клону:
+// у бэкенда главной стояла упразднённая prod (25.08). Прибор с тремя
+// ответами: несовпадение — ошибка; gh недоступен — «НЕ ПРОВЕРЕНА», тоже
+// ошибка (зелёное молчание запрещено); пропуск только явным --no-remote.
+const DEFAULT_BRANCHES = [
+  ['kirillsummy/backend', 'dev'],
+  ['kirillsummy/crm', 'main'],
+  ['kirillsummy/website', 'main'],
+  ['kirillsummy/master-app', 'feature/react-client'],
+  ['kirillsummy/governance', 'main'],
+];
+rules++;
+if (!process.argv.includes('--no-remote')) {
+  for (const [repo, want] of DEFAULT_BRANCHES) {
+    try {
+      const got = execSync(
+        `gh repo view ${repo} --json defaultBranchRef -q .defaultBranchRef.name`,
+        { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }
+      ).trim();
+      if (got !== want)
+        errors.push(`главная ветка ${repo}: «${got}», по таблице «${want}»`);
+    } catch {
+      errors.push(`главная ветка ${repo}: НЕ ПРОВЕРЕНА (gh недоступен) — это «не знаю», не «да»; сознательный пропуск = --no-remote`);
+    }
+  }
+}
 
 const checked = Object.values(docs).filter((v) => v !== null).length;
 if (errors.length) {
