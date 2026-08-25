@@ -169,28 +169,55 @@ not(['charter'], /merge-нод/, 'нет merge-ноды');
 
 // ── Главная ветка репозитория = базовая из таблицы «Ветки» ────────────────
 // Настройка живёт в GitHub, файлам не видна, а код раздаёт каждому клону:
-// у бэкенда главной стояла упразднённая prod (25.08). Прибор с тремя
-// ответами: несовпадение — ошибка; gh недоступен — «НЕ ПРОВЕРЕНА», тоже
-// ошибка (зелёное молчание запрещено); пропуск только явным --no-remote.
-const DEFAULT_BRANCHES = [
-  ['kirillsummy/backend', 'dev'],
-  ['kirillsummy/crm', 'main'],
-  ['kirillsummy/website', 'main'],
-  ['kirillsummy/master-app', 'feature/react-client'],
-  ['kirillsummy/governance', 'main'],
-];
+// у бэкенда главной стояла упразднённая prod, у master-app — main, где нет
+// даже папки web/ (оба случая 25.08). Ожидания НЕ дублируются рукописным
+// списком — выводятся из самой таблицы «Ветки» устава: вторая копия таблицы,
+// которую держат руками, — тот же класс дрейфа этажом выше (находка
+// релиз-инженера). governance — не продукт и в таблице не живёт, его пара
+// статична ниже. Прибор с тремя ответами: несовпадение — ошибка; gh
+// недоступен — «НЕ ПРОВЕРЕНА», тоже ошибка; пропуск только явным --no-remote,
+// и он виден в итоговой строке.
+//
+// Излом (рабочие формы, проверено релиз-инженером 25.08):
+//   (а) подмени базу в строке таблицы «Ветки» → сторож обязан покраснеть;
+//   (б) спрячь gh, ОСТАВИВ node:
+//       PATH="$(dirname "$(command -v node)"):/usr/bin" node scripts/check-canon.mjs
+//       Форма `env PATH=/usr/bin node …` негодна: на машине с fnm она убирает
+//       сам node — «env: node: No such file or directory» выглядит сработавшим
+//       изломом, но прибор даже не запускался. «Упало» ≠ «упало от того».
+function vetkiIzTablicy(charter) {
+  const pairs = [];
+  const m = charter.match(
+    /\| Репозиторий \| База для веток[^\n]*\n\|[-| ]+\n((?:\|[^\n]*\n)+)/
+  );
+  if (!m) return pairs;
+  for (const line of m[1].trim().split('\n')) {
+    const cells = line.split('|').map((s) => s.trim());
+    const repo = (cells[1] || '').match(/`(?:kirillsummy\/)?([a-z0-9-]+)`/);
+    const base = (cells[2] || '').match(/`([^`]+)`/);
+    if (repo && base) pairs.push([`kirillsummy/${repo[1]}`, base[1]]);
+  }
+  return pairs;
+}
 rules++;
-if (!process.argv.includes('--no-remote')) {
-  for (const [repo, want] of DEFAULT_BRANCHES) {
-    try {
-      const got = execSync(
-        `gh repo view ${repo} --json defaultBranchRef -q .defaultBranchRef.name`,
-        { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }
-      ).trim();
-      if (got !== want)
-        errors.push(`главная ветка ${repo}: «${got}», по таблице «${want}»`);
-    } catch {
-      errors.push(`главная ветка ${repo}: НЕ ПРОВЕРЕНА (gh недоступен) — это «не знаю», не «да»; сознательный пропуск = --no-remote`);
+const NO_REMOTE = process.argv.includes('--no-remote');
+{
+  const izTablicy = docs.charter === null ? [] : vetkiIzTablicy(docs.charter);
+  if (docs.charter !== null && izTablicy.length < 4)
+    errors.push(`таблица «Ветки» в CHARTER.md не распарсилась (строк: ${izTablicy.length}) — прибору не из чего вывести главные ветки`);
+  const DEFAULT_BRANCHES = [...izTablicy, ['kirillsummy/governance', 'main']];
+  if (!NO_REMOTE) {
+    for (const [repo, want] of DEFAULT_BRANCHES) {
+      try {
+        const got = execSync(
+          `gh repo view ${repo} --json defaultBranchRef -q .defaultBranchRef.name`,
+          { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }
+        ).trim();
+        if (got !== want)
+          errors.push(`главная ветка ${repo}: «${got}», по таблице «${want}»`);
+      } catch {
+        errors.push(`главная ветка ${repo}: НЕ ПРОВЕРЕНА (gh недоступен) — это «не знаю», не «да»; сознательный пропуск = --no-remote`);
+      }
     }
   }
 }
@@ -201,5 +228,6 @@ if (errors.length) {
   process.exit(1);
 }
 const note = absent.length ? ` · ПРОПУЩЕНО (--partial): ${absent.join(', ')}` : '';
-console.log(`канон согласован: правил ${rules}, файлов проверено ${checked}/${Object.keys(FILES).length}${note}`);
+const noteRemote = NO_REMOTE ? ' · ПРОПУЩЕНО (--no-remote): главные ветки репозиториев' : '';
+console.log(`канон согласован: правил ${rules}, файлов проверено ${checked}/${Object.keys(FILES).length}${note}${noteRemote}`);
 if (absent.length && PARTIAL) process.exit(2);
