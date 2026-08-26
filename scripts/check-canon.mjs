@@ -213,7 +213,8 @@ function proverit(d, { noRemote }) {
   //       Форма `env PATH=/usr/bin node …` негодна: на машине с fnm она убирает
   //       сам node — «env: node: No such file or directory» выглядит сработавшим
   //       изломом, но прибор даже не запускался. «Упало» ≠ «упало от того».
-  rules++;
+  rules++; // главная ветка = базовая из таблицы
+  rules++; // автоснятие влитых веток включено (владельцу мусор «путает», 26.08)
   {
     const izTablicy = d.charter === null ? [] : vetkiIzTablicy(d.charter);
     if (d.charter !== null && izTablicy.length < 4)
@@ -222,14 +223,16 @@ function proverit(d, { noRemote }) {
     if (!noRemote) {
       for (const [repo, want] of DEFAULT_BRANCHES) {
         try {
-          const got = execSync(
-            `gh repo view ${repo} --json defaultBranchRef -q .defaultBranchRef.name`,
+          const got = JSON.parse(execSync(
+            `gh repo view ${repo} --json defaultBranchRef,deleteBranchOnMerge`,
             { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }
-          ).trim();
-          if (got !== want)
-            errors.push(`главная ветка ${repo}: «${got}», по таблице «${want}»`);
+          ));
+          if (got.defaultBranchRef.name !== want)
+            errors.push(`главная ветка ${repo}: «${got.defaultBranchRef.name}», по таблице «${want}»`);
+          if (got.deleteBranchOnMerge !== true)
+            errors.push(`автоснятие влитых веток ВЫКЛЮЧЕНО у ${repo} — мусор копится по устройству; включение: gh repo edit ${repo} --delete-branch-on-merge`);
         } catch {
-          errors.push(`главная ветка ${repo}: НЕ ПРОВЕРЕНА (gh недоступен) — это «не знаю», не «да»; сознательный пропуск = --no-remote`);
+          errors.push(`главная ветка и автоснятие ${repo}: НЕ ПРОВЕРЕНЫ (gh недоступен) — это «не знаю», не «да»; сознательный пропуск = --no-remote`);
         }
       }
     }
@@ -318,6 +321,6 @@ if (errors.length) {
   process.exit(1);
 }
 const note = absent.length ? ` · ПРОПУЩЕНО (--partial): ${absent.join(', ')}` : '';
-const noteRemote = NO_REMOTE ? ' · ПРОПУЩЕНО (--no-remote): главные ветки репозиториев' : '';
+const noteRemote = NO_REMOTE ? ' · ПРОПУЩЕНО (--no-remote): настройки репозиториев (главная ветка, автоснятие)' : '';
 console.log(`канон согласован: правил ${rules}, файлов проверено ${checked}/${Object.keys(FILES).length} · ${samoizlom}${note}${noteRemote}`);
 if (absent.length && PARTIAL) process.exit(2);
