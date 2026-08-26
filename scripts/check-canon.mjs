@@ -275,6 +275,48 @@ function proverit(d, { noRemote }) {
     }
   }
 
+  // ── Страж «уже проверен»: канонная копия там, где выгоден, запрет там, где вреден
+  // Повторный прогон побайтово того же дерева после сквош-мержа ел 22% минут
+  // Actions (замер сессии минут, август-2026). Канонический прибор —
+  // governance/scripts/uzhe_proveren.py (чеканен из влитого backend#64,
+  // dev fc0f873); продуктовое имя дорогой джобы живёт НЕ в байтах, а в env
+  // воркфлоу (STRAZH_DZHOBA_POLNOGO_KONTURA) — байт-в-байт копия с зашитым
+  // именем была бы мёртвым прибором в чужом продукте (правило №19, обратная
+  // грань). Копии обязаны: backend, crm — байт-в-байт + вызов в workflows
+  // (форма проводки свободна: outputs+needs или шаг с if). Тесты стража НЕ
+  // канон: у продуктов разные стеки — от копии требуется СВОЙ излом своим
+  // стеком, это проверяет релиз-инженер на приёмке, не этот сторож.
+  // website и master-app — ЯВНЫЙ ЗАПРЕТ, не «не завели»: их прогон 1.0/0.9
+  // мин, страж дороже прогона (посчитано сессией 26.08); отсутствие и запрет
+  // обязаны читаться по-разному, иначе «доведут до единообразия» во вред.
+  rules++;
+  {
+    const kanonStrazh = resolve(GOV, 'scripts/uzhe_proveren.py');
+    const strazhText = existsSync(kanonStrazh) ? readFileSync(kanonStrazh, 'utf8') : null;
+    if (strazhText === null)
+      errors.push(`канонический страж отсутствует: ${kanonStrazh}`);
+    for (const prod of ['backend', 'crm']) {
+      const kopiya = resolve(WS, prod, 'scripts/uzhe_proveren.py');
+      if (!existsSync(kopiya)) {
+        errors.push(`страж «уже проверен» не заведён в ${prod}: нет scripts/uzhe_proveren.py (байт-в-байт копия канонического)`);
+        continue;
+      }
+      if (strazhText !== null && readFileSync(kopiya, 'utf8') !== strazhText)
+        errors.push(`копия стража разъехалась с канонической: ${kopiya}`);
+      const wfDir = resolve(WS, prod, '.github/workflows');
+      const wired = existsSync(wfDir) && readdirSync(wfDir).some((f) => {
+        try { return readFileSync(resolve(wfDir, f), 'utf8').includes('uzhe_proveren'); }
+        catch { return false; }
+      });
+      if (!wired)
+        errors.push(`страж «уже проверен» не проведён в CI ${prod}: в ${wfDir} нет вызова uzhe_proveren`);
+    }
+    for (const prod of ['website', 'master-app']) {
+      if (existsSync(resolve(WS, prod, 'scripts/uzhe_proveren.py')))
+        errors.push(`копия стража в ${prod} ЗАПРЕЩЕНА: страж дороже прогона (1.0/0.9 мин, посчитано 26.08); снятие запрета — новым замером через архитектора`);
+    }
+  }
+
   // ── knip: настройка ровно одна ───────────────────────────────────────────
   // Две настройки не спорят вслух — Knip молча берёт knip.json вместо
   // knip.jsonc, исключения исчезают, и сторож мёртвого кода краснеет на
