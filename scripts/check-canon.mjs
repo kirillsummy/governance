@@ -359,7 +359,11 @@ const { errors, rules } = proverit(docs, { noRemote: NO_REMOTE });
 
 const checked = Object.values(docs).filter((v) => v !== null).length;
 if (errors.length) {
-  console.error(`ДРЕЙФ КАНОНА — ${errors.length} проблем(ы):\n- ` + errors.join('\n- '));
+  // Судья виден и на красном: раз мы здесь, самоизлом ПРОШЁЛ (его провал
+  // выходит раньше своим «сторож мёртв») — но читатель красного прогона не
+  // обязан знать устройство, чтобы верить вердикту (заметка релиз-инженера
+  // с пост-ревью #49: он чуть не счёл молчание судьи находкой).
+  console.error(`ДРЕЙФ КАНОНА — ${errors.length} проблем(ы) · ${samoizlom}:\n- ` + errors.join('\n- '));
   process.exit(1);
 }
 const note = absent.length ? ` · ПРОПУЩЕНО (--partial): ${absent.join(', ')}` : '';
