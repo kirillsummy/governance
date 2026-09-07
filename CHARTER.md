@@ -75,6 +75,7 @@
 | [`contracts/master-photo.md`](contracts/master-photo.md) | фото мастера: одно на человека; пишут кабинет и CRM, читают оба и сайт |
 | [`contracts/shift-penalty.md`](contracts/shift-penalty.md) | штрафные баллы с карточки смены; пишет бэкенд, читает CRM (мастерский показ — будущим заходом) |
 | [`contracts/staff-medbook.md`](contracts/staff-medbook.md) | медкнижка сотрудника: записи двух циклов, оригиналы, сверка; пишут кабинет и CRM, читают оба, сайт — только факт проверки |
+| [`contracts/master-reviews.md`](contracts/master-reviews.md) | отзывы клиентов о мастере: зеркало YClients, счётчик и среднее считает платформа; читают сайт и приложение мастера, CRM — рычаг снятия |
 
 Внутренние контракты продукта остаются в его репозитории.
 
