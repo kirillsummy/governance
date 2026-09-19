@@ -28,4 +28,4 @@
 
 CRM группирует страницы по clients, staff, processes, payroll, materials, warehouses, tech-cards, media, settings, analytics. Мастер содержит экраны дня/записи, смены/графика, профиля/портфолио/медкнижки, отзывов и финансов. На сайте — услуги, студии, мастера, блог, вакансии и публичные формы. Это карта маршрутов, не отметка завершённости всех экранов.
 
-Общая диаграмма — [architecture](architecture.md); авторизация — [api](api.md); данные — [database](database.md). Файлы и глубина просмотра — [sources](sources.md).
+Общая диаграмма — [architecture](architecture/README.md); авторизация — [api](api.md); данные — [database](database.md). Файлы и глубина просмотра — [sources](sources.md).

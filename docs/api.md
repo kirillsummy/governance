@@ -1,6 +1,6 @@
 # API, идентичность и доступ
 
-[Вход в DOC](../AGENTS.md) · [Архитектура](architecture.md)
+[Вход в DOC](../AGENTS.md) · [Архитектура](architecture/README.md)
 
 ## Поверхности
 

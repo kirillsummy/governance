@@ -3,7 +3,7 @@
 **Снимок кода и документации, не отчёт о деплое.** Проверены GitHub metadata/ветки/PR,
 README, manifests, ключевые routers, BFF, миграции и конфигурация. Production и общий
 стенд не изменялись и в этой задаче не проверялись после входа. Замер публичного
-health из PR #65 сохранён отдельно в [истории наблюдений](history/health-2026-09-19.md). [SHA](repositories.md),
+health из PR #65 сохранён отдельно в [истории наблюдений](https://github.com/kirillsummy/governance/blob/263d84b60a4f03bf158453f1fe7d295db146e1ab/docs/history/health-2026-09-19.md). [SHA](repositories.md),
 [реестр доказательств](sources.md), [полный список удалённых веток](branches.md).
 
 ## Реализовано в основных ветках
@@ -17,7 +17,7 @@ health из PR #65 сохранён отдельно в [истории набл
 | Client `main` | Три файла заготовки: AGENTS, CLAUDE, README | Отсутствие работы над клиентским продуктом: код уже в отдельных PR |
 | Governance / docs / context / workspace | Канон, знания, память, инструменты | Отдельные работающие SaaS-продукты |
 
-Источники реализации: [архитектура](architecture.md), [API](api.md),
+Источники реализации: [архитектура](architecture/README.md), [API](api.md),
 [репозитории](repositories.md), закреплённые файлы в [реестре](sources.md).
 
 ## Реализовано в просмотренном feature-коде и ключевых модулях

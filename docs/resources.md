@@ -47,7 +47,7 @@ Kubernetes pod не подтверждены. Дзен в source задан пу
 
 - [YClients API](https://api.yclients.com/api/v1) — auth/данные/операции по серверным адаптерам.
 - [Telegram API](https://api.telegram.org) — серверные уведомления форм сайта; токен в DOC не публикуется.
-- [Замер health от 19.09](history/health-2026-09-19.md) — сохранён из PR #65, не повторялся при объединении.
+- [Замер health от 19.09](https://github.com/kirillsummy/governance/blob/263d84b60a4f03bf158453f1fe7d295db146e1ab/docs/history/health-2026-09-19.md) — сохранён из PR #65, не повторялся при объединении.
 
 ## Инфраструктурные ссылки и интерфейсы
 

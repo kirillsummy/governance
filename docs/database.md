@@ -15,7 +15,7 @@
 Это состояние Git, а не значение `alembic_version` на сервере.
 Историческая схема в репозитории `docs` и архивные SQL в `data/` не образуют
 второй журнал миграций. Источник: [дерево ревизий](https://github.com/kirillsummy/backend/tree/bbfe5e5e22ca2eedbaf58db2899a60c4cdfa70f3/alembic/versions),
-[историческая проверка](../MAP.md).
+[историческая проверка](https://github.com/kirillsummy/governance/blob/263d84b60a4f03bf158453f1fe7d295db146e1ab/docs/history/map-before-consolidation.md).
 
 ## Основные сущности и поля
 
