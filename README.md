@@ -1,12 +1,26 @@
-# governance
+# SUMMY · DOC / Governance
 
 **Канон экосистемы SUMMY** — роли, процесс разработки, правила релизов, запреты, межпродуктовые контракты. Репозиторий **публичный**: его читает любой агент (Claude, Codex, Kimi, облачные сессии) по прямой ссылке.
+
+## Начать здесь
+
+**[AGENTS.md](AGENTS.md)** — первый вход агента. За 5–10 минут: [состояние](docs/current-state.md)
+→ [продукт](docs/product.md) → [архитектура и схемы](docs/architecture.md)
+→ [репозитории/модули](docs/repositories.md). Далее: [БД](docs/database.md),
+[API](docs/api.md), [конвенции](docs/conventions.md), [инфраструктура](docs/infrastructure.md),
+[ветки](docs/branches.md), [ресурсы](docs/resources.md), [источники](docs/sources.md).
+
+По запросу владельца от 19.09.2026 governance становится центральным DOC разработки.
+Прежние contracts/decisions/roles/templates сохранены. `kirillsummy/docs` остаётся
+источником уникальных прежних знаний: перенос без чтения и потери материала не выполнялся.
+Снимок docs содержит дату/SHA и отдельно показывает feature-код; он не обещает,
+что перечисленные изменения уже развёрнуты.
 
 ## Куда смотреть (вопрос → документ)
 
 | Вопрос | Документ |
 |---|---|
-| **С чего начать, где что искать** | [`MAP.md`](MAP.md) |
+| **С чего начать, где что искать** | [`AGENTS.md`](AGENTS.md), затем [`MAP.md`](MAP.md) |
 | Кто есть кто, как устроен процесс, релизы, запреты | [`CHARTER.md`](CHARTER.md) |
 | Что значит термин (смена, грейд, опция, DayFill…) | [`GLOSSARY.md`](GLOSSARY.md) |
 | Формат QR рабочего места | [`contracts/qr-workplace.md`](contracts/qr-workplace.md) |
@@ -34,6 +48,6 @@
 
 ## Продукты (4 + платформа данных)
 
-Сайт (`kirillsummy/website`, `summy.ru`) · Кабинет мастера (`kirillsummy/master-app`, `master.summy.ru`) · CRM админа и управляющего (`kirillsummy/crm`, `admin.summy.ru`) · Приложение клиента (`kirillsummy/client-app`, заведён, кода нет) · Бэкенд — FastAPI и своя БД (`kirillsummy/backend`), данные и продуктовая логика одним продуктом ([ADR-0002](decisions/0002-single-backend.md)).
+Сайт (`kirillsummy/website`, `summy.ru`) · Кабинет мастера (`kirillsummy/master-app`, `master.summy.ru`) · CRM админа и управляющего (`kirillsummy/crm`, `admin.summy.ru`) · Приложение клиента (`kirillsummy/client-app`, реализация в feature; см. docs/current-state.md) · Бэкенд — FastAPI и своя БД (`kirillsummy/backend`), данные и продуктовая логика одним продуктом ([ADR-0002](decisions/0002-single-backend.md)).
 
 Архитектор — **один на все**: ценность и риск живут на стыках между продуктами.
