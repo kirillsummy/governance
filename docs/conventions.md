@@ -17,7 +17,7 @@
 | CRM тесты | Смонтированный UI очищается afterEach(cleanup); отсутствие unhandled errors тоже проверяется | crm/AGENTS.md |
 | Фронты | Секреты только на сервере; BFF allowlist и server-only границы | client server, master BFF, website platform.ts |
 | Бренд | SUMMY, на «ты», без давления; палитра и бренд из contracts | AGENTS продуктов, governance contracts |
-| Ветки | База по продукту; feature/worktree и PR с явной base; сданный SHA неизменяем | CHARTER, AGENTS продуктов |
+| Ветки | Не больше production/test/work/singular; работа в work; singular только архив достижимости; сданный SHA неизменяем | CHARTER, docs/branches.md |
 | Naming | snake_case в Python/SQL; TS DTO клиента camelCase, явные aliases в backend | client types, orders/router.py |
 | Ошибки | Доменные AppError и HTTPException сосуществуют, BFF иногда переводит ответ в message | api.md |
 | Логи | Python logging, LOG_LEVEL, middleware request-id; финансовая история отдельно в БД | backend/app/main.py, config.py |
