@@ -1,5 +1,18 @@
 # governance
 
+**Центральный DOC SUMMY. Начать с [AGENTS.md](AGENTS.md).**
+
+Карта продукта и реализации из собранного контекста на **19.09.2026**:
+[продукт](docs/product.md) · [архитектура](docs/architecture.md) ·
+[БД](docs/database.md) · [API и доступ](docs/api.md) ·
+[стандарты](docs/conventions.md) · [текущее состояние](docs/current-state.md) ·
+[репозитории](docs/repositories.md) · [ветки](docs/branches.md) ·
+[инфраструктура и ресурсы](docs/infrastructure.md) · [источники](docs/sources.md).
+
+Это датированный снимок исходников и известных документов, не проверка работающих
+серверов. Основные ветки, разработки в PR и непроверенные сведения разделены.
+Нормативный источник остаётся в CHARTER/contracts; прежние документы сохранены.
+
 **Канон экосистемы SUMMY** — роли, процесс разработки, правила релизов, запреты, межпродуктовые контракты. Репозиторий **публичный**: его читает любой агент (Claude, Codex, Kimi, облачные сессии) по прямой ссылке.
 
 ## Куда смотреть (вопрос → документ)
@@ -34,6 +47,6 @@
 
 ## Продукты (4 + платформа данных)
 
-Сайт (`kirillsummy/website`, `summy.ru`) · Кабинет мастера (`kirillsummy/master-app`, `master.summy.ru`) · CRM админа и управляющего (`kirillsummy/crm`, `admin.summy.ru`) · Приложение клиента (`kirillsummy/client-app`, заведён, кода нет) · Бэкенд — FastAPI и своя БД (`kirillsummy/backend`), данные и продуктовая логика одним продуктом ([ADR-0002](decisions/0002-single-backend.md)).
+Сайт (`kirillsummy/website`, `summy.ru`) · Кабинет мастера (`kirillsummy/master-app`, `master.summy.ru`) · CRM админа и управляющего (`kirillsummy/crm`, `admin.summy.ru`) · Приложение клиента (`kirillsummy/client-app`: в `main` заготовка, код есть в отдельных PR — [снимок](docs/current-state.md)) · Бэкенд — FastAPI и своя БД (`kirillsummy/backend`), данные и продуктовая логика одним продуктом ([ADR-0002](decisions/0002-single-backend.md)).
 
 Архитектор — **один на все**: ценность и риск живут на стыках между продуктами.
