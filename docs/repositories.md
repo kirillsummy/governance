@@ -11,8 +11,7 @@ summy-data-gateway → backend, summy.ru → website, summy-governance → gover
 В пяти продуктах прочитана feature-реализация от 17.09, потому что она содержит
 изменения текущего чата. **Это не срез default и не deployed SHA.** Основные ветки
 проверены через GitHub metadata; численное сравнение — в [branches](branches.md).
-Governance для этой DOC-ветки взят от main, отдельный контракт заказов PR #62 не
-влит молча: на него дана ссылка как на feature-источник.
+Governance для этой DOC-ветки взят от main, контракт заказов PR #62 сохранён в contracts с пометкой feature, без deployment.
 
 | Репозиторий | Default GitHub | Прочитанный commit |
 |---|---|---|

@@ -43,6 +43,12 @@ Kubernetes pod не подтверждены. Дзен в source задан пу
 Внутренний API production не имеет подтверждённого публичного URL; не публиковать
 весь /v1 как открытый reverse proxy ради удобства фронта.
 
+## Внешние API и историческое наблюдение
+
+- [YClients API](https://api.yclients.com/api/v1) — auth/данные/операции по серверным адаптерам.
+- [Telegram API](https://api.telegram.org) — серверные уведомления форм сайта; токен в DOC не публикуется.
+- [Замер health от 19.09](history/health-2026-09-19.md) — сохранён из PR #65, не повторялся при объединении.
+
 ## Инфраструктурные ссылки и интерфейсы
 
 - GitHub Actions/PR — внутри соответствующего репозитория; [все ветки](branches.md).
@@ -50,7 +56,7 @@ Kubernetes pod не подтверждены. Дзен в source задан пу
   не проверен и не выдумывается. S3 endpoint `s3.twcstorage.ru` — инфраструктурный host,
   не публичная ссылка на клиентские файлы.
 - Яндекс Пэй sandbox host `sandbox.pay.yandex.ru` — адаптер интеграции, не SUMMY UI.
-- [Сохранённый контракт заказов в PR #62](https://github.com/kirillsummy/governance/pull/62)
+- [Контракт тестовых заказов](../contracts/orders-payments-test.md)
   описывает payment-link feature; новое требование карты отмечено в current-state.
 
 Проверки версий: у сайта/мастера `/healthz`, CRM `/api/health`, backend `/health`
