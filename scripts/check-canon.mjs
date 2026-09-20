@@ -1,4 +1,5 @@
-// Сторож дрейфа канона: копии правил обязаны совпадать по ключевым фактам.
+// Сторож дрейфа канона: правила живут в канонических файлах, остальные документы
+// ссылаются на них вместо копирования формулировок.
 // Fail-closed: отсутствие обязательного файла — ошибка. Флаг --partial
 // разрешает пропуски только для сознательной локальной проверки; в CI запрещён.
 // Проверяются канон, роли тройки (архитектор/разработчик/релиз-инженер) и
@@ -57,6 +58,7 @@ const FILES = {
   handoff: resolve(GOV, 'templates/handoff.md'),
   stub: resolve(GOV, 'templates/AGENTS-stub.md'),
   kickoff: resolve(GOV, 'templates/kickoff.md'),
+  branches: resolve(GOV, 'docs/branches.md'),
   money: resolve(GOV, 'contracts/money-dod.md'),
   architect: resolve(WS, 'context/agents/architect.md'),
   developer: resolve(WS, 'context/agents/developer.md'),
@@ -67,7 +69,6 @@ const FILES = {
   agentsCabinet: resolve(WS, 'master-app/AGENTS.md'), // checkout на feature/react-client
   agentsClient: resolve(WS, 'client-app/AGENTS.md'),
   agentsRoot: resolve(WS, 'AGENTS.md'), // памятка-роутер рабочего пространства
-  map: resolve(GOV, 'MAP.md'),
   glossary: resolve(GOV, 'GLOSSARY.md'),
 };
 
@@ -78,18 +79,16 @@ for (const [k, p] of Object.entries(FILES)) {
   else { docs[k] = null; absent.push(`${k} (${p})`); }
 }
 
-// Ожидания главных веток НЕ дублируются рукописным списком — выводятся из
-// самой таблицы «Ветки» устава: вторая копия таблицы, которую держат руками,
-// — тот же класс дрейфа этажом выше (находка релиз-инженера, 25.08).
-function vetkiIzTablicy(charter) {
+// Ожидания главных веток выводятся из канонической таблицы docs/branches.md.
+function vetkiIzTablicy(branches) {
   const pairs = [];
-  const m = charter.match(
-    /\| Репозиторий \| База для веток[^\n]*\n\|[-| ]+\n((?:\|[^\n]*\n)+)/
+  const m = branches.match(
+    /\| Репозиторий \| Production[^\n]*\n\|[-| ]+\n((?:\|[^\n]*\n)+)/
   );
   if (!m) return pairs;
   for (const line of m[1].trim().split('\n')) {
     const cells = line.split('|').map((s) => s.trim());
-    const repo = (cells[1] || '').match(/`(?:kirillsummy\/)?([a-z0-9-]+)`/);
+    const repo = (cells[1] || '').replaceAll('`', '').match(/^([a-z0-9-]+)$/);
     const base = (cells[2] || '').match(/`([^`]+)`/);
     if (repo && base) pairs.push([`kirillsummy/${repo[1]}`, base[1]]);
   }
@@ -126,36 +125,39 @@ function proverit(d, { noRemote }) {
   const ALL_AGENTS = ['agentsSite', 'agentsCrm', 'agentsBackend', 'agentsCabinet', 'agentsClient'];
 
   // ── Хендофф и релиз ───────────────────────────────────────────────────────
-  has(['charter', 'handoff', 'stub', 'kickoff', ...ALL_AGENTS],
+  has(['charter', 'handoff', ...ALL_AGENTS],
     'проведи ревью и смержи', 'финальная строка хендоффа');
-  not(['charter', 'handoff', 'stub', 'kickoff', 'team', ...ALL_AGENTS],
+  not(['charter', 'handoff', 'team', ...ALL_AGENTS],
     /Архитектору: смержи и выкати/, 'хендофф не просит выкатку');
-  has(['charter', 'handoff', 'kickoff'], 'выкатку разрешает',
+  has(['charter'], 'выкатку разрешает',
     'выкатка — за владельцем');
   rules++;
-  for (const k of ['handoff', 'stub', 'kickoff', ...ALL_AGENTS]) {
+  for (const k of ['handoff', ...ALL_AGENTS]) {
     if (d[k] === null) continue;
     if (!/проведи ревью и смержи[^\n]*commit <полный SHA>/.test(d[k]))
       errors.push(`финальная строка без (commit <полный SHA>) в ${FILES[k]}`);
   }
 
   // ── Заморозка коммита ─────────────────────────────────────────────────────
-  has(['charter', 'handoff'], 'коммит заморожен', 'заморозка коммита (канон)');
+  has(['charter'], 'коммит заморожен', 'заморозка коммита (канон)');
   has(ALL_AGENTS, 'новыми коммитами', 'правки поверх новыми коммитами (памятки)');
-  not(['charter', 'handoff', 'stub', 'kickoff', ...ALL_AGENTS],
+  not(['charter', 'handoff', ...ALL_AGENTS],
     /отданную ветку не дописыва|ветка заморожена|новая правка = новая ветка/,
     'нет старой заморозки ветки');
   not(ALL_AGENTS, /[Нн]е удалять файлы[^.\n]*без явного указания/,
     'нет тотального запрета удаления файлов');
 
   // ── Ветки: база и защищённые, без захардкоженного dev ─────────────────────
-  not(['charter', 'architect', 'stub', 'kickoff'],
+  not(['charter', 'architect'],
     /мерж в `dev`|мержит в `dev`|Ветка от <dev\|main>|только через\s+`dev`/,
     'нет захардкоженного dev');
   not(ALL_AGENTS, /пуш ветки \(не `dev`\/`main`\)|НЕ пушить в `dev`\/`main`/,
     'памятки не сужают запрет до dev/main');
-  has(['charter'], 'Пушить напрямую в защищённые ветки', 'запрет пуша (устав)');
-  has(['stub'], 'защищённую ветку продукта', 'запрет пуша (памятка-шаблон)');
+  has(['branches'], 'не изменять без прямого указания разработчика',
+    'защищённые ветки (каноническая политика)');
+  has(['stub'], 'governance/AGENTS.md', 'памятка продукта ссылается на канон');
+  has(['kickoff'], '[порядок работы](../ai/WORKFLOW.md)',
+    'шаблон задачи ссылается на workflow');
   rules++;
   const PRODUCTS = [
     ['agentsCabinet', 'feature/react-client', ['feature/react-client', 'dev', 'main']],
@@ -216,9 +218,9 @@ function proverit(d, { noRemote }) {
   rules++; // главная ветка = базовая из таблицы
   rules++; // автоснятие влитых веток включено (владельцу мусор «путает», 26.08)
   {
-    const izTablicy = d.charter === null ? [] : vetkiIzTablicy(d.charter);
-    if (d.charter !== null && izTablicy.length < 4)
-      errors.push(`таблица «Ветки» в CHARTER.md не распарсилась (строк: ${izTablicy.length}) — прибору не из чего вывести главные ветки`);
+    const izTablicy = d.branches === null ? [] : vetkiIzTablicy(d.branches);
+    if (d.branches !== null && izTablicy.length < 4)
+      errors.push(`таблица веток в docs/branches.md не распарсилась (строк: ${izTablicy.length}) — прибору не из чего вывести главные ветки`);
     const DEFAULT_BRANCHES = [...izTablicy, ['kirillsummy/governance', 'main']];
     if (!noRemote) {
       for (const [repo, want] of DEFAULT_BRANCHES) {
@@ -338,13 +340,13 @@ const IZLOMY = [
   ['инвариант конвейера',
     (d) => ({ ...d, charter: d.charter.replaceAll('строивший не принимает своё', '') })],
   ['не распарсилась',
-    (d) => ({ ...d, charter: d.charter.replace('| Репозиторий | База для веток', '| Репозиторий | Откуда') })],
+    (d) => ({ ...d, branches: d.branches.replace('| Репозиторий | Production', '| Репозиторий | Выпуск') })],
   ['финальная строка хендоффа',
     (d) => ({ ...d, handoff: d.handoff.replaceAll('проведи ревью и смержи', '') })],
 ];
 let samoizlom = `самоизлом ${IZLOMY.length}/${IZLOMY.length}`;
-if (docs.charter === null || docs.handoff === null) {
-  samoizlom = 'самоизлом ПРОПУЩЕН (--partial без charter/handoff)';
+if (docs.charter === null || docs.handoff === null || docs.branches === null) {
+  samoizlom = 'самоизлом ПРОПУЩЕН (--partial без charter/handoff/branches)';
 } else {
   for (const [zhdyom, slomat] of IZLOMY) {
     const { errors: e } = proverit(slomat(docs), { noRemote: true });
