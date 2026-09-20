@@ -26,6 +26,9 @@ SMS OTP и связь с существующим CRM-клиентом пров�
 
 ## Конфигурация и проверки
 
+Подготовка отдельного тестового `/client/`, SHA конфигурации и блокировка SSH:
+[журнал подключения 20.09.2026](../history/client-test-connection-2026-09-20.md).
+
 CLIENT_BACKEND_URL/TOKEN, CLIENT_PUBLIC_ORIGIN; CLIENT_DEMO только loopback, без реальных SMS/CRM/платежей. npm test, build, format:check. `https://summy.ru/client/` — предполагаемый публичный адрес, не подтверждённый deployment.
 
 ## Источники
