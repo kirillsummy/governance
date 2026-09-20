@@ -1,5 +1,7 @@
 # Порядок работы агента
 
+Для продолжения известной задачи: [экономия контекста и токенов](TOKEN-EFFICIENCY.md).
+
 1. Прочитай [ограничения](RESTRICTIONS.md), [состояние](../docs/current-state.md),
    раздел [архитектуры](../docs/architecture/README.md) выбранного продукта и его AGENTS/DEBT.
 2. Проверь Git root, remote, production/`test`/`work`/`singular`, upstream и dirty-state; выясни, где живёт факт,
