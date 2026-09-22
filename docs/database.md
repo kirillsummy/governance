@@ -17,6 +17,13 @@
 второй журнал миграций. Источник: [дерево ревизий](https://github.com/kirillsummy/backend/tree/bbfe5e5e22ca2eedbaf58db2899a60c4cdfa70f3/alembic/versions),
 [историческая проверка](https://github.com/kirillsummy/governance/blob/263d84b60a4f03bf158453f1fe7d295db146e1ab/docs/history/map-before-consolidation.md).
 
+В ветке `backend/work`, коммит `2b5b7a4`, цепочка уже продолжена до
+`0125_complaint_canonical_model`. Эта ревизия подготовлена в коде, но на БД не
+применялась и тестами не проверялась. Поэтому она описывает ожидаемую схему после
+релиза, а не подтверждённое состояние test или production. Порядок приёмки и
+обязательные действия владельца БД закреплены в
+[контракте рекламаций](../contracts/reklamaciya.md).
+
 ## Основные сущности и поля
 
 Это обзор прочитанных моделей, **не полный DDL**. Типы/nullable/индексы/каскады
@@ -35,9 +42,10 @@
 | `client_notes` | `id`, `client_id`, `author_ref`, `body`, `visibility`, `source`, `deleted_at` | История заметок; автор может быть внешним/неизвестным |
 | `appointments` | `id`, `organization_id`, `location_id`, `client_id`, `staff_id`, `starts_at`, `ends_at`, `status`, `total_amount`, `currency`, `source_channel` | Запись клиента, сотрудник/клиент могут отсутствовать |
 | `appointment_items` | `id`, `appointment_id`, `service_offer_id`, `staff_id`, `quantity`, `unit_price`, `discount_amount`, `final_amount`, `service_snapshot`, `staff_snapshot` | Позиции записи и снимки услуги/мастера |
-| `processes` | `id`, `type`, `title`, `status`, `priority`, `assignee_role`, `appointment_id`, `staff_id`, `fields`, `source`, `external_ref` | Операционные карточки, включая ссылки на запись и мастера |
+| `processes` | `id`, `type`, `title`, `status`, `priority`, `assignee_role`, `appointment_id`, `staff_id`, `client_id`, `service_id`, `shift_process_id`, `fields`, `source`, `external_ref` | Операционные карточки; связи рекламации вынесены из анкеты в колонки/FK |
 | `process_types` | `id`, `code`, `label`, `scope`, `statuses`, `transitions`, `fields`, `initial_status` | Описания видов/переходов — данные |
 | `process_attachments` | `id`, `process_id`, `storage_key`, `content_type`, `size_bytes`, `deleted_at` | Метаданные вложения; байты в объектном хранилище |
+| `complaint_grants` | `id`, `process_id`, `kind`, `amount`, `bonus_size`, `status`, `idempotency_key`, `actor_role`, `actor_id`, `grant_note`, `error`, `granted_at` | Append-only журнал фактического предоставления решения; строки нельзя обновлять или удалять |
 | `warehouses` / `warehouse_shelves` | `id`, `name`, `deleted_at`; у полки `warehouse_id` | Склад и адресное хранение; склад не обязательно студия |
 | `warehouse_docs` | `id`, `warehouse_id`, `target_warehouse_id`, `doc_type`, `reason`, `actor_id` | Проведённые документы движений; остаток вычисляется по строкам |
 | `media_assets` | `id`, `storage_bucket`, `storage_key`, `mime_type`, `size_bytes`, `checksum_sha256`, `processing_status`, `metadata` | Файл в S3 и его метаданные |
@@ -65,7 +73,10 @@ erDiagram
   staff_members o|--o{ appointments : performs
   appointments ||--o{ appointment_items : includes
   appointments o|--o{ processes : related
+  clients o|--o{ processes : complaint_client
+  processes o|--o{ processes : related_shift
   processes ||--o{ process_attachments : attachments
+  processes ||--o{ complaint_grants : resolution_ledger
   media_assets ||--o{ content_items : represents
   staff_members ||--o{ staff_content : portfolio
   content_items ||--o{ staff_content : published_work
@@ -105,6 +116,9 @@ erDiagram
     text status
     uuid appointment_id
     uuid staff_id
+    uuid client_id
+    uuid service_id
+    uuid shift_process_id
     jsonb fields
   }
   media_assets {
@@ -136,6 +150,16 @@ erDiagram
 [schema-contract.json](https://github.com/kirillsummy/backend/blob/f53795b23999402eecfa2faa8f9098e9ce272904/db/schema-contract.json).
 
 ## Неслитые изменения схемы
+
+Актуальная рабочая линия backend на 22.09.2026 содержит миграции до `0125`.
+Последняя ревизия добавляет связи рекламации, ограничения согласованности,
+индексы фильтрации и защиту append-only журнала `complaint_grants`. Перед её
+применением владелец БД обязан подтвердить реальный head целевой среды и отсутствие
+другой ревизии с тем же номером/`revision`; локальный номер файла не является
+доказательством совместимости.
+
+Ниже сохранён исторический контекст ветвления после `0116`; он не описывает
+текущий head `backend/work`:
 
 - В `backend/test` есть `0117_staff_invitations` (собственный вход).
 - В ветке обращений мастера есть другая `0117_master_requests_hours`.
