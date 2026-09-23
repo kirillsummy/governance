@@ -114,6 +114,16 @@ merchant ID, валютой, замороженной суммой и опера
 
 ### Рекламации в `backend/work`
 
+Этап 10 расширяет общий `GET /v1/processes` без отдельного endpoint рекламаций.
+Доступны `staff_id`, `client_id`, `phone` (общая нормализация), `service_id`,
+`defect_kind`, `appeal_category`, `appeal_source`, периоды
+`appeal_date_from/to`, `visit_date_from/to`, `repair_date_from/to`,
+`resolution_kind`, `resolution_grant_status`, `has_attachments`,
+`has_penalties`, а также `sort=newest|oldest|due_soon`.
+Фильтры, `total` и сортировка применяются в БД до `limit/offset`.
+`state=closed` определяет терминальность по workflow; карточка списка
+отдаёт `completed_at` и `has_attachments`.
+
 Этап 6: `GET /v1/processes/workflows` остаётся единственным API options
 анкеты рекламации. `resolution_kind` для нового выбора содержит `redo`,
 `bonus`, `refund`, `reject`; `reject` устанавливает переход в `rejected` с
