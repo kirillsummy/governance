@@ -114,6 +114,17 @@ merchant ID, валютой, замороженной суммой и опера
 
 ### Рекламации в `backend/work`
 
+Этап 5 добавляет универсальные задания процесса: `GET/POST
+/v1/processes/{id}/tasks`, `PATCH /v1/processes/{id}/tasks/{task_id}` и
+`POST /v1/processes/{id}/tasks/{task_id}/complete|cancel`. DTO задания содержит
+`due_at` и рассчитанный сервером `is_overdue`. `GET /v1/processes/workflows`
+дополнен `task_kinds`; у вида процесса необязательная `stage_sla_hours`.
+`ProcessTransition.fields` передаёт решение вместе с переходом в `executing`.
+Закрытие при незавершённой обязательной задаче отвечает 409
+`complaint_required_task_open`; эскалация без комментария — 422
+`complaint_escalation_comment_required`; отклонение без причины — 422
+`complaint_rejection_reason_required`. Ревизия 0128 не применялась.
+
 Создание CRM использует существующий `POST /v1/processes` с `type=complaint`.
 Необязательный для старых клиентов `request_id` (UUID) задаёт идемпотентность
 нового подтверждения: backend хранит ключ и SHA-256 нормализованного тела в
