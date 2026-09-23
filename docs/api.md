@@ -114,6 +114,15 @@ merchant ID, валютой, замороженной суммой и опера
 
 ### Рекламации в `backend/work`
 
+Этап 6: `GET /v1/processes/workflows` остаётся единственным API options
+анкеты рекламации. `resolution_kind` для нового выбора содержит `redo`,
+`bonus`, `refund`, `reject`; `reject` устанавливает переход в `rejected` с
+обязательным свободным `rejection_reason`, а не переход в `executing`.
+Старые русские строки в карточках и ledger не переписываются. Настройка
+options выполняется существующим `PUT /v1/processes/types/complaint/fields`;
+снятое значение читается в старых карточках, но не принимается как новое.
+Ревизия 0129 меняет options и CHECK ledger; она не применялась.
+
 Этап 5 добавляет универсальные задания процесса: `GET/POST
 /v1/processes/{id}/tasks`, `PATCH /v1/processes/{id}/tasks/{task_id}` и
 `POST /v1/processes/{id}/tasks/{task_id}/complete|cancel`. DTO задания содержит
