@@ -122,7 +122,8 @@ merchant ID, валютой, замороженной суммой и опера
 `has_penalties`, а также `sort=newest|oldest|due_soon`.
 Фильтры, `total` и сортировка применяются в БД до `limit/offset`.
 `state=closed` определяет терминальность по workflow; карточка списка
-отдаёт `completed_at` и `has_attachments`.
+отдаёт `completed_at`, `has_attachments` и сумму исполненной компенсации
+`resolution_grant_amount_rub` из ledger (не из анкеты).
 
 Этап 6: `GET /v1/processes/workflows` остаётся единственным API options
 анкеты рекламации. `resolution_kind` для нового выбора содержит `redo`,
