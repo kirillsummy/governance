@@ -4,12 +4,17 @@ Governance — единая документация разработки SUMMY.
 в [ветках](docs/branches.md). Если актуального контекста ещё нет, начни с
 [порядка работы](ai/WORKFLOW.md) и [ограничений для ИИ](ai/RESTRICTIONS.md).
 Полномочия задаются [уставом](CHARTER.md) и явным решением владельца, не skills.
+Любая LLM-сессия, изменяющая любой репозиторий `kirillsummy`, обязана в рамках
+той же задачи отразить изменение в Governance `main`: минимум факт и границу
+проверки в [CHANGELOG](CHANGELOG.md), а изменённый контракт — в его единственном
+каноническом разделе. Подробный порядок закреплён в [уставе](CHARTER.md#что-документируем-а-что-нет).
 
 ## Найди нужный раздел
 
 | Задача | Куда смотреть |
 |---|---|
 | Понять продукт и статус | [Продукт](docs/product.md), [состояние](docs/current-state.md) |
+| Нерешённое / конфликт | [Реестр решений и блокеров](docs/open-questions.md) |
 | Архитектура | [Общая схема](docs/architecture/README.md) |
 | Сайт | [website](docs/architecture/website.md) |
 | Backend | [backend](docs/architecture/backend.md), [БД](docs/database.md), [API](docs/api.md) |
@@ -17,6 +22,7 @@ Governance — единая документация разработки SUMMY.
 | Мастер / клиент | [master-app](docs/architecture/master-app.md), [client-app](docs/architecture/client-app.md) |
 | Найти код / источник | [Репозитории](docs/repositories.md), [модули](docs/modules.md), [реестр файлов](docs/sources.md) |
 | Проверки / окружения | [Конвенции](docs/conventions.md), [инфраструктура](docs/infrastructure.md) |
+| Люди / доступы | [Команда](roles/TEAM.md) |
 | Повторяемая процедура | [Skills](ai/skills/README.md) |
 | Общее бизнес-правило | [Контракты](contracts/README.md) |
 

@@ -17,11 +17,16 @@
 второй журнал миграций. Источник: [дерево ревизий](https://github.com/kirillsummy/backend/tree/bbfe5e5e22ca2eedbaf58db2899a60c4cdfa70f3/alembic/versions),
 [историческая проверка](https://github.com/kirillsummy/governance/blob/263d84b60a4f03bf158453f1fe7d295db146e1ab/docs/history/map-before-consolidation.md).
 
-В ветке `backend/work` на 24.09.2026 цепочка продолжена до `0132`:
+В удалённой ветке `backend/work` на 24.09.2026 цепочка продолжена до
+`0135_cash_payout_requests`:
 `0125` — каноническая модель, `0127` — идемпотентность создания,
 `0128` — задания, `0130` — сверка начислений, `0131` — переделка,
-`0132` — снимок ставки штрафного балла. Наличие файлов в Git не доказывает
-применение в БД; `alembic_version` test/production в этой сверке не проверен.
+`0132` — снимок ставки штрафного балла, `0133` — виды событий решения,
+`0134` — правило фотоподтверждений v2, `0135` — запросы наличного вывода.
+`backend/test` содержит **тот же файл `0125`** и заканчивается `0126`,
+а базовая ветка `dev` — `0116`; `test` и `work` разошлись по Git.
+Наличие файлов в Git не доказывает применение в БД; `alembic_version`
+test/production в этой сверке не проверен.
 Поэтому схема в work — ожидаемое состояние после релиза, а не подтверждённое
 состояние серверов. Порядок приёмки и обязательные действия владельца БД закреплены в
 [контракте рекламаций](../contracts/reklamaciya.md).
@@ -42,12 +47,14 @@
 | `client_contacts` | `id`, `client_id`, `contact_type`, `value_raw`, `value_normalized`, `is_primary`, `is_verified` | Контакты отдельно от карточки клиента |
 | `client_referrals` | `id`, `inviter_client_id`, `invited_client_id` | Кто пригласил клиента; уникальность активной связи задаёт миграция |
 | `client_notes` | `id`, `client_id`, `author_ref`, `body`, `visibility`, `source`, `deleted_at` | История заметок; автор может быть внешним/неизвестным |
-| `appointments` | `id`, `organization_id`, `location_id`, `client_id`, `staff_id`, `starts_at`, `ends_at`, `status`, `total_amount`, `currency`, `source_channel` | Запись клиента, сотрудник/клиент могут отсутствовать |
+| `appointments` | `id`, `organization_id`, `location_id`, `client_id`, `staff_id`, `starts_at`, `ends_at`, `status`, `total_amount`, `currency`, `source_channel`, `complaint_process_id`, `source_appointment_id`, `is_free_redo` | Запись клиента; nullable-связи переделки добавлены в work ревизией 0131 |
 | `appointment_items` | `id`, `appointment_id`, `service_offer_id`, `staff_id`, `quantity`, `unit_price`, `discount_amount`, `final_amount`, `service_snapshot`, `staff_snapshot` | Позиции записи и снимки услуги/мастера |
-| `processes` | `id`, `type`, `title`, `status`, `priority`, `assignee_role`, `appointment_id`, `staff_id`, `client_id`, `service_id`, `shift_process_id`, `fields`, `source`, `external_ref` | Операционные карточки; связи рекламации вынесены из анкеты в колонки/FK |
+| `processes` | `id`, `type`, `title`, `status`, `priority`, `assignee_role`, `appointment_id`, `staff_id`, `client_id`, `service_id`, `shift_process_id`, `create_request_id`, `create_request_hash`, `fields`, `source`, `external_ref` | Связи рекламации вынесены из анкеты в FK; ключ создания добавлен в work ревизией 0127 |
 | `process_types` | `id`, `code`, `label`, `scope`, `statuses`, `transitions`, `fields`, `initial_status` | Описания видов/переходов — данные |
 | `process_attachments` | `id`, `process_id`, `storage_key`, `content_type`, `size_bytes`, `deleted_at` | Метаданные вложения; байты в объектном хранилище |
-| `complaint_grants` | `id`, `process_id`, `kind`, `amount`, `bonus_size`, `status`, `idempotency_key`, `actor_role`, `actor_id`, `grant_note`, `error`, `granted_at` | Append-only журнал фактического предоставления решения; строки нельзя обновлять или удалять |
+| `process_tasks` | `id`, `organization_id`, `process_id`, `kind`, `title`, `required`, `status`, `assignee_role`, `assignee_id`, `due_at`, `completed_at` | Универсальные задания и сроки процесса; 0128 |
+| `complaint_grants` | `id`, `complaint_id`, `decision_kind`, `bonus_size`, `amount_rub`, `status`, `idempotency_key`, `fail_reason`, `grant_note`, `granted_at` | Журнал попыток предоставления; завершённые строки защищены от UPDATE/DELETE |
+| `complaint_grant_reconciliations` | `id`, `organization_id`, `complaint_id`, `grant_id`, `outcome`, `note`, `idempotency_key`, `created_by_id`, `created_at` | Отдельный append-only результат операторской сверки; 0130 |
 | `warehouses` / `warehouse_shelves` | `id`, `name`, `deleted_at`; у полки `warehouse_id` | Склад и адресное хранение; склад не обязательно студия |
 | `warehouse_docs` | `id`, `warehouse_id`, `target_warehouse_id`, `doc_type`, `reason`, `actor_id` | Проведённые документы движений; остаток вычисляется по строкам |
 | `media_assets` | `id`, `storage_bucket`, `storage_key`, `mime_type`, `size_bytes`, `checksum_sha256`, `processing_status`, `metadata` | Файл в S3 и его метаданные |
@@ -153,23 +160,38 @@ erDiagram
 
 ## Неслитые изменения схемы
 
-Актуальная рабочая линия backend на 24.09.2026 содержит миграции до `0132`.
+Актуальная удалённая рабочая линия backend на 24.09.2026 содержит миграции до `0135`.
 Ревизия `0125` добавляет связи рекламации, ограничения согласованности,
 индексы фильтрации и защиту append-only журнала `complaint_grants`; последующие
-ревизии расширяют создание, задания, сверку, переделку и штрафы. Перед их
+ревизии расширяют создание, задания, сверку, переделку, штрафы и другие домены.
+`db/api-contract.json` и `db/schema-contract.json` в work статически содержат
+новые поверхности, но их генерация/сравнение в этой проверке не выполнялись.
+Перед их
 применением владелец БД обязан подтвердить реальный head целевой среды и отсутствие
 другой ревизии с тем же номером/`revision`; локальный номер файла не является
 доказательством совместимости.
 
+Откат не равен простому `alembic downgrade`: downgrade ревизий 0127,
+0129–0131 и 0133–0135 содержит guards на данные, а
+`0132_complaint_penalty_rate_downgrade.sql` удаляет исторический
+`point_price_rub`. До изменения БД нужен план совместимости, резервной
+копии и восстановления, согласованный владельцем. В compose для API и
+миграций используется `POSTGRES_USER` (default `summy_data_owner`);
+отдельная runtime-роль мигратора и реальные права test/production не
+проверены. Это конфигурация исходника, не проверка ACL.
+
 Ниже сохранён исторический контекст ветвления после `0116`; он не описывает
 текущий head `backend/work`:
 
-- В `backend/test` есть `0117_staff_invitations` (собственный вход).
+- Тогда в `backend/test` была `0117_staff_invitations` (собственный вход).
 - В ветке обращений мастера есть другая `0117_master_requests_hours`.
 - Последующие ветки клиентского контура/платежей добавляют
   `0118_client_portal`, `0119_order_payments_test`, `0120_quality_before_payment`.
 
-Это независимые линии развития после `0116`. Перед объединением проверить
+Это историческое описание независимых линий после `0116`, а не текущий
+перечень голов. Сейчас `test` дошла до `0126`, `work` — до `0135`, а
+`singular` остаётся отдельной линией с головой `0117_staff_invitations`.
+Перед объединением проверить
 реальные `revision`/`down_revision`, головы Alembic, порядок применения и
 совместимость данных; совпадение префикса `0117` уже требует внимания, но
 само по себе не доказывает одинаковый внутренний revision ID.
