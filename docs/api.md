@@ -23,6 +23,12 @@ URL только из названия доменной папки.
 [master-app/bff/README.md](https://github.com/kirillsummy/master-app/blob/84f3d0a74584c549ed50070f0f3fbc2eee0f5515/bff/README.md),
 [backend/docs/client-portal.md](https://github.com/kirillsummy/backend/blob/ea174dd267c873cc7ae1b8a95fb63d6c456fdf8a/docs/client-portal.md).
 
+Cash-v1 добавляет master-scoped preview, создание и чтение запроса в
+`/v1/finance/payout-*`; подтверждение и отказ управляющей находятся в
+`/v1/earnings/payouts/{id}/*` и не входят в master BFF. Состояния, права,
+идемпотентность и граница готовности описаны в
+[контракте наличного вывода](../contracts/cash-earnings-payout.md).
+
 ## Три разных проверки
 
 1. **Сервис:** `X-API-Token`, сравнение с настройкой `SERVICE_API_TOKEN`.
