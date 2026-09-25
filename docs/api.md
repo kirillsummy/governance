@@ -16,7 +16,7 @@ URL только из названия доменной папки.
 | `/v1/profile`, `/v1/finance`, `/v1/master/*`, `/v1/day`, часть `/v1/schedule` | Кабинет мастера через BFF | Пути графика делят пространство с CRM; нужен точный allowlist |
 | `/v1/public/*` | Сервер сайта | Читаемые DTO студий, мастеров, портфолио, отзывов, услуг/вакансий |
 | Остальные `/v1` router domains | CRM и внутренние сервисы | Клиенты, процессы, склад, персонал, расчёты и служебные API |
-| `/v1/client/*` | Client BFF, отдельные feature-ветки | OTP, сессия, запись, история/заказы; в базовом `dev` отсутствует |
+| `/v1/client/*` | Client BFF, `client-app/work` и `backend/work` | OTP, сессия, запись, история/заказы; локальная доработка 25.09 добавляет жалобы, лояльность и набор услуг, не проверена на TEST |
 
 Источники: [backend/app/main.py](https://github.com/kirillsummy/backend/blob/bbfe5e5e22ca2eedbaf58db2899a60c4cdfa70f3/app/main.py), [backend/app/config.py](https://github.com/kirillsummy/backend/blob/bbfe5e5e22ca2eedbaf58db2899a60c4cdfa70f3/app/config.py),
 [backend/app/domains/auth/router.py](https://github.com/kirillsummy/backend/blob/bbfe5e5e22ca2eedbaf58db2899a60c4cdfa70f3/app/domains/auth/router.py), [backend/app/domains/public_api/router.py](https://github.com/kirillsummy/backend/blob/bbfe5e5e22ca2eedbaf58db2899a60c4cdfa70f3/app/domains/public_api/router.py),
@@ -194,8 +194,7 @@ options выполняется существующим `PUT /v1/processes/types
 `complaint_create_request_conflict`; несколько осознанных рекламаций одного
 визита разрешены. `X-Request-Id` остаётся только трассировкой.
 
-Поиск использует `GET /v1/clients?search=...` (имя или телефон, общий
-нормализатор, все дубли без автовыбора) и `GET /v1/appointments` с
+Поиск использует `GET /v1/clients?search=...` (имя или частичный телефон; префиксы `+7`, `7` и `8` равносильны, все дубли остаются доступными без автовыбора) и `GET /v1/appointments` с
 `client_id`, `date_from`, `date_to`, `staff_id`, новым `location_id` и
 `include_items=true`. Прямой ID записи читается существующим
 `GET /v1/appointments/{id}`. CRM не ходит в YClients напрямую.
