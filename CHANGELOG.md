@@ -2,6 +2,26 @@
 
 ## [Unreleased]
 
+### Docs — памятки AGENTS.md под новую схему 25.09.2026
+
+- Памятки переписаны под устав `c257466`: ответственный за продукт, ветка
+  `task/<кто>-<суть>` от свежей `test`, PR в `test`, агент релиза, два цикла
+  ИИ-ревью, строка сдачи «Агенту релиза: …»; упоминания релиз-инженера и
+  эстафеты сняты. Ветки и PR: backend `task/kirill-agents-md` `274b7df`
+  ([#88](https://github.com/kirillsummy/backend/pull/88)), CRM `91a3331`
+  ([#188](https://github.com/kirillsummy/crm/pull/188)), master-app `373a25b`
+  ([#102](https://github.com/kirillsummy/master-app/pull/102)), client-app
+  `d232af2` ([#7](https://github.com/kirillsummy/client-app/pull/7)), website
+  `ad5874d` ([#48](https://github.com/kirillsummy/website/pull/48)), workspace
+  `agents-md-novaya-shema` `03438ff`
+  ([#38](https://github.com/kirillsummy/workspace/pull/38), база `main`).
+  В `test` и production не влито; ИИ-ревью по этим PR не проводилось, код не
+  менялся.
+- `scripts/check-canon.mjs`: метка базы веток в памятках backend и master-app —
+  «от свежей `test`» вместо «от `dev`» / эпика.
+- Устав, очередь решений: сводка и разбор — в чате Codex «Решения Кирилла»,
+  запись решения — после слова «записывай».
+
 ### Changed — три очереди, ветка на задачу, двойное ИИ-ревью 25.09.2026
 
 - Решение владельца 25.09.2026: Кирилл — бизнес-логика и сайт, Юра — техлид

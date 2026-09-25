@@ -126,8 +126,8 @@ function proverit(d, { noRemote }) {
     'шаблон задачи ссылается на workflow');
   rules++;
   const PRODUCTS = [
-    ['agentsCabinet', 'feature/react-client', ['feature/react-client', 'dev', 'main']],
-    ['agentsBackend', 'от `dev`', ['dev']],
+    ['agentsCabinet', 'от свежей `test`', ['feature/react-client', 'dev', 'main']],
+    ['agentsBackend', 'от свежей `test`', ['dev']],
   ];
   for (const [key, baseMarker, prot] of PRODUCTS) {
     if (d[key] === null) continue;
