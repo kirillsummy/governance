@@ -4,11 +4,20 @@
 Доступность, фактические контейнеры, секреты, свежесть бэкапов и deployed SHA
 на серверах в этой задаче не проверялись. Никакой deployment не выполнялся.
 
+Дополнение 24.09: в актуальном коде стенда YClients credentials предназначены
+только отдельному `sync` в режиме read-only; API не получает их и остаётся под
+`STAND_AUTH_PASSWORD`. Старый `backend/docs/STAND-SERVER.md` утверждает, что
+синка и ключей на TEST нет, — это описание от 15.09, расходящееся с новым
+compose/`STAND.md`, **не доказательство фактической настройки сервера**.
+Действующие значения ключей, разрешённые компании, выкаченный SHA, состояние
+worker и `alembic_version` не просматривались. [Текущий статус](current-state.md),
+[вопросы](open-questions.md).
+
 | Среда | Что подтверждено источником | Что не подтверждено сейчас |
 |---|---|---|
 | Production | Домены summy.ru/admin.summy.ru/master.summy.ru; внутренний backend, runbooks Docker/nginx, сайт имеет deploy/server | Точные текущие SHA, состав контейнеров, пользовательские сценарии |
 | Общий тестовый сервер | STAND-SERVER, backend PR #79: summy-test, IP 201.51.9.79, nginx + изолированные сервисы, ветки test | Доставка feature PR с клиентом/заказами и текущая конфигурация |
-| Локальный stand | docker-compose.stand.yml, PostgreSQL/MinIO/API, loopback; STAND_AUTH_PASSWORD запрещает внешние YClients вызовы | Не является новым изолированным YClients sandbox |
+| Локальный stand | docker-compose.stand.yml, PostgreSQL/MinIO/API, loopback; API под STAND_AUTH_PASSWORD без YClients credentials, отдельный sync может работать read-only по новой конфигурации | Не является sandbox для записывающих YClients вызовов; фактический стенд не проверен |
 | Локальный orders test | Дополнительный docker-compose.orders-test.yml, отдельная БД, синтетические данные | Docker overlay описан, его сборка в предыдущем хендоффе не проверялась |
 | Локальное клиентское demo | CLIENT_DEMO=true только loopback, данные в памяти Node | Не отправляет SMS, не создаёт реальные CRM-записи и платежи |
 
@@ -40,7 +49,8 @@ backend с PostgreSQL/MinIO в compose, website под pm2. Docker-сеть — 
 
 | Компонент | Переменные и назначение |
 |---|---|
-| Backend DB/S3 | POSTGRES_*, DEFAULT_ORGANIZATION_ID, S3_*; доступ только серверный |
+| Backend DB/S3 | POSTGRES_*, DEFAULT_ORGANIZATION_ID, S3_*; доступ только серверный; отдельная миграционная роль на целевых БД не подтверждена |
+| Backend YClients | YCLIENTS_PARTNER_TOKEN, YCLIENTS_USER_TOKEN, YCLIENTS_COMPANY_IDS, YCLIENTS_READ_ONLY; здесь указаны только имена, не фактические значения |
 | Backend service/auth | SERVICE_API_TOKEN, SESSION_SECRET, INTERNAL_MASTER_API_ENABLED |
 | Клиентский backend | CLIENT_PORTAL_ENABLED, CLIENT_PORTAL_SECRET, CLIENT_SMS_API_ID, CLIENT_CONSENT_VERSION |
 | Orders sandbox | ORDERS_TEST_ENABLED, ORDERS_TEST_DATABASE = POSTGRES_DB, ORDERS_YCLIENTS_TEST_COMPANIES, YANDEX_PAY_SANDBOX_MERCHANT_ID, ORDERS_CLIENT_URL |
@@ -58,7 +68,7 @@ backend с PostgreSQL/MinIO в compose, website под pm2. Docker-сеть — 
 
 | Сервис | Роль в коде | Проверенный статус |
 |---|---|---|
-| YClients | Справочники, расписание, записи, auth, внешние ID; единственный фасад backend | Интеграция реализована, свежесть live-синка не проверялась |
+| YClients | Справочники, расписание, записи, auth, внешние ID; единственный фасад backend | Интеграция реализована, реальные настройки/права ключей и свежесть live-синка не проверялись |
 | S3/MinIO | Медиа, backend storage; локально MinIO, runbook production указывает Timeweb S3 | Настройка описана, доступность бакета/полнота медиа не проверялись |
 | SMS.ru | Код клиентского OTP | Есть адаптер, внешняя доставка не принята |
 | SMTP | Отправка сохранённых обращений мастера | Есть очередь/повторы; заглушка адреса до настройки |
@@ -66,6 +76,9 @@ backend с PostgreSQL/MinIO в compose, website под pm2. Docker-сеть — 
 | Касса | Фискальный чек | Не выбрана, адаптера нет |
 
 Не запускать внешние операции только ради обновления документации.
+Существующий worker `outbox_events` обслуживает рекрутинг и общий Telegram-чат;
+адресная доставка рекламаций в нём не реализована. Таблица
+`order_notifications` принадлежит заказам и не заменяет этот контур.
 
 ## Релиз и проверка среды
 

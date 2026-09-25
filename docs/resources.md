@@ -1,6 +1,7 @@
 # Реестр ресурсов SUMMY
 
-Дата инвентаризации исходников: 19.09.2026. URL в этой таблице не означает успешную
+Дата инвентаризации исходников: 19.09.2026; ссылки из переданного владельцем
+гайда дополнены 24.09.2026. URL в этой таблице не означает успешную
 проверку доступности. Репозитории проверены GitHub API; адреса приложений — из
 документов и чата. Неизвестные адреса намеренно не достраиваются.
 
@@ -13,10 +14,14 @@
 | [Тестовый сайт](https://201.51.9.79/) | Общий тест | Адрес владельца, STAND-SERVER от 15.09 |
 | [Тестовая CRM](https://201.51.9.79:8443/) | Общий тест CRM | Тот же источник |
 | [Тестовый мастер](https://201.51.9.79:9443/) | Общий тест мастера | Тот же источник |
+| [Тестовый клиент](https://201.51.9.79/client/) | Путь клиентского приложения на TEST | Гайд владельца 24.09; фактическое развёртывание не проверено |
+| [YouTrack](https://summy.youtrack.cloud/dashboard?id=177-0) | Задачи команды | Гайд владельца 24.09; права и доступность не проверены |
 | [Локальный client](http://127.0.0.1:5190/client/) | Dev/demo с этого ПК | README и текущий контекст; жизнь процесса не проверялась |
 | [Локальный backend docs](http://localhost:8000/docs) | OpenAPI стандартного dev-запуска | Backend README; другой порт возможен в stand |
 | [Локальный stand health](http://127.0.0.1:8091/health) | Проверка изолированного API | STAND.md; только при запущенном stand |
 | [Сетевая запись YClients](https://n662275.yclients.com) | Прежний внешний вход записи | website/src/lib/site.ts, используется без client-флага |
+| [Запись YClients — Батурина](https://n508972.yclients.com/) | Внешняя форма записи филиала | Гайд владельца 24.09; фактические настройки не проверены |
+| [Запись YClients — Офицерская](https://n643080.yclients.com/) | Внешняя форма записи филиала | Гайд владельца 24.09; фактические настройки не проверены |
 | [Telegram для связи](https://t.me/summybeauty) | Публичный контакт | website/src/lib/site.ts |
 | [Telegram-канал](https://t.me/summybeauty33) | Публичный канал | website/src/lib/site.ts |
 | [ВКонтакте](https://vk.com/summybeauty) | Социальная площадка | website/src/lib/site.ts |
@@ -27,8 +32,12 @@
 не постоянные staging-адреса. Отдельные dev/staging домены клиента и адрес тестового
 Kubernetes pod не подтверждены. Дзен в source задан пустым URL.
 
+Переданный гайд не подтверждает deployed SHA или работу сценариев.
+
 ## Код и документы
 
+- [Профиль GitHub](https://github.com/kirillsummy) — обзор репозиториев;
+  права доступа к приватным проектам проверяются отдельно.
 - [backend](https://github.com/kirillsummy/backend) — общий backend/API/DDL.
 - [client-app](https://github.com/kirillsummy/client-app) — клиент.
 - [master-app](https://github.com/kirillsummy/master-app) — мастер.
@@ -38,6 +47,8 @@ Kubernetes pod не подтверждены. Дзен в source задан пу
 - [docs](https://github.com/kirillsummy/docs) — прежние деловые и технические знания.
 - [context](https://github.com/kirillsummy/context) — приватная память/хендоффы.
 - [workspace](https://github.com/kirillsummy/workspace) — инструменты рабочего пространства.
+- [Инструкция Codex для Windows](https://learn.chatgpt.com/docs/windows/windows-app) —
+  ссылка из гайда владельца 24.09, её актуальность не проверялась.
 
 Подробности по назначению, директориям и commit-ссылкам — [repositories](repositories.md).
 Внутренний API production не имеет подтверждённого публичного URL; не публиковать

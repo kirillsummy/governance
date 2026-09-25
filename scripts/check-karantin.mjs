@@ -1,13 +1,3 @@
-// Ворота карантина: срок несёт имя папки archive/karantin-do-ГГГГ-ММ-ДД
-// (канон — governance/CHARTER.md, раздел «Карантин техдолга»).
-// За 3 дня до срока — предупреждение, после срока — красное (exit 1):
-// истёкший карантин не чистят молча — Релиз-инженер несёт владельцу опись,
-// чистка только его словом. Сторож на сервере репо-карантин не видит,
-// поэтому срок проверяют эти ворота на каждом пуше workspace (CI гоняет
-// сначала излом, потом живой прогон — см. .github/workflows/karantin.yml).
-//
-// Запуск:  node check-karantin.mjs
-// Излом:   node check-karantin.mjs --dir=<папка> --today=ГГГГ-ММ-ДД
 import { readdirSync, existsSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -17,8 +7,6 @@ const DIR_ARG = process.argv.find((a) => a.startsWith('--dir='));
 const ROOT = DIR_ARG ? resolve(DIR_ARG.slice(6)) : resolve(HERE, 'archive');
 const TODAY_ARG = process.argv.find((a) => a.startsWith('--today='));
 
-// Строгая календарная дата: «2026-02-30» не существует и не проходит,
-// хотя Date.parse молча превратил бы её во 2 марта.
 function parseDen(s) {
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s);
   if (!m) return NaN;
@@ -28,8 +16,6 @@ function parseDen(s) {
   return ok ? dt.getTime() : NaN;
 }
 
-// «Сегодня» — по Москве: бизнес-день экосистемы московский, а UTC-полночь
-// отстаёт на три часа и задержала бы красное.
 const today = TODAY_ARG
   ? TODAY_ARG.slice(8)
   : new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Moscow' });
@@ -47,8 +33,6 @@ if (!existsSync(ROOT)) {
 const dirs = readdirSync(ROOT, { withFileTypes: true })
   .filter((d) => d.isDirectory())
   .map((d) => d.name);
-// Кандидат — всё, что похоже на карантин, а не только идеально названное:
-// опечатка вида karantin_do-… не должна выскальзывать из-под ворот молча.
 const karantiny = dirs.filter((n) => n.toLowerCase().includes('karantin'));
 let red = 0;
 let warn = 0;
