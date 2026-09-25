@@ -2,6 +2,16 @@
 
 ## [Unreleased]
 
+### Added — репозиторий summy-ai-operator 25.09.2026
+
+- По прямому поручению Кирилла создан приватный пустой репозиторий
+  [kirillsummy/summy-ai-operator](https://github.com/kirillsummy/summy-ai-operator).
+  Кода, веток и SHA пока нет; назначение и архитектура этой задачей не определялись.
+- Для `ilya-baykov` отправлено приглашение с ролью `write` (ID `334764777`).
+  GitHub API подтвердил репозиторий (`private=true`, `size=0`) и ожидающее
+  принятия приглашение; фактический доступ после принятия ещё не проверен.
+  Код, CI, серверы и базы данных не менялись, тесты неприменимы.
+
 ### Changed — единая ветка test 25.09.2026
 
 - По решению владельца доработки backend, CRM, client-app, master-app и website сведены в `test`. Удалены перенесённые удалённые и локальные `work`, `task/*`, тематические ветки и временные копии `main`; существующие production/default имена `backend/dev` и `master-app/feature/react-client` сохранены. Неперенесённые альтернативные линии оставлены только в `backend/singular` и `website/singular` с причиной в [политике веток](docs/branches.md).
