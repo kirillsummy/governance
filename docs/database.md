@@ -17,7 +17,7 @@
 второй журнал миграций. Источник: [дерево ревизий](https://github.com/kirillsummy/backend/tree/bbfe5e5e22ca2eedbaf58db2899a60c4cdfa70f3/alembic/versions),
 [историческая проверка](https://github.com/kirillsummy/governance/blob/263d84b60a4f03bf158453f1fe7d295db146e1ab/docs/history/map-before-consolidation.md).
 
-В опубликованной ветке `backend/work` `ca369db` на 25.09.2026 цепочка
+В срезе `backend/work` `ca369db` на 25.09.2026 цепочка
 продолжена до `0139_complaint_shift_organization_guard`:
 `0125` — каноническая модель, `0127` — идемпотентность создания,
 `0128` — задания, `0130` — сверка начислений, `0131` — переделка,
@@ -50,7 +50,7 @@ test/production в этой сверке не проверен.
 | `client_notes` | `id`, `client_id`, `author_ref`, `body`, `visibility`, `source`, `deleted_at` | История заметок; автор может быть внешним/неизвестным |
 | `appointments` | `id`, `organization_id`, `location_id`, `client_id`, `staff_id`, `starts_at`, `ends_at`, `status`, `total_amount`, `currency`, `source_channel`, `complaint_process_id`, `source_appointment_id`, `is_free_redo` | Запись клиента; nullable-связи переделки добавлены в work ревизией 0131 |
 | `appointment_items` | `id`, `appointment_id`, `service_offer_id`, `staff_id`, `quantity`, `unit_price`, `discount_amount`, `final_amount`, `service_snapshot`, `staff_snapshot` | Позиции записи и снимки услуги/мастера |
-| `processes` | `id`, `type`, `title`, `status`, `priority`, `assignee_role`, `appointment_id`, `staff_id`, `client_id`, `service_id`, `shift_process_id`, `create_request_id`, `create_request_hash`, `fields`, `source`, `external_ref` | Связи рекламации вынесены из анкеты в FK; ключ создания добавлен в work ревизией 0127 |
+| `processes` | `id`, `type`, `title`, `status`, `priority`, `assignee_role`, `appointment_id`, `staff_id`, `client_id`, `service_id`, `shift_process_id`, `location_id`, `create_request_id`, `create_request_hash`, `fields`, `source`, `external_ref` | Связи рекламации вынесены из анкеты в FK; `location_id` для системной смены администратора добавляет ревизия 0140 только в work |
 | `process_types` | `id`, `code`, `label`, `scope`, `statuses`, `transitions`, `fields`, `initial_status` | Описания видов/переходов — данные |
 | `process_attachments` | `id`, `process_id`, `storage_key`, `content_type`, `size_bytes`, `deleted_at` | Метаданные вложения; байты в объектном хранилище |
 | `process_tasks` | `id`, `organization_id`, `process_id`, `kind`, `title`, `required`, `status`, `assignee_role`, `assignee_id`, `due_at`, `completed_at` | Универсальные задания и сроки процесса; 0128 |
@@ -207,6 +207,20 @@ erDiagram
   организации, и запрещает обратное изменение организации/типа/удаления
   связанной смены. Проверка применяется ко всем процессам, использующим это
   поле; конфликты разбирает владелец данных.
+
+Опубликованная в `backend/work` (`51bc8a6`) ревизия
+`0140_admin_shift_process` добавляет nullable
+`processes.location_id` с FK к филиалу и составной охраной совпадения
+организации, CHECK полноты строки `admin_shift`, уникальный индекс одной
+открытой смены на администратора и возможность использовать существующие
+`create_request_id`/SHA-256 для этого системного вида. `shift_report` и его
+табель не меняются. Строка `process_types.admin_shift` создаётся архивной:
+прежний backend не покажет её в общей форме между миграцией и кодом, а
+DB-ограничение запрещает сделать её обычным выбираемым видом. Открытие и
+закрытие оставляют `process_events`. После появления смен downgrade
+останавливается, чтобы не удалить факты; старый backend после этого также
+не является безопасным откатом. Применение 0140 в реальной БД и новые
+generated OpenAPI/schema snapshots не подтверждены.
 
 Локально на новой PostgreSQL 18.6 пройдены миграции с нуля и отдельная
 синтетическая репетиция `0126→0139→0135`: однозначная старая рекламация
