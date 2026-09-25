@@ -34,6 +34,10 @@ SMS OTP и связь с существующим CRM-клиентом пров�
 [журнал подключения 20.09.2026](../history/client-test-connection-2026-09-20.md).
 
 CLIENT_BACKEND_URL/TOKEN, CLIENT_PUBLIC_ORIGIN; CLIENT_DEMO только loopback, без реальных SMS/CRM/платежей. npm test, build, format:check. `https://summy.ru/client/` — предполагаемый публичный адрес, не подтверждённый deployment.
+Демо-адаптер подключается только явно; фиктивная история CRM заранее задана
+только документированной демо-учётной записи. Просроченные challenge и
+сессии удаляются из памяти демо-процесса. Live BFF не подменяет ошибку
+backend демонстрационными данными.
 
 ## Источники
 

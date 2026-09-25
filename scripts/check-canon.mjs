@@ -1,24 +1,3 @@
-// Сторож дрейфа канона: правила живут в канонических файлах, остальные документы
-// ссылаются на них вместо копирования формулировок.
-// Fail-closed: отсутствие обязательного файла — ошибка. Флаг --partial
-// разрешает пропуски только для сознательной локальной проверки; в CI запрещён.
-// Проверяются канон, роли тройки (архитектор/разработчик/релиз-инженер) и
-// НАСТОЯЩИЕ продуктовые AGENTS.md — структурными значениями (базовые и
-// защищённые ветки, шаблон финальной строки), а не только фразами.
-//
-// ⚠️ Сторож читает РАБОЧЕЕ ДЕРЕВО по путям, а не origin: зелёное относится
-// к состоянию ТВОЕГО диска на момент прогона. Отставшая копия даст зелёное
-// о вчерашнем — 22.08.2026 «17/17 зелено» после мержа пяти памяток
-// относилось к диску, где все пять отставали от origin. Перед прогоном
-// подтяни копии (git pull в governance, context и продуктах) — иначе судишь
-// не о том, что влито.
-//
-// Самоизлом: перед живым прогоном сторож трижды ломает сам себя (копию
-// прочитанных документов, не файлы) и требует красного О СВОЁМ. Прибор
-// доказывает себя при каждом прогоне, а не ждёт, пока кто-то вспомнит про
-// излом (принцип ворот карантина; формулировка релиз-инженера 25.08).
-// Ручной излом в тот же день сам оказался сломан — env PATH=/usr/bin убил
-// node вместо gh, «упало» читалось как «сработало». Излом кодом так не врёт.
 import { readFileSync, existsSync, statSync, readdirSync } from 'node:fs';
 import { execSync } from 'node:child_process';
 import { dirname, resolve } from 'node:path';
@@ -29,19 +8,10 @@ const GOV = resolve(HERE, '..');
 const PARTIAL = process.argv.includes('--partial');
 const NO_REMOTE = process.argv.includes('--no-remote');
 
-// Где искать продукты и роли. По умолчанию — папка рядом с governance, но со
-// «стола» (worktree в ~/Projects/SUMMY-desks) соседей нет, и сторож честно
-// падал одиннадцатью «файл отсутствует». Столы должны работать полноценно:
-// проверять канон надо там же, где его правишь, а не бегать в основную копию.
-//   --ws=<путь>   явно
-//   SUMMY_WS      переменной окружения
-//   иначе         подъём вверх до папки, где лежат и governance, и context
 const WS_ARG = process.argv.find((a) => a.startsWith('--ws='));
 function najtiWorkspace() {
   if (WS_ARG) return resolve(WS_ARG.slice(5));
   if (process.env.SUMMY_WS) return resolve(process.env.SUMMY_WS);
-  // Стол — это git-worktree: его `.git` не папка, а файл с указателем на
-  // основную копию. По нему и находим настоящее рабочее пространство.
   const gitPath = resolve(GOV, '.git');
   if (existsSync(gitPath) && statSync(gitPath).isFile()) {
     const ukazatel = readFileSync(gitPath, 'utf8').trim();
@@ -64,11 +34,11 @@ const FILES = {
   developer: resolve(WS, 'context/agents/developer.md'),
   release: resolve(WS, 'context/agents/release-engineer.md'),
   agentsSite: resolve(WS, 'website/AGENTS.md'),
-  agentsCrm: resolve(WS, 'crm/AGENTS.md'), // checkout на main
+  agentsCrm: resolve(WS, 'crm/AGENTS.md'),
   agentsBackend: resolve(WS, 'backend/AGENTS.md'),
-  agentsCabinet: resolve(WS, 'master-app/AGENTS.md'), // checkout на feature/react-client
+  agentsCabinet: resolve(WS, 'master-app/AGENTS.md'),
   agentsClient: resolve(WS, 'client-app/AGENTS.md'),
-  agentsRoot: resolve(WS, 'AGENTS.md'), // памятка-роутер рабочего пространства
+  agentsRoot: resolve(WS, 'AGENTS.md'),
   glossary: resolve(GOV, 'GLOSSARY.md'),
 };
 
@@ -79,14 +49,13 @@ for (const [k, p] of Object.entries(FILES)) {
   else { docs[k] = null; absent.push(`${k} (${p})`); }
 }
 
-// Ожидания главных веток выводятся из канонической таблицы docs/branches.md.
 function vetkiIzTablicy(branches) {
   const pairs = [];
-  const m = branches.match(
-    /\| Репозиторий \| Production[^\n]*\n\|[-| ]+\n((?:\|[^\n]*\n)+)/
-  );
-  if (!m) return pairs;
-  for (const line of m[1].trim().split('\n')) {
+  const lines = branches.split(/\r?\n/);
+  const start = lines.findIndex((line) => /^\|\s*Репозиторий\s*\|/.test(line));
+  if (start < 0 || !/^\|[\s:|-]+\|$/.test(lines[start + 1] ?? '')) return pairs;
+  for (const line of lines.slice(start + 2)) {
+    if (!line.startsWith('|')) break;
     const cells = line.split('|').map((s) => s.trim());
     const repo = (cells[1] || '').replaceAll('`', '').match(/^([a-z0-9-]+)$/);
     const base = (cells[2] || '').match(/`([^`]+)`/);
@@ -95,10 +64,10 @@ function vetkiIzTablicy(branches) {
   return pairs;
 }
 
-// Весь свод правил — одна функция от прочитанных документов: так сторож
-// умеет судить и настоящий канон, и нарочно сломанную копию (самоизлом).
-// Правила по файловой системе (карантин, knip) от docs не зависят и в
-// самоизломе просто повторяются — лишнего красного они не дают.
+function gitText(value) {
+  return value.replace(/\r\n/g, '\n');
+}
+
 function proverit(d, { noRemote }) {
   const errors = [];
   if (absent.length && !PARTIAL) {
@@ -124,7 +93,6 @@ function proverit(d, { noRemote }) {
 
   const ALL_AGENTS = ['agentsSite', 'agentsCrm', 'agentsBackend', 'agentsCabinet', 'agentsClient'];
 
-  // ── Хендофф и релиз ───────────────────────────────────────────────────────
   has(['charter', 'handoff', ...ALL_AGENTS],
     'проведи ревью и смержи', 'финальная строка хендоффа');
   not(['charter', 'handoff', 'team', ...ALL_AGENTS],
@@ -138,7 +106,6 @@ function proverit(d, { noRemote }) {
       errors.push(`финальная строка без (commit <полный SHA>) в ${FILES[k]}`);
   }
 
-  // ── Заморозка коммита ─────────────────────────────────────────────────────
   has(['charter'], 'коммит заморожен', 'заморозка коммита (канон)');
   has(ALL_AGENTS, 'новыми коммитами', 'правки поверх новыми коммитами (памятки)');
   not(['charter', 'handoff', ...ALL_AGENTS],
@@ -147,7 +114,6 @@ function proverit(d, { noRemote }) {
   not(ALL_AGENTS, /[Нн]е удалять файлы[^.\n]*без явного указания/,
     'нет тотального запрета удаления файлов');
 
-  // ── Ветки: база и защищённые, без захардкоженного dev ─────────────────────
   not(['charter', 'architect'],
     /мерж в `dev`|мержит в `dev`|Ветка от <dev\|main>|только через\s+`dev`/,
     'нет захардкоженного dev');
@@ -173,10 +139,6 @@ function proverit(d, { noRemote }) {
     }
   }
 
-  // ── Сигналы, деньги, полномочия ──────────────────────────────────────────
-  // Инвариант конвейера сторожится по слову канона «единственный инвариант,
-  // который не сжимается». Найдено 20.08: удаление фразы сторож не замечал —
-  // предохранитель, не покрывающий то, ради чего заведён, опаснее отсутствующего.
   has(['charter', 'team', 'developer', 'release'], 'строивший не принимает своё',
     'инвариант конвейера');
   has(['charter', 'team', 'release'], 'повторного прогона', 'ретест перед закрытием');
@@ -188,35 +150,18 @@ function proverit(d, { noRemote }) {
   has(['agentsCabinet'], 'деньги считает БЭКЕНД', 'кабинет: деньги в бэкенде');
   not(['agentsCabinet'], /payout\.py` \+ \[docs/, 'кабинет не шлёт деньги в легаси');
 
-  // ── Иерархия документов ──────────────────────────────────────────────────
   has(['agentsCrm'], 'но не устав', 'CRM: канон выше памятки');
   not(ALL_AGENTS, /этот `AGENTS\.md`[^\n]*побеждает\*\* —/,
     'памятка не выше устава');
 
-  // ── Эстафета и миграции ──────────────────────────────────────────────────
   has(['charter'], 'Файл сам по себе эстафету не включает', 'эстафета: файл не команда');
   has(['charter'], 'commit SHA этого файла — идентификатор эстафеты', 'эстафета: SHA-идентификатор');
   has(['release'], 'commit SHA файла-приказа', 'эстафета в роли релиз-инженера');
   has(['charter'], 'перенумерование НОВЫМ коммитом', 'конфликт миграций: один процесс');
   not(['charter'], /merge-нод/, 'нет merge-ноды');
 
-  // ── Главная ветка репозитория = базовая из таблицы «Ветки» ──────────────
-  // Настройка живёт в GitHub, файлам не видна, а код раздаёт каждому клону:
-  // у бэкенда главной стояла упразднённая prod, у master-app — main, где нет
-  // даже папки web/ (оба случая 25.08). governance — не продукт и в таблице
-  // не живёт, его пара статична. Прибор с тремя ответами: несовпадение —
-  // ошибка; gh недоступен — «НЕ ПРОВЕРЕНА», тоже ошибка; пропуск только
-  // явным --no-remote, и он виден в итоговой строке.
-  //
-  // Излом (рабочие формы, проверено релиз-инженером 25.08):
-  //   (а) подмени базу в строке таблицы «Ветки» → сторож обязан покраснеть;
-  //   (б) спрячь gh, ОСТАВИВ node:
-  //       PATH="$(dirname "$(command -v node)"):/usr/bin" node scripts/check-canon.mjs
-  //       Форма `env PATH=/usr/bin node …` негодна: на машине с fnm она убирает
-  //       сам node — «env: node: No such file or directory» выглядит сработавшим
-  //       изломом, но прибор даже не запускался. «Упало» ≠ «упало от того».
-  rules++; // главная ветка = базовая из таблицы
-  rules++; // автоснятие влитых веток включено (владельцу мусор «путает», 26.08)
+  rules++;
+  rules++;
   {
     const izTablicy = d.branches === null ? [] : vetkiIzTablicy(d.branches);
     if (d.branches !== null && izTablicy.length < 4)
@@ -240,15 +185,6 @@ function proverit(d, { noRemote }) {
     }
   }
 
-  // ── Карантин техдолга: ворота в каждом репозитории, где он завёлся ───────
-  // Канон (CHARTER п.5) требовал «ворота CI репозитория» с 22.08, но прибора
-  // не было: первый репо-карантин (crm#142) завёлся без ворот и тихо пережил
-  // бы свой срок (находка релиз-инженера 25.08). Канонический прибор —
-  // governance/scripts/check-karantin.mjs; в репозитории с карантином обязана
-  // лежать его байт-в-байт копия в корне плюс проводка в CI. Копии не
-  // держатся руками на веру — сверяются содержимым (урок рукописного
-  // DEFAULT_BRANCHES того же дня). Чекаут без папки archive/ пропускается:
-  // нет карантина — нет требования ворот.
   rules++;
   {
     const kanonPribor = resolve(GOV, 'scripts/check-karantin.mjs');
@@ -265,7 +201,7 @@ function proverit(d, { noRemote }) {
         errors.push(`карантин в ${dir} без ворот: нет check-karantin.mjs (байт-в-байт копия governance/scripts/check-karantin.mjs)`);
         continue;
       }
-      if (kanonText !== null && readFileSync(kopiya, 'utf8') !== kanonText)
+      if (kanonText !== null && gitText(readFileSync(kopiya, 'utf8')) !== gitText(kanonText))
         errors.push(`копия прибора карантина разъехалась с канонической: ${kopiya}`);
       const wfDir = resolve(dir, '.github/workflows');
       const wired = existsSync(wfDir) && readdirSync(wfDir).some((f) => {
@@ -277,20 +213,6 @@ function proverit(d, { noRemote }) {
     }
   }
 
-  // ── Страж «уже проверен»: канонная копия там, где выгоден, запрет там, где вреден
-  // Повторный прогон побайтово того же дерева после сквош-мержа ел 22% минут
-  // Actions (замер сессии минут, август-2026). Канонический прибор —
-  // governance/scripts/uzhe_proveren.py (чеканен из влитого backend#64,
-  // dev fc0f873); продуктовое имя дорогой джобы живёт НЕ в байтах, а в env
-  // воркфлоу (STRAZH_DZHOBA_POLNOGO_KONTURA) — байт-в-байт копия с зашитым
-  // именем была бы мёртвым прибором в чужом продукте (правило №19, обратная
-  // грань). Копии обязаны: backend, crm — байт-в-байт + вызов в workflows
-  // (форма проводки свободна: outputs+needs или шаг с if). Тесты стража НЕ
-  // канон: у продуктов разные стеки — от копии требуется СВОЙ излом своим
-  // стеком, это проверяет релиз-инженер на приёмке, не этот сторож.
-  // website и master-app — ЯВНЫЙ ЗАПРЕТ, не «не завели»: их прогон 1.0/0.9
-  // мин, страж дороже прогона (посчитано сессией 26.08); отсутствие и запрет
-  // обязаны читаться по-разному, иначе «доведут до единообразия» во вред.
   rules++;
   {
     const kanonStrazh = resolve(GOV, 'scripts/uzhe_proveren.py');
@@ -303,7 +225,7 @@ function proverit(d, { noRemote }) {
         errors.push(`страж «уже проверен» не заведён в ${prod}: нет scripts/uzhe_proveren.py (байт-в-байт копия канонического)`);
         continue;
       }
-      if (strazhText !== null && readFileSync(kopiya, 'utf8') !== strazhText)
+      if (strazhText !== null && gitText(readFileSync(kopiya, 'utf8')) !== gitText(strazhText))
         errors.push(`копия стража разъехалась с канонической: ${kopiya}`);
       const wfDir = resolve(WS, prod, '.github/workflows');
       const wired = existsSync(wfDir) && readdirSync(wfDir).some((f) => {
@@ -319,12 +241,6 @@ function proverit(d, { noRemote }) {
     }
   }
 
-  // ── knip: настройка ровно одна ───────────────────────────────────────────
-  // Две настройки не спорят вслух — Knip молча берёт knip.json вместо
-  // knip.jsonc, исключения исчезают, и сторож мёртвого кода краснеет на
-  // сотнях чужих мест: отказ, замаскированный под срабатывание — следующий
-  // решит «сторож сломался» и выключит его целиком (crm, 25.08, находка
-  // релиз-инженера).
   rules++;
   if (existsSync(resolve(WS, 'crm/knip.json')) && existsSync(resolve(WS, 'crm/knip.jsonc')))
     errors.push('у crm две настройки knip (knip.json И knip.jsonc) — младшая молча побеждает; оставить одну, knip.jsonc');
@@ -332,15 +248,11 @@ function proverit(d, { noRemote }) {
   return { errors, rules };
 }
 
-// ── Самоизлом: три поломки, каждая обязана дать красное О СВОЁМ ────────────
-// Ломается копия прочитанных документов, не файлы на диске. Без gh: изломы
-// файловые, сеть им не нужна. Ждём не «есть хоть какая-то ошибка», а ошибку
-// именно сломанного правила: «упало» ≠ «упало от того».
 const IZLOMY = [
   ['инвариант конвейера',
     (d) => ({ ...d, charter: d.charter.replaceAll('строивший не принимает своё', '') })],
   ['не распарсилась',
-    (d) => ({ ...d, branches: d.branches.replace('| Репозиторий | Production', '| Репозиторий | Выпуск') })],
+    (d) => ({ ...d, branches: d.branches.replaceAll('| Репозиторий |', '| Система |') })],
   ['финальная строка хендоффа',
     (d) => ({ ...d, handoff: d.handoff.replaceAll('проведи ревью и смержи', '') })],
 ];
@@ -361,10 +273,6 @@ const { errors, rules } = proverit(docs, { noRemote: NO_REMOTE });
 
 const checked = Object.values(docs).filter((v) => v !== null).length;
 if (errors.length) {
-  // Судья виден и на красном: раз мы здесь, самоизлом ПРОШЁЛ (его провал
-  // выходит раньше своим «сторож мёртв») — но читатель красного прогона не
-  // обязан знать устройство, чтобы верить вердикту (заметка релиз-инженера
-  // с пост-ревью #49: он чуть не счёл молчание судьи находкой).
   console.error(`ДРЕЙФ КАНОНА — ${errors.length} проблем(ы) · ${samoizlom}:\n- ` + errors.join('\n- '));
   process.exit(1);
 }

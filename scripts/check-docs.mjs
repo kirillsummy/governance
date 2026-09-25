@@ -34,4 +34,3 @@ if (errors.length) {
 } else {
   console.log(`OK: ${files.length} Markdown files, ${checked} relative file links.`);
 }
-// Проверяет файлы/каталоги, не внешние URL и не якоря заголовков.
