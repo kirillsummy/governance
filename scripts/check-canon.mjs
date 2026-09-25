@@ -94,7 +94,7 @@ function proverit(d, { noRemote }) {
   const ALL_AGENTS = ['agentsSite', 'agentsCrm', 'agentsBackend', 'agentsCabinet', 'agentsClient'];
 
   has(['charter', 'handoff'],
-    'Юре: проверь независимую приёмку и поставь', 'финальная строка хендоффа');
+    'Агенту релиза: проверь независимую приёмку и поставь', 'финальная строка хендоффа');
   not(['charter', 'handoff', 'team', ...ALL_AGENTS],
     /Архитектору: смержи и выкати/, 'хендофф не просит выкатку');
   has(['charter'], 'Production — отдельное решение Кирилла',
@@ -102,7 +102,7 @@ function proverit(d, { noRemote }) {
   rules++;
   for (const k of ['handoff']) {
     if (d[k] === null) continue;
-    if (!/Юре: проверь независимую приёмку и поставь[^\n]*commit <полный SHA>/.test(d[k]))
+    if (!/Агенту релиза: проверь независимую приёмку и поставь[^\n]*commit <полный SHA>/.test(d[k]))
       errors.push(`финальная строка без (commit <полный SHA>) в ${FILES[k]}`);
   }
 
@@ -126,8 +126,8 @@ function proverit(d, { noRemote }) {
     'шаблон задачи ссылается на workflow');
   rules++;
   const PRODUCTS = [
-    ['agentsCabinet', 'feature/react-client', ['feature/react-client', 'dev', 'main']],
-    ['agentsBackend', 'от `dev`', ['dev']],
+    ['agentsCabinet', 'от свежей `test`', ['feature/react-client', 'dev', 'main']],
+    ['agentsBackend', 'от свежей `test`', ['dev']],
   ];
   for (const [key, baseMarker, prot] of PRODUCTS) {
     if (d[key] === null) continue;
@@ -256,7 +256,7 @@ const IZLOMY = [
   ['не распарсилась',
     (d) => ({ ...d, branches: d.branches.replaceAll('| Репозиторий |', '| Система |') })],
   ['финальная строка хендоффа',
-    (d) => ({ ...d, handoff: d.handoff.replaceAll('Юре: проверь независимую приёмку и поставь', '') })],
+    (d) => ({ ...d, handoff: d.handoff.replaceAll('Агенту релиза: проверь независимую приёмку и поставь', '') })],
 ];
 let samoizlom = `самоизлом ${IZLOMY.length}/${IZLOMY.length}`;
 if (docs.charter === null || docs.handoff === null || docs.branches === null) {
