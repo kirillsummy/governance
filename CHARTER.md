@@ -202,11 +202,10 @@ Git-реестра перенесены в [SUM-96](https://summy.youtrack.cloud
 отдельно после ответа. Теги доступны команде Summy для просмотра и применения.
 
 Быстрый поиск в проекте: `project: SUM tag: вопрос-кириллу` и
-`project: SUM tag: вопрос-юре`. Эти теги уже стоят на вопросах из Очереди
-([SUM-87](https://summy.youtrack.cloud/issue/SUM-87),
-[SUM-88](https://summy.youtrack.cloud/issue/SUM-88)) и на вопросах из Git
-([SUM-96](https://summy.youtrack.cloud/issue/SUM-96),
-[SUM-97](https://summy.youtrack.cloud/issue/SUM-97)) соответственно.
+`project: SUM tag: вопрос-юре`. Вопросы из Очереди и прежнего Git-реестра
+объединены в [SUM-96](https://summy.youtrack.cloud/issue/SUM-96) для Кирилла
+и [SUM-97](https://summy.youtrack.cloud/issue/SUM-97) для Юры; на каждой
+задаче стоит соответствующий тег.
 
 ### Недельный цикл
 
