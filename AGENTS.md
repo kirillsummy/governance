@@ -18,7 +18,7 @@ Governance — единая документация разработки SUMMY.
 | Задача | Куда смотреть |
 |---|---|
 | Понять продукт и статус | [Продукт](docs/product.md), [состояние](docs/current-state.md) |
-| Нерешённое / конфликт | [Реестр решений и блокеров](docs/open-questions.md) |
+| Нерешённое / конфликт | [Вопросы Кириллу с Git](https://summy.youtrack.cloud/issue/SUM-96), [Вопросы Юре с Git](https://summy.youtrack.cloud/issue/SUM-97) |
 | Архитектура | [Общая схема](docs/architecture/README.md) |
 | Сайт | [website](docs/architecture/website.md) |
 | Backend | [backend](docs/architecture/backend.md), [БД](docs/database.md), [API](docs/api.md) |
