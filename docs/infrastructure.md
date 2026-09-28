@@ -73,6 +73,11 @@ compose/`STAND.md`. Более поздняя локальная памятка 
 
 Порядок подготовки и выпуска RC1 без передачи секретов записан в
 [промте выкладки](releases/production-rc1-deploy-prompt-2026-09-28.md).
+Фактические production-версии после переключения 28.09, миграция 0116→0143,
+сохранённые каталоги и пределы отката записаны в
+[отчёте выкладки RC2](releases/production-rc2-deployment-2026-09-28.md).
+Нижеследующие ссылки описывают историческую исходную конфигурацию и не
+подменяют этот датированный runtime-срез.
 
 - Backend: контейнер api и отдельный sync; api опубликован на loopback хоста, внутренняя сеть summy-internal и DNS gateway. PostgreSQL и S3 настраиваются через env. Runbook описывает управляемый PostgreSQL Timeweb и S3; compose всё ещё содержит MinIO. Это нельзя превращать в утверждение о фактическом составе контейнеров без runtime-инвентаризации. [backend/docker-compose.prod.yml](https://github.com/kirillsummy/backend/blob/bbfe5e5e22ca2eedbaf58db2899a60c4cdfa70f3/docker-compose.prod.yml), [backend/docs/DEPLOY.md](https://github.com/kirillsummy/backend/blob/bbfe5e5e22ca2eedbaf58db2899a60c4cdfa70f3/docs/DEPLOY.md).
 - Мастер: собранный web/dist обслуживает Node BFF; reverse proxy → BFF → gateway. Версия из APP_VERSION или VERSION_FILE; health отдельно проверяет наличие оболочки. [master-app/bff/README.md](https://github.com/kirillsummy/master-app/blob/84f3d0a74584c549ed50070f0f3fbc2eee0f5515/bff/README.md).

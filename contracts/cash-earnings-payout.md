@@ -2,7 +2,7 @@
 
 ## Доступность в production-кандидате SUM-112
 
-В подготовленной редакции RC2 (28.09.2026, deployment не выполнен)
+В развёрнутой редакции [RC2 от 28.09.2026](../docs/releases/production-rc2-deployment-2026-09-28.md)
 CASH_PAYOUTS_ENABLED по умолчанию false и должен быть явно false
 в production API/sync. Отключены preview, создание/чтение новых cash requests,
 confirm-cash и reject-cash; проверки стоят на API и прямых доменных командах.

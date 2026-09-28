@@ -14,7 +14,7 @@ Backend владеет файлами, связями с визитом, дос�
 
 ## Доступность в production-кандидате SUM-112
 
-В подготовленной редакции RC2 (28.09.2026, deployment не выполнен)
+В развёрнутой редакции [RC2 от 28.09.2026](../docs/releases/production-rc2-deployment-2026-09-28.md)
 PHOTO_PROOF_V2_ENABLED по умолчанию false. Для production он задаётся
 явно false в API и sync. Это сохраняет прежний production-режим:
 фото работы **или** отказ от гарантии, closure с photo_rule_version=1,
