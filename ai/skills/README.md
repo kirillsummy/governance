@@ -12,6 +12,8 @@
 | [summy-youtrack](summy-youtrack/SKILL.md) | Прочитать или изменить задачи и доску YouTrack с проверкой живого состояния |
 | [summy-test-state](summy-test-state/SKILL.md) | Сверить версии общего TEST и ревизию БД с Git SHA |
 | [summy-test-delivery](summy-test-delivery/SKILL.md) | Подготовить и выполнить разрешённую поставку конкретных SHA на TEST |
+| [summy-production-release](summy-production-release/SKILL.md) | Подготовить кандидата и выпустить только утверждённый состав в production |
+| [summy-claude-handoff](summy-claude-handoff/SKILL.md) | Передать задачу Claude Code, проследить работу и независимо проверить результат |
 
 Ограничения хранятся отдельно: [RESTRICTIONS](../RESTRICTIONS.md).
 Skills не предоставляют права на релиз, оплату, рассылку или изменение соседнего продукта.
