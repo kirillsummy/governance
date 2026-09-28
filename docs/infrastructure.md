@@ -32,6 +32,48 @@ compose/`STAND.md`. Более поздняя локальная памятка 
 
 ## Production по конфигурации
 
+### Доступ и резервные копии production (проверено 28.09.2026)
+
+- Сервер приложений Timeweb Cloud: **Wise Cepheus**, ID `8554217`, IP
+  `81.200.146.182`. Это не сервер PostgreSQL: production-БД управляется
+  Timeweb отдельно. Панель сервера:
+  `https://timeweb.cloud/my/servers/8554217`.
+- Доступ к серверу подтверждён по SSH как `root` с персональным разрешённым
+  ключом. Для этого сервера ED25519 host key был независимо сверен через
+  консоль Timeweb; отпечаток на 28.09:
+  `SHA256:8EsBQwlmNXiA/hm/etMFP3hwRVvXMGTj7vamsNRucFI`.
+  Перед новым подключением проверяй его заново через доверенный канал и
+  используй `StrictHostKeyChecking=yes`, свой `known_hosts`,
+  `IdentitiesOnly=yes` и `BatchMode=yes`. Не отключай проверку host key и не
+  помещай приватный ключ, пароль или `.env` в Governance. Рабочий шаблон:
+  `ssh -i <личный-разрешённый-ключ> -o IdentitiesOnly=yes -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=<проверенный-known_hosts> root@81.200.146.182`.
+  Наличие доступа к серверу не доказывает отдельные права к managed PostgreSQL.
+- На сервере ежедневный cron запускает дамп БД в **04:20 МСК** через
+  `/usr/local/bin/summy-db-backup.sh` и медиаархив в **04:30 МСК** через
+  `/usr/local/bin/summy-media-backup.sh`. Локальные каталоги:
+  `/root/db-backups` и `/opt/summy-backups/media`. С 28.09 оба скрипта
+  удаляют локальные архивы старше семи суток до создания новой копии и после
+  него. Медиаскрипт отдельно сохраняет прежние 14 суток для удалённого S3;
+  локальное правило не задаёт срок для Timeweb snapshots или других S3-копий.
+- 28.09 были удалены локальные архивы старше семи суток и три подтверждённо
+  неполных файла. Вне расписания создан дамп БД на 43 МБ: `pg_restore` прочитал
+  содержимое без восстановления, копирование в S3 завершилось успешно.
+  Медиаархив на 1,47 ГБ прошёл `gzip -t`, содержал 1650 объектов; отпечаток
+  удалённой S3-копии совпал. После этих действий `df -h /` показывал 8,9 ГБ
+  свободно на диске 48 ГБ. Это датированный замер, не гарантия места для
+  следующей сборки. До сборки снова проверить `df`, Docker/containerd и
+  пиковую потребность; не запускать слепую очистку образов, включая откатные.
+- Для сверки режима и результатов без чтения секретов: `cat /etc/cron.d/summy-db-backup
+  /etc/cron.d/summy-backup`, `df -h /`, список имён/размеров архивов в указанных
+  каталогах и журналы `/var/log/summy-db-backup.log`,
+  `/opt/summy-backups/media/backup.log`. Наличие файла недостаточно:
+  проверить полный `pg_restore` в `/dev/null` для дампа, `gzip -t` и число
+  объектов для медиа, а также подтверждение второй копии. Проверки дампа не
+  означают выполненный restore.
+
+Порядок подготовки и выпуска RC1 без передачи секретов записан в
+[промте выкладки](releases/production-rc1-deploy-prompt-2026-09-28.md).
+
 - Backend: контейнер api и отдельный sync; api опубликован на loopback хоста, внутренняя сеть summy-internal и DNS gateway. PostgreSQL и S3 настраиваются через env. Runbook описывает управляемый PostgreSQL Timeweb и S3; compose всё ещё содержит MinIO. Это нельзя превращать в утверждение о фактическом составе контейнеров без runtime-инвентаризации. [backend/docker-compose.prod.yml](https://github.com/kirillsummy/backend/blob/bbfe5e5e22ca2eedbaf58db2899a60c4cdfa70f3/docker-compose.prod.yml), [backend/docs/DEPLOY.md](https://github.com/kirillsummy/backend/blob/bbfe5e5e22ca2eedbaf58db2899a60c4cdfa70f3/docs/DEPLOY.md).
 - Мастер: собранный web/dist обслуживает Node BFF; reverse proxy → BFF → gateway. Версия из APP_VERSION или VERSION_FILE; health отдельно проверяет наличие оболочки. [master-app/bff/README.md](https://github.com/kirillsummy/master-app/blob/84f3d0a74584c549ed50070f0f3fbc2eee0f5515/bff/README.md).
 - CRM: Next.js сервер, Docker и reverse proxy; health сообщает версию/SHA/auth mode. Сайт: Next.js; его runbook и стендовая памятка описывают запуск через pm2. Полное совпадение инфраструктуры с runbook не проверено.

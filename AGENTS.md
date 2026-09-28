@@ -26,6 +26,7 @@ Governance — единая документация разработки SUMMY.
 | Мастер / клиент | [master-app](docs/architecture/master-app.md), [client-app](docs/architecture/client-app.md) |
 | Найти код / источник | [Репозитории](docs/repositories.md), [модули](docs/modules.md), [реестр файлов](docs/sources.md) |
 | Проверки / окружения | [Конвенции](docs/conventions.md), [инфраструктура](docs/infrastructure.md) |
+| Production-доступ и первый релиз | [Инфраструктура](docs/infrastructure.md#доступ-и-резервные-копии-production-проверено-28092026), [промт RC1](docs/releases/production-rc1-deploy-prompt-2026-09-28.md) |
 | Подключение к TEST/БД и доставка `test` | [Инфраструктура](docs/infrastructure.md#подключение-к-test-и-бд), [БД](docs/database.md), [ветки](docs/branches.md), [текущее состояние](docs/current-state.md) |
 | Люди / доступы | [Команда](roles/TEAM.md) |
 | Повторяемая процедура | [Skills](ai/skills/README.md) |
