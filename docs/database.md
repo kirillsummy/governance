@@ -28,7 +28,7 @@ TEST остаётся отдельной БД; её последняя подт�
 > (SUM-116), `0150_cleaning_rates_manager_pay` (SUM-120), `0151_complaint_claims`
 > (SUM-119), `0152_service_resource_source` (SUM-115) — все в `backend/test`
 > `85c4d9b`; затем `0153_client_loyalty_credits` (SUM-103, в `test` `214b128`) и
-> `0154_process_type_colors` (краски двух видов, локальный кандидат).
+> `0154_process_type_colors` (краски двух видов, в `test` `bf4a947`, голова).
 > Полная цепочка — в [разделе SUM-120](#кандидат-sum-120-ставки-уборки-и-факты-оплаты-управляющей).
 
 Ревизия `0151_complaint_claims` следует за `0150_cleaning_rates_manager_pay`, кандидат
@@ -71,11 +71,11 @@ Downgrade `0151` откажется выполняться после перво
 Порядок ревизий на 29.09.2026: `0148_payroll_v1` → `0149_staff_penalty_payroll`
 (SUM-116) → `0150_cleaning_rates_manager_pay` (SUM-120) → `0151_complaint_claims`
 (SUM-119) → `0152_service_resource_source` (SUM-115; все четыре в `backend/test`
-`85c4d9b`) → `0153_client_loyalty_credits` (SUM-103, в `test` `214b128`, голова,
+`85c4d9b`) → `0153_client_loyalty_credits` (SUM-103, в `test` `214b128`,
 [ревизия веток](branch-audit-2026-09-29.md#выборочный-перенос-work-локальные-кандидаты-29092026))
-→ `0154_process_type_colors` (локальный кандидат: только данные — краски
+→ `0154_process_type_colors` (в `test` `bf4a947`, голова: только данные — краски
 `appointment_reschedule` и `payroll_dispute`, см. [палитру](../contracts/brand-palette.md#краски-видов-процессов-полоса-на-доске-crm)).
-Применение 0151–0153 к общей TEST-БД подтверждается отдельно. Одновременно публиковать две ревизии с одним номером или две
+Применение 0152–0154 к общей TEST-БД (на ней `0151`) подтверждается отдельно. Одновременно публиковать две ревизии с одним номером или две
 головы Alembic нельзя.
 
 Ревизия аддитивная, существующие данные не меняются. Она создаёт:
