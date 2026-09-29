@@ -1,18 +1,112 @@
 # Фактическое состояние
 
-## SUM-103, SUM-111, SUM-114 и 0154 — в Git `test`, общий TEST не обновлён, 29.09.2026
+## SUM-103, SUM-111, SUM-114 и 0154 — развернуто на общем TEST, 29.09.2026
 
-Опубликовано fast-forward: backend `test` `bf4a947eee7e1c2e1d9275921bbdb88467b2a208`
-(голова миграций `0154_process_type_colors`; поверх `214b128` — B6 SUM-103,
-исправление переноса SUM-114, тесты, краски двух видов), CRM `test`
-`5732bef0e2fce8c18302f28e256501c4b86515a1`, client-app `test`
-`5d994f46f5b19dfa0ae09d31d953801ecccbf931` (поверх `30c9a46` только
-форматирование). Это Git-состояние, не развёртывание: общий TEST-сервер
-этими публикациями не обновлялся; по read-only проверке 29.09 ≈22:20 МСК на
-нём backend `6623617` и БД `0151_complaint_claims`. Матрица на этих SHA и
-репетиция `0151 → 0153` пройдены до публикации (см. [CHANGELOG](../CHANGELOG.md));
-выкладка на TEST — отдельное поручение, план — в
-[ревизии веток](branch-audit-2026-09-29.md#план-до-серверного-test).
+Поручение Юры: выложить проверенный пакет на общий TEST для ручной приёмки
+перед отдельным production-релизом. Production не менялся. Выложены точные SHA
+из Git `test` (readback `ls-remote` перед выкладкой совпал):
+
+| Продукт | Было на TEST | Установлено 29.09 23:00–23:03 МСК | Образ (ID) |
+|---|---|---|---|
+| backend (`api`, `sync`) | `66236171937d2d69e79053a003b40c03af6f412a`, `summy-payroll-backend:6623617` (`c23dd666673e`) | `bf4a947eee7e1c2e1d9275921bbdb88467b2a208` | `summy-sum103-backend:bf4a947` (`7624faa8efbc`) |
+| CRM | `259ae55b3b818a43535e85b2ed23452232c0e38c` (`16e661fc3b17`, откатный тег `adminapp:pre-sum103-20260929`) | `5732bef0e2fce8c18302f28e256501c4b86515a1` | `adminapp:latest` = `adminapp:crm-5732bef` (`d3b56c57e07d`) |
+| client-app | `cc0fec5c82ada6eaa247107225df2b49f4611db4`, `summy-limits-client:cc0fec5` (`15cadf64aedc`) | `5d994f46f5b19dfa0ae09d31d953801ecccbf931` | `summy-sum103-client:5d994f4` (`3cb63c3af357`) |
+| БД `summy_data` (снимок production из SUM-138) | `0151_complaint_claims` | `0154_process_type_colors` (head) | — |
+
+master-app `d6c254b9c7c5eec845ec3a640b97108ecb416e4b` (`bff-bff:master-d6c254b-legacyid`)
+и website `8bc4072a85949e23a63b0da5eeb7160b29f341b4` не менялись: ID контейнеров
+master BFF, PostgreSQL, MinIO, ИИ-оператора и Redis до и после совпали.
+Git `test` master-app (`ee6d1cc`) и website (`a086b83`) впереди TEST и в этот
+релиз не входили.
+
+**Репетиция до выкладки** (29.09 22:53–22:55 МСК): одноразовый
+`postgres:18-alpine` во внутренней Docker-сети без портов на самом TEST, роли
+без паролей и поток `pg_dump | pg_restore` активной `summy_data` (restore без
+ошибок, 188 таблиц); alembic из кода `bf4a947` в образе `6623617` (зависимости
+не менялись). Цепь `0151 → 0152 → 0153 → 0154` по шагу: счётчики менялись
+только добавлением двух пустых таблиц 0153; схема на 0154 против снимка
+кандидата — лишь известные 36 объектов (`schema_migrations`,
+`zzz_bak_tech_*_20260806`). Откат до 0151 вернул схему (сравнение `pg_dump --schema-only`)
+и счётчики 0151, повторный upgrade дал ту же схему.
+Краски: `appointment_reschedule` `teal` → `#6995b5`, `payroll_dispute` `gold` →
+`#d3b89d`, `inspection` `teal` и `improvement` `gold` не тронуты. На синтетике в
+копии: вручную выбранная краска сохраняется при upgrade и downgrade; если
+целевой цвет занят другим активным видом, вид не перекрашивается; при наличии
+начисления откат 0153 отклонён (`Cannot downgrade 0153 while loyalty credits
+exist`), ревизия осталась 0154. Проверка отката 0152 с синхронизированными
+требованиями пропущена: в копии их было 0. Действующие контейнеры, ревизия и
+краски live-БД до и после репетиции совпали; копия, сеть и каталог удалены.
+
+**Выкладка** — скрипт `/opt/summy-test/releases/sum103-111-20260929/release.py`
+по образцу `payroll-20260929`, под общим замком
+`/var/lock/summy-test-deploy.lock`. Образы собраны по одному из
+`git archive` (LF, SHA-256 архивов сверены) при работающих старых контейнерах.
+Затем `api`/`sync` остановлены (API недоступен ≈2 мин), снята копия
+`/opt/summy-test/backups/sum103-111-before-0152-20260929.dump` (custom,
+44 200 139 байт, SHA-256
+`a3dee916a3d7669bced8bff55742f02c0021b332fb9b01d3c91eee323d1ef826`,
+`pg_restore --list`: 1870 записей, 188 TABLE DATA, полное чтение
+`pg_restore -f /dev/null` без ошибок; restore не выполнялся). Миграции 0152,
+0153, 0154 применены по одной разовыми контейнерами нового образа со сверкой
+`alembic_version` после каждой. Потом по очереди запущены backend, CRM и
+client-app. Конфигурация: `api`/`sync` —
+`releases/sum103-111-20260929/backend-next.json` = `prod-db-20260929/backend-prodsnap.json`
+с новым образом (env не менялись, `PLATFORM_ID_ENABLED=false` сохранён);
+client-app — прежний `limits-20260929/client-next.json` с новым образом; CRM —
+свой compose с прежним `.env`. Копии compose/env/VERSION — в `preserved/`
+(с SHA-256), прежний исходный каталог CRM — `crm-prev`, старые image ID — в
+`state.json`. Секреты не выводились.
+
+**Readback после выкладки** (23:04–23:08 МСК, выводились только коды, версии,
+ID и счётчики): VERSION всех пяти продуктов как в таблице; backend `/health`
+version `bf4a947…`, `stand=on`, `/ready` ready, `alembic current` =
+`0154_process_type_colors (head)`; CRM `/api/health` sha `5732bef…`,
+`authMode=gateway`, `demoData=off`; master `/healthz` version `d6c254b…`,
+`shell=ok`; client `/healthz` ok, `mode=live`, `/client/` 200; website 200;
+nginx без Basic Auth — 401 на 443/8443/9443. Краски в БД и в
+`GET /v1/processes/types`: `#6995b5`/`#d3b89d`, дублей краски у активных видов
+нет. OpenAPI содержит пять новых путей: `POST /v1/clients/{client_id}/loyalty-credits`,
+`GET …/loyalty-credits/unresolved`, `POST …/{credit_id}/reconciliation` (SUM-103),
+`GET /v1/client/complaints/{complaint_id}` и `…/photos/{photo_id}` (SUM-111).
+Без сессии все пять — 401, в том числе только с сервисным токеном; client BFF
+на карточку и фото рекламации — 401, неверный путь — 404; CRM BFF без cookie —
+307 на `/login` (общий middleware CRM, как у прежних маршрутов). Адресный smoke
+через CRM `/login_dev` 18/18: владелец — чтение незавершённого начисления 200
+(`credit=null`), BFF отклоняет неверное тело 400 до backend; управляющая — 403
+на чтение и запись; после logout токен 401. Записано только служебное
+`test_developer_*`; `client_loyalty_credits` и сверок — 0. Первый цикл sync
+новым кодом (catalog 23:05 МСК) прошёл успешно и создал 256 синхронизированных
+требований ресурсов (до выкладки 0). В журналах `api`, `sync`, CRM, client и
+master BFF с 23:02 МСК — 0 строк error/exception, 0 ответов 5xx.
+Предохранители: `YCLIENTS_READ_ONLY=true` у `api` и `sync`, токенов YClients в
+`api` нет, `PLATFORM_ID_ENABLED=false`.
+
+**Не проверено и ограничения ручной приёмки.** Живое начисление бонусов не
+выполнялось и на TEST невозможно: YClients в режиме только чтения, кнопка
+начисления вернёт отказ; это не доказательство работы начисления. Браузерные
+сценарии CRM, клиентского приложения и мастера после входа не проверялись;
+в снимке production нет клиентских аккаунтов (`client_portal_accounts` = 0),
+поэтому «Мои рекламации» SUM-111 в клиенте на данных TEST пока не открыть без
+отдельного решения о тестовой учётке. SMS, платежи и POST в YClients не
+запускались.
+
+**Откат** (только по конкретному сбою, с отдельным отчётом), порядок — в
+`releases/sum103-111-20260929/README.txt`. client-app и CRM — прежние образы и
+compose (`client-old.json`, `adminapp:pre-sum103-20260929` + `crm-prev`).
+Backend: старый `6623617` на схеме 0154 не стартует (его alembic не знает
+0152+), поэтому `release.py rollback-backend` сначала делает `alembic downgrade
+0151_complaint_claims` **новым** образом и только затем запускает `6623617` с
+прежним compose. Это допустимо, пока `client_loyalty_credits` и сверки пусты:
+0154 возвращает `teal`/`gold` только там, где краска ещё мигрированная; 0153
+удаляет пустые таблицы; 0152 удаляет синхронизированные требования ресурсов
+(сейчас 256, до выкладки 0) и их `external_refs`. Если начисления уже есть,
+0153 откат отклоняет; строки неизменяемы триггером и не удаляются — тогда
+исправление вперёд или restore копии в новую БД только по отдельному решению
+(теряются все изменения TEST после 23:00 МСК). `prod-db-20260929/cutover.sh
+rollback` из SUM-138 по-прежнему переименует текущую `summy_data` (0154) и
+вернёт прежнюю TEST-БД (0151) с `6623617`; без отдельного решения не запускать.
+
+Git-публикация этих SHA — [в ревизии веток](branch-audit-2026-09-29.md#публикация-b6-sum-114-и-0154-в-git-test-29092026).
 
 ## SUM-138 — общий TEST на снимке production-БД, 29.09.2026
 
