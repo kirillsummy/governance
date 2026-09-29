@@ -1,5 +1,61 @@
 # Фактическое состояние
 
+## SUM-138 — общий TEST на снимке production-БД, 29.09.2026
+
+Поручение Юры ([SUM-138](https://summy.youtrack.cloud/issue/SUM-138)): TEST
+работает на свежих production-данных, а разработчик через `/login_dev`
+(SUM-104) выбирает действующего сотрудника в пределах его прав. Production
+использовался только на чтение: разовый `pg_dump -Fc` в read-only транзакции,
+без nightly-скрипта, prune и S3. Секреты и дампы в Governance не пишутся.
+
+| Что | Состояние после 29.09 17:05 UTC |
+|---|---|
+| Активная `summy_data` | снимок production 2026-09-29 16:26:19 UTC (`0143`) + миграции 0144→0151 образом `summy-payroll-backend:6623617`; `alembic_version` = `0151_complaint_claims` |
+| Прежняя TEST-БД | `summy_data_pre_prod_20260929` (не удалять до приёмки) и полный дамп в `/opt/summy-test/backups/prod-refresh-20260929T162418Z/` |
+| backend | `66236171937d2d69e79053a003b40c03af6f412a`, compose `/opt/summy-test/releases/prod-db-20260929/backend-prodsnap.json` — прежний `payroll-20260929/backend-next.json` с единственным отличием `api` `PLATFORM_ID_ENABLED=false` |
+| master-app | `d6c254b9c7c5eec845ec3a640b97108ecb416e4b`, образ `bff-bff:master-d6c254b-legacyid` (`VITE_PLATFORM_ID_ENABLED=false`), `bff/.env` `PLATFORM_ID_ENABLED='false'` |
+| CRM / client / website | без изменений (`259ae55…`, `cc0fec5…`, `8bc4072…`) |
+
+Переключение: `api`/`sync` остановлены, базы переименованы одной транзакцией
+(`summy_data` → `summy_data_pre_prod_20260929`, `summy_data_next` →
+`summy_data`), `api`/`sync` запущены; API был недоступен ≈40 с, master BFF
+перезапущен следом. `stand/restore.sh` не использовался.
+
+Что в снимке для входа: 3 активных CRM-допуска (owner, manager,
+administrator), 0 филиальных допусков, 0 аккаунтов и привязок Platform ID,
+41 однозначная привязка `staff_user`, 0 `client_portal_accounts`, 0 ожидающих
+outbox/уведомлений/платежей. Все сессии и `test_developer_*` очищены в staging.
+Без Platform ID-привязок режим `true` дал бы пустой список мастеров, поэтому
+TEST переведён на legacy-режим, как в production. `LEGACY_MASTER_ID_ENABLED`
+не задан (закрыт). `SESSION_SECRET` не менялся.
+
+Проверено на сервере (29/29, выводились только коды, роли и числа): `/health`
+и `/ready` api (version `6623617…`, stand=on), маршрутизатор Platform ID
+отвечает 404; CRM `/login_dev` — неверный пароль 401, чужой Origin 403, вход
+`developer`, 3 профиля, выбор каждого даёт его роль; филиалы owner — все
+(2), manager/administrator — 0, как в production; сотрудник без CRM-допуска
+отклонён; после logout токен 401. Master `/login_dev` — 41 мастер, выбор,
+сессия, read-only `/v1/finance`, logout (токен 401); обычный master-вход,
+сессия, logout, неверный пароль 401. Предохранители: `YCLIENTS_READ_ONLY`,
+SMS `stand`, CRM/process session required, токенов YClients в api нет,
+merchant/SMTP/Telegram нет; nginx без Basic Auth отвечает 401.
+**Не проверены** браузерные сценарии CRM/master/client и client
+`/login_dev` (учёток в снимке нет).
+
+Старые cookie **не отозваны**: CRM- и master-токены stateless. По коду
+CRM BFF и backend сверяют роль с `gateway_admin_access` на каждом запросе,
+а филиалы берут из текущей БД; master-токен проходит только при той же паре
+user → staff. Сверка с прежней БД: 3/3 CRM-допуска совпадают по пользователю
+и роли (филиалов стало меньше), 40 из 41 master-пар совпадают, одна
+отличается и отклоняется. Чужой роли или расширения прав старые токены не
+получают. Developer-, Platform ID- и клиентские сессии хранятся в БД и
+очищены.
+
+Откат (минуты, без restore): `/opt/summy-test/releases/prod-db-20260929/cutover.sh rollback`
+— переименовывает `summy_data` в `summy_data_prod_refresh_failed_20260929`,
+возвращает `summy_data_pre_prod_20260929`, прежний compose, образ
+`bff-bff:pre-prodsnap-20260929` и прежний `bff/.env`.
+
 ## SUM-119/120/122 — развернуто на общем TEST, 29.09.2026
 
 Разрешение Юры на эту выкладку TEST, production не менялся. Выложены точные
