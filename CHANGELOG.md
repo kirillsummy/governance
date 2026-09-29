@@ -2,6 +2,54 @@
 
 ## [Unreleased]
 
+### SUM-120 — перенос кандидата на новый backend/test после SUM-116, локально (2026-09-29)
+
+- Безопасный push SUM-120 остановлен: в `backend/test` появились SUM-116
+  `e6addc48e0a3b5de43ad10996ed563e319e02e32` с ревизией
+  `0149_staff_penalty_payroll` после `0148_payroll_v1`, а затем SUM-93
+  `ecf87af129b988578ca95c6401d21a2ca1d73c18` (JIT финансовой сводки, без
+  миграций). Решение архитектора — взять новый `test` базой, не переписывая
+  его. Для fast-forward база взята от `ecf87af`: он содержит `e6addc4`.
+- **backend** `31b6b2357e70aafde197e52867ac698efbab79c7` поверх `ecf87af`.
+  Пять локальных коммитов из `0304aa2` перенесены cherry-pick: `46f6efb`,
+  `9cc4b14`, `9cb7522`, `48e0939`, `d13bb70`. Конфликты были только в
+  CHANGELOG backend, записи SUM-116 и SUM-93 сохранены. Дифф `0304aa2..d13bb70`
+  вне CHANGELOG совпадает с диффом `7dc05ff..ecf87af`. Коммит `31b6b23`
+  переименовывает неопубликованную `0149_cleaning_rates_manager_pay` в
+  `0150_cleaning_rates_manager_pay` с `down_revision = 0149_staff_penalty_payroll`.
+  Он меняет имена файлов Python/SQL/downgrade, revision id, текст ошибок и
+  автора посевных ставок (`migration:0150`). Одна голова Alembic — только на
+  `31b6b23`, в промежуточных коммитах переноса их две.
+- **CRM** `ea7f3ea1a8814b6c13b759218055c9d4e1a57c06` поверх неизменного
+  кандидата `23460e5`: в CHANGELOG CRM исправлена только требуемая ревизия.
+  Код и OpenAPI-зависимость CRM не менялись.
+- **Семантика.** SQL 0150 создаёт только три свои таблицы и функцию и не
+  трогает объекты 0149 SUM-116: `staff_penalties.payroll_eligible` и витрины
+  `contract_v1_staff_penalty_amounts`, `contract_v1_earnings_sources`,
+  `contract_v1_earnings_blockers`. Штрафы SUM-116 идут в зарплатную сводку по
+  `staff_id` и в заработок мастера. В оклад управляющей они не подставляются:
+  там по-прежнему `penalties_source_missing`. Свод уборки штрафы не вычитает.
+  Ставки уборки и факты управляющей не влияют на сводку и витрины заработка,
+  поэтому прошлые периоды не пересчитываются.
+- **Порядок миграций:** `0148_payroll_v1` → `0149_staff_penalty_payroll`
+  (SUM-116) → `0150_cleaning_rates_manager_pay` (SUM-120) → SUM-119
+  (перенумеровать в `0151`) → будущая лояльность
+  ([БД](docs/database.md#кандидат-sum-120-ставки-уборки-и-факты-оплаты-управляющей)).
+  Прежнее правило «SUM-120 — первый кандидат на `0149`» ниже устарело.
+- **Проверки** 29.09.2026 на одноразовой PostgreSQL 18.6 (WSL, порт 55439).
+  Цепочка с нуля: `0148` → `0149_staff_penalty_payroll` → `0150`. `alembic heads`
+  показывает один head. Витрины SUM-116 и `payroll_eligible` после `upgrade`
+  и `downgrade -1` совпадают со снимком на 0149. Проверены посев
+  `migration:0150` и отказ `downgrade` при записанном факте.
+  `app.schema_contract` пересобран: в снимке `origin/test` не хватало
+  объектов SUM-116. `app.api_contract` — OK. `pytest`
+  `test_cleaning_rate_commands`, `test_payroll_rules_sum120` и
+  `test_shift_penalties`: 58 passed под `TZ=UTC` и `TZ=Europe/Moscow`. Полная
+  матрица, CRM-тесты и сборки не запускались: код CRM не менялся. Общая
+  TEST-БД не затрагивалась.
+- Push, TEST, production и YouTrack не выполнялись. Кандидат **не
+  опубликован**; нужны независимое ревью и одобрение точных SHA.
+
 ### SUM-120 — исправления после независимого ревью кандидата, локально (2026-09-29)
 
 - **backend** `0304aa2bb38d64e115ef837f4d527e92b4a824da` поверх `4e6cc24`, **CRM** `23460e569202d6ff6226ffc62a973a86cbf6f659` поверх
