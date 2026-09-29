@@ -37,7 +37,14 @@ master-сессии проверяет backend. Legacy X-Master-Id и риски
 
 ## Конфигурация и проверки
 
-VITE_API_BASE задаёт реальный транспорт; без него возможен frontend mock. BFF: GATEWAY_URL/SERVICE_API_TOKEN/APP_VERSION. Healthz проверяет shell и версию. web: typecheck/test/build/check:palette; BFF: node --test bff/server.test.mjs.
+`VITE_API_BASE` задаёт транспорт к BFF/API. В `master-app/test` `fe16e7d`
+неподключённый маршрут в обычном режиме возвращает ошибку недоступности, а
+учебные ответы доступны только при `VITE_DEMO_MODE=true` в локальном Vite dev:
+плашка явно помечает демо, подключённые `/v1/*` продолжают ходить в API.
+Production-сборка демо не включает. Это факт кода ветки `test`, не
+подтверждение выкладки на общий TEST или production. BFF:
+GATEWAY_URL/SERVICE_API_TOKEN/APP_VERSION. Healthz проверяет shell и версию.
+web: typecheck/test/build/check:palette; BFF: node --test bff/server.test.mjs.
 
 ## Источники
 
