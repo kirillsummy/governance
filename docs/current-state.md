@@ -1,5 +1,69 @@
 # Фактическое состояние
 
+## SUM-119/120/122 — развернуто на общем TEST, 29.09.2026
+
+Разрешение Юры на эту выкладку TEST, production не менялся. Выложены точные
+SHA из `test` (опубликованы и проверены Codex до выкладки):
+
+| Продукт | Было на TEST | Установлено 29.09 ≈17:05–17:16 МСК | Образ |
+|---|---|---|---|
+| backend | `fc648ca8f514c3ba61759d1435a047680d79eac9` | `66236171937d2d69e79053a003b40c03af6f412a` | `summy-payroll-backend:6623617` |
+| CRM | `3dd2910c5695bddd90663a338346d7e37a7e541f` | `259ae55b3b818a43535e85b2ed23452232c0e38c` | `adminapp:latest` = `adminapp:crm-259ae55` |
+| master-app | `085a1e36823a27174ce7a2eff977efd168c14006` | `d6c254b9c7c5eec845ec3a640b97108ecb416e4b` | `bff-bff:latest` = `bff-bff:master-d6c254b` |
+| БД | `0147_operator_history` | `0151_complaint_claims` (head) | — |
+
+master-app `test` к моменту выкладки ушёл вперёд до `f7041e3` (SUM-116,
+«убрать накопленные баллы с экрана штрафов»); этот коммит **не** одобрялся
+к выкладке и на TEST не установлен.
+
+Порядок: образы собраны из `git archive` точных SHA, пока работали старые
+контейнеры. Затем backend `api`/`sync` остановлены, снята копия
+`/opt/summy-test/backups/payroll-before-0148-20260929.dump` (custom,
+43 866 430 байт, SHA-256
+`e0b887db11f73dbcb9a2e6f9e929702a90489b539952c183b7991fde38d10e50`,
+`pg_restore --list`: 1827 записей, 184 TABLE DATA; restore не выполнялся).
+Миграции `0148_payroll_v1` → `0149_staff_penalty_payroll` →
+`0150_cleaning_rates_manager_pay` → `0151_complaint_claims` применены
+по одной разовыми контейнерами нового образа, после каждой сверена
+`alembic_version`. Потом последовательно запущены backend, CRM и master BFF.
+
+Конфигурация: активный compose backend —
+`/opt/summy-test/releases/payroll-20260929/backend-next.json`, это прежний
+`history-20260928/backend-next.json` с новым образом `api`/`sync` и одной
+добавленной настройкой `api`: `MANAGER_PAY_APPROVER_YCLIENTS_USER_ID`
+(ID Кирилла, владельца TEST, по указанию Юры). Эта же строка дописана в
+`backend/.env.stand`, остальные значения env не менялись. Не заданы
+`CLEANING_LOCATION_RATES_FROM`, `CLEANING_CHECKLIST_NO_DELAY_FROM` и
+`YCLIENTS_PAID_AUTO_CLOSE_*`; `YCLIENTS_READ_ONLY` остаётся `true`. CRM и
+master BFF запущены своими compose (`crm/docker-compose.prod.yml`,
+`master-app/bff/docker-compose.bff.yml`) с `--no-build --no-deps` и прежними
+`.env`. Для отката сохранены: прежние каталоги `crm-prev` и `master-app-prev`,
+копии env/compose/VERSION в `releases/payroll-20260929/preserved/`, образы
+`summy-history-backend:fc648ca`, `adminapp:pre-payroll-20260929` и
+`bff-bff:pre-payroll-20260929`. Старый backend не стартует на схеме `0151`
+(неизвестная ревизия), поэтому откат backend — только через отдельное
+решение о restore копии или проверенный downgrade.
+
+Первая попытка CRM автоматически откатилась: созданный скриптом `VERSION`
+имел права `0600`, и процесс `nextjs` его не читал (health отдавал
+`0.1.0`). После `chmod 644` и пересборки второй запуск прошёл. Кроме того,
+около 17:12 МСК контейнер `summy-ai-operator-test` был пересоздан отдельным
+релизом `date-20260929` (образ `summy-date-operator:5e60637`), не этой
+выкладкой; его `/health` отвечает 200.
+
+Проверки после выкладки (только чтение, без записей в YClients и без
+клиентских данных в выводе): backend `/health` version `6623617…`,
+`/ready` ready, `alembic current` = `0151_complaint_claims (head)`; CRM
+`/api/health` sha `259ae55…`, `authMode=gateway`, `demoData=off`;
+master `/healthz` version `d6c254b…`, `shell=ok`. `GET /v1/cleaning/location-rates`,
+`/staff-rates`, `/pay-rules` отвечают 200 с сервисным токеном; без токена
+и без CRM-сессии — 401 (`/payroll/manager-salary`). OpenAPI содержит
+новые пути `manager-salary`, `location-rates`, `staff-rates`,
+`payroll-disputes`, `close-penalty-preview`, `processes/{id}/claim`. За
+первые минуты ошибок в журналах api/sync/CRM/BFF нет. Сценарии в UI после
+входа (принятие рекламации, ставки уборки, оклад управляющей, «Мои клиенты»)
+**не** проверялись: нужна ручная приёмка.
+
 ## SUM-119 — кандидат рекламаций, 29.09.2026 (не опубликован)
 
 Контракт — [рекламация, SUM-119](../contracts/reklamaciya.md#реализация-кандидата-29092026-не-опубликована).
