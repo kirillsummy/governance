@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+### SUM-103 и SUM-111 опубликованы в Git `test`, `work` удалены (2026-09-29)
+
+- После двух независимых финальных Claude-ревью (READY, без blocker/major) и разрешения Юры опубликовано fast-forward без force, readback `ls-remote` совпал: backend `test` `85c4d9b131ef3754f8f5ea0923bc34841daf4540` → `214b1280b0a3308c41a8729473cd0cae0df3b098` (SUM-111, SUM-103, ревизия 0153); CRM `test` `6d1011310b1bd2ca6dfd20c90885adba417be017` → `5732bef0e2fce8c18302f28e256501c4b86515a1` (SUM-103); client-app `test` `99ba413b418a499ce588523b58c4a0ef9e019788` → `30c9a4603b2a3eed07500c767783006630bb3e6a` (SUM-111).
+- Удалены удалённые `backend/work` `337493c`, `crm/work` `502db36`, `master-app/work` `3ab7ee5`: их содержимое в `test` перенесённым или patch-equivalent кодом. Сохранены `client-app/work` (SUM-117), `backend/singular` (SUM-99), `website/singular` (SUM-100). Доказательства — в [ревизии веток](docs/branch-audit-2026-09-29.md#публикация-в-git-test-и-удаление-work-29092026).
+- Тесты, lint, typecheck, build, миграционные прогоны и smoke до Git `test` не запускались. Серверный общий TEST не развёртывался, production и стадии YouTrack не менялись. До выкладки на TEST — одна полная матрица регрессии и решение по выбору филиала бонуса (B6).
+
 ### Исправления по первому независимому ревью кандидатов `work` (2026-09-29)
 
 - Первое ревью backend `09bf5b8`, CRM `fc7fe9f`, client-app `f53a41a` и Governance `cef1248` вернуло NOT READY. Исправления — локальные коммиты backend `214b128`, CRM `5732bef`, client-app `30c9a46` поверх этих SHA; базы `test` не сдвигались, опубликованная история не переписывалась.
