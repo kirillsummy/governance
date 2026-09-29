@@ -169,6 +169,7 @@ overrides и продуктовым DEPLOY, а не историческим п�
 | Backend DB/S3 | POSTGRES_*, DEFAULT_ORGANIZATION_ID, S3_*; доступ только серверный; отдельная миграционная роль на целевых БД не подтверждена |
 | Backend YClients | YCLIENTS_PARTNER_TOKEN, YCLIENTS_USER_TOKEN, YCLIENTS_COMPANY_IDS, YCLIENTS_READ_ONLY; здесь указаны только имена, не фактические значения |
 | Backend service/auth | SERVICE_API_TOKEN, SESSION_SECRET, INTERNAL_MASTER_API_ENABLED |
+| Backend деньги клининга (кандидат SUM-120) | CLEANING_LOCATION_RATES_FROM, CLEANING_CHECKLIST_NO_DELAY_FROM — две независимые даты, по умолчанию не заданы; см. чек-лист ниже |
 | Клиентский backend | CLIENT_PORTAL_ENABLED, CLIENT_PORTAL_SECRET, CLIENT_SMS_API_ID, CLIENT_CONSENT_VERSION |
 | Orders sandbox | ORDERS_TEST_ENABLED, ORDERS_TEST_DATABASE = POSTGRES_DB, ORDERS_YCLIENTS_TEST_COMPANIES, YANDEX_PAY_SANDBOX_MERCHANT_ID, ORDERS_CLIENT_URL |
 | Почта мастера | MASTER_REPORTS_EMAIL, REPORTS_SMTP_*; без настройки доставка выключена |
@@ -211,6 +212,25 @@ Backend `/health` читает VERSION; `/ready` проверяет БД. Master
 
 Откат orders: отключить флаги/worker и сохранить аудит. Не сносить таблицы ради
 успешного downgrade: ограничения 0119/0120 намеренно защищают данные.
+
+### Чек-лист выкладки кандидата SUM-120 (клининг и оклад управляющей)
+
+Правило — [контракт](../contracts/payroll-v1.md#управляющая-и-уборщица).
+Кандидат не опубликован; пункты действуют после утверждения Кириллом и
+отдельного распоряжения о среде.
+
+1. Сначала backend с ревизией `0149_cleaning_location_rates`, затем CRM.
+2. `CLEANING_LOCATION_RATES_FROM=YYYY-MM-DD` — первый день выходов по ставке
+   филиала 1 200/800 ₽. Без неё — прежняя ставка вида уборки.
+3. `CLEANING_CHECKLIST_NO_DELAY_FROM=YYYY-MM-DD` — первый день выходов, которые
+   оплачиваются при загруженном бланке любого статуса. Без неё — прежнее
+   правило: с 01.08.2026 нужен принятый бланк.
+4. Обе даты утверждает Кирилл, отдельно друг от друга; одну не выводят из
+   другой, из дня выкладки или наката. ⚠️ Дата в прошлом пересчитывает
+   своды уже показанных, в том числе завершённых месяцев; ставить её раньше
+   дня включения можно только по явному решению Кирилла о пересчёте.
+5. Значения дат записать в задачу выкладки; env-переключатель не ведёт
+   журнала изменений.
 
 
 ## Просмотренные источники
