@@ -25,9 +25,10 @@ TEST остаётся отдельной БД; её последняя подт�
 ## Кандидат SUM-119: ревизия `0151_complaint_claims`
 
 > Порядок ревизий после `0148_payroll_v1` на 29.09.2026: `0149_staff_penalty_payroll`
-> (SUM-116), `0150_cleaning_rates_manager_pay` (SUM-120), обе в `backend/test`
-> `31b6b23`, затем `0151_complaint_claims` (кандидат SUM-119, не опубликован),
-> затем будущая лояльность.
+> (SUM-116), `0150_cleaning_rates_manager_pay` (SUM-120), `0151_complaint_claims`
+> (SUM-119), `0152_service_resource_source` (SUM-115) — все в `backend/test`
+> `85c4d9b`; затем `0153_client_loyalty_credits` (SUM-103, локальный кандидат).
+> Полная цепочка — в [разделе SUM-120](#кандидат-sum-120-ставки-уборки-и-факты-оплаты-управляющей).
 
 Ревизия `0151_complaint_claims` следует за `0150_cleaning_rates_manager_pay`, кандидат
 backend `aa194a4` поверх `31b6b23`. Прежнее неопубликованное имя —
@@ -66,10 +67,12 @@ Downgrade `0151` откажется выполняться после перво
 `contract_v1_earnings_blockers`) ревизия 0150 не создаёт, не заменяет и не
 удаляет, в том числе при `downgrade`.
 
-Порядок ревизий: `0148_payroll_v1` → `0149_staff_penalty_payroll` (SUM-116) →
-`0150_cleaning_rates_manager_pay` (SUM-120) → `0151_complaint_claims` (SUM-119,
-[кандидат](#кандидат-sum-119-ревизия-0151_complaint_claims)) → будущая
-лояльность. Одновременно публиковать две ревизии с одним номером или две
+Порядок ревизий на 29.09.2026: `0148_payroll_v1` → `0149_staff_penalty_payroll`
+(SUM-116) → `0150_cleaning_rates_manager_pay` (SUM-120) → `0151_complaint_claims`
+(SUM-119) → `0152_service_resource_source` (SUM-115; все четыре в `backend/test`
+`85c4d9b`, голова) → `0153_client_loyalty_credits` (SUM-103, локальный кандидат,
+[ревизия веток](branch-audit-2026-09-29.md#выборочный-перенос-work-локальные-кандидаты-29092026)).
+Применение 0151–0153 к общей TEST-БД подтверждается отдельно. Одновременно публиковать две ревизии с одним номером или две
 головы Alembic нельзя.
 
 Ревизия аддитивная, существующие данные не меняются. Она создаёт:

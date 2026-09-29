@@ -95,6 +95,7 @@ OTP через SMS.ru; BFF хранит серверные секреты, backe
 | GET | /orders, /orders/{order_id} | Только свои заказы и детали |
 | POST | /orders | Создание с requestId и подписанным slotId, ответ 202 |
 | POST | /orders/{order_id}/cancellation | Запрос отмены с причиной, не сама отмена |
+| GET | /complaints, /complaints/{complaint_id}, /complaints/{complaint_id}/photos/{photo_id} | SUM-111, локальный кандидат 29.09: только свои рекламации и свои фото; чужая или удалённая карточка — 404; внутренние поля и штрафы не отдаются |
 
 В client `src/types.ts` существуют отдельные OrderStatus и PaymentStatus.
 Платёжная проекция содержит mode/url/receiptUrl/message. Полей привязанной карты
@@ -313,6 +314,19 @@ CRM при переходе на этот контракт не должна п�
 Источники: [backend/app/errors.py](https://github.com/kirillsummy/backend/blob/bbfe5e5e22ca2eedbaf58db2899a60c4cdfa70f3/app/errors.py), [backend/app/domains/auth/schemas.py](https://github.com/kirillsummy/backend/blob/bbfe5e5e22ca2eedbaf58db2899a60c4cdfa70f3/app/domains/auth/schemas.py),
 [backend/app/domains/staff/models.py](https://github.com/kirillsummy/backend/blob/bbfe5e5e22ca2eedbaf58db2899a60c4cdfa70f3/app/domains/staff/models.py),
 [governance/contracts/orders-payments-test.md](https://github.com/kirillsummy/governance/blob/a1c3b56c4382e0520885b9b9cd3574ce16ee53ca/contracts/orders-payments-test.md).
+
+### Ручное начисление бонусов владельцем (SUM-103, локальный кандидат 29.09)
+
+Маршруты backend только для живой CRM-сессии роли `owner`:
+`POST /v1/clients/{client_id}/loyalty-credits` (`requestId`, `amount`, `note`),
+`GET /v1/clients/{client_id}/loyalty-credits/unresolved` и
+`POST /v1/clients/{client_id}/loyalty-credits/{credit_id}/reconciliation`
+(`requestId`, `outcome` = `granted` | `not_found`, `note`). CRM вызывает их
+через BFF `/api/clients/loyalty` и `/api/clients/loyalty/reconciliation`.
+Отказ, после которого ключ точно не записан, несёт
+`error.detail.requestUnused = true`; только по нему CRM забывает ключ до
+подтверждённого итога. Правила идемпотентности, сверки и хранения ключа во
+вкладке — в [контракте SUM-103](../contracts/client-loyalty.md).
 
 ## Как менять стык
 
