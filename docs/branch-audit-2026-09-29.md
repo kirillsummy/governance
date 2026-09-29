@@ -264,7 +264,9 @@ production-ветки и все `test`.
 5. Регрессия опубликованных ранее SUM-115, SUM-119, SUM-120, SUM-122, SUM-132.
 6. **Найдено 29.09:** дефект подтверждения переноса SUM-114 — исправлен
    локально (`7e8b44f`); дубли краски видов `appointment_reschedule`/`inspection`
-   и `payroll_dispute`/`improvement` — ждут решения по цветам.
+   и `payroll_dispute`/`improvement` — решено 29.09 ревизией `0154_process_type_colors`
+   (цвета бренда, [палитра](../contracts/brand-palette.md#краски-видов-процессов-полоса-на-доске-crm)),
+   локальный кандидат.
 
 Живое начисление на TEST не проверяется: YClients к записи не готов (SUM-96
 P19).
