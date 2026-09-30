@@ -46,8 +46,8 @@
   [текущем состоянии](docs/current-state.md#sum-140--удаление-рекламации-на-общем-test-30092026).
 ### SUM-141 — участники лояльности и начисление управляющей (2026-09-30, локальные кандидаты)
 
-- Backend `ccd027102bfddc6b3b353d54461b99ce9e8d7561` и CRM `96447f2a7b8242cfa02a4404b3c3e4c92b31642b` — локальные коммиты поверх `origin/test`
-  (`595e26a` и `46adeaa`), в `test` не опубликованы, TEST и production не менялись.
+- Backend `ccd027102bfddc6b3b353d54461b99ce9e8d7561` и CRM `01dfa8dd02afefb4a9ac23fed0b717d82988c531` — локальные коммиты поверх `origin/test`
+  (`595e26a` и `f67583a`), в `test` не опубликованы, TEST и production не менялись.
 - Backend: ревизия `0156_client_loyalty_cards` (аддитивная), снимок сверенных карт
   YClients, `GET /v1/clients/loyalty-members`, `POST /v1/clients/{client_id}/loyalty-card/refresh`,
   право управляющей на начисление с лимитом 10 000 за операцию, фоновое задание
