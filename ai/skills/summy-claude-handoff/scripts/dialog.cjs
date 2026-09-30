@@ -11,6 +11,10 @@ const statusPath = path.join(temp, 'claude-status.json');
 const summonPath = path.join(temp, 'codex-summon.json');
 const reposRoot = process.env.SUMMY_REPOS_ROOT || path.join(os.homedir(), 'Documents', 'MyProjects', 'Summy');
 let activeJob = null;
+let lastClaudeStatus = null;
+let pendingRunLog = null;
+let pendingSize = 0;
+let pendingStableAt = 0;
 
 function json(response, code, value) {
   response.writeHead(code, {'content-type':'application/json; charset=utf-8','cache-control':'no-store'});
@@ -151,7 +155,26 @@ function readDialog() {
     const content = blocks.filter(x => x.type === 'text' && typeof x.text === 'string').map(x => x.text).join('\n').trim();
     if (content) messages.push({ role: event.type, content });
   }
-  return { task: String(state.task || 'SUMMY'), status, runLog: file, runSize: fs.existsSync(file) ? fs.statSync(file).size : 0, messages };
+  return { task: String(state.task || 'SUMMY'), phase, status, runLog: file, runSize: fs.existsSync(file) ? fs.statSync(file).size : 0, messages };
+}
+
+function watchClaude() {
+  const dialog = readDialog();
+  if (lastClaudeStatus === 'working' && dialog.status === 'idle' && !/пауза|остановлен/i.test(dialog.phase || '')) {
+    pendingRunLog = dialog.runLog || null;
+    pendingSize = dialog.runSize || 0;
+    pendingStableAt = Date.now();
+  }
+  if (dialog.status === 'working' || dialog.status === 'waiting' || /пауза|остановлен/i.test(dialog.phase || '')) pendingRunLog = null;
+  lastClaudeStatus = dialog.status;
+  if (pendingRunLog && dialog.runLog === pendingRunLog && dialog.runSize !== pendingSize) {
+    pendingSize = dialog.runSize;
+    pendingStableAt = Date.now();
+  }
+  if (pendingRunLog && dialog.runLog === pendingRunLog && dialog.status === 'idle' && Date.now() - pendingStableAt >= 6000 && dialog.messages.some(message => message.role === 'assistant')) {
+    pendingRunLog = null;
+    summonCodex();
+  }
 }
 
 const page = `<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Claude · диалог</title><style>
@@ -180,3 +203,7 @@ http.createServer((request, response) => {
     response.end(page);
   } else { response.writeHead(404); response.end(); }
 }).listen(8770, '127.0.0.1');
+
+const initialDialog = readDialog();
+lastClaudeStatus = initialDialog.status;
+setInterval(watchClaude, 2000);

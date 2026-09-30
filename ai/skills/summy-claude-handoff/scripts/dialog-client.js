@@ -100,8 +100,7 @@ async function refresh() {
     if (!response.ok) throw Error();
     const state = await response.json();
     setStatus(state.status);
-    const hasReply = state.messages.some(message => message.role === 'assistant');
-    summon.style.display = state.status === 'idle' && hasReply ? 'inline-block' : 'none';
+    summon.style.display = state.status === 'idle' && state.messages.some(message => message.role === 'assistant') ? 'inline-block' : 'none';
     const summonResponse = await fetch('/api/summon', {cache:'no-store'});
     if (summonResponse.ok) {
       const job = await summonResponse.json();
