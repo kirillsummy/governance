@@ -13,6 +13,22 @@ website `a086b8386fa886960c795ed30e924a76db6473fb` (`main`, `v2.31.0`); БД
 вход не включён. Копия перед миграцией, результаты команд и откат — в
 [отчёте о выкладке](releases/production-rc5-deployment-2026-09-30.md).
 
+## SUM-125 — оклад за смену в ведомости на общем TEST, 01.10.2026
+
+Опубликовано в `origin/test` и развёрнуто выпуском
+`/opt/summy-test/releases/yr125-20261001` (`prepare`, `backend`, `crm`,
+`status` — exit 0; LF-архивы, SHA-256 и blob-хеши сверены):
+
+| Продукт | Было на TEST | Установлено | Образ и контейнер |
+|---|---|---|---|
+| backend (API и sync) | `11c8d692519b0123ec6179a09f6bfbb89a3b7c78` | `24ee8ab932cf1b19fd56d3034b10e1427a5e51f4` | `summy-yr-backend:24ee8ab` (`sha256:981cf0db9859…`), API `720b0dda2476` healthy, sync `03f79b1cf418` |
+| CRM | `6a5c182f68d45b3845f60faadbecfb36525f4c94` | `591059176e0f6de2bae7b9b473d5dc2b784e6233` | `adminapp:crm-5910591` (`sha256:46a97e7bcb3c…`), `92d891080122` healthy |
+| БД, master-app, client-app | — | не менялись (`0162_penalty_appeals`) | — |
+
+Откат: `release.py rollback-crm`, `rollback-backend` (прежние образы
+`adminapp:pre-yr125-20261001`, `summy-fin7-backend:11c8d69`; миграций нет).
+Экраны и HTTP-ответы не проверялись. [Контракт](../contracts/payroll-v1.md#администратор).
+
 ## SUM-150 — вход разработчика и демо-учётка клиента на общем TEST, 01.10.2026
 
 Код в `origin/test`: backend `9589f1f82e45fb84d0475ad522b1b72ba99608a1`, CRM
