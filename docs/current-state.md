@@ -13,6 +13,35 @@ website `a086b8386fa886960c795ed30e924a76db6473fb` (`main`, `v2.31.0`); БД
 вход не включён. Копия перед миграцией, результаты команд и откат — в
 [отчёте о выкладке](releases/production-rc5-deployment-2026-09-30.md).
 
+## SUM-157, SUM-120, SUM-111 P6 на общем TEST, 01.10.2026
+
+Поручение разработчика-координатора 30.09.2026 («завершить семь задач»).
+Опубликовано в `origin/test` fast-forward и развёрнуто выпуском
+`/opt/summy-test/releases/fin7-20261001` (шаги `prepare`, `backend`, `master`,
+`crm`, `status` — exit 0, 00:14–00:19 МСК 01.10):
+
+| Продукт | Было на TEST | Установлено | Образ и контейнер |
+|---|---|---|---|
+| backend (API и sync) | `10e0dd53355605a2d9ae7daa1f3ba45ee1c4fb95` | `11c8d692519b0123ec6179a09f6bfbb89a3b7c78` | `summy-fin7-backend:11c8d69` (`sha256:9ff8f1b57edb…`), API `ab2d33616968` healthy, sync `29e56a5f2396` |
+| БД | `0160_daily_processes` | `0162_penalty_appeals` | PostgreSQL `8d64c21e46db` не пересоздавался |
+| master-app | `dee599f81da12aaef7832c26f4c840803d3de816` | `9d4dcb3e881e17b0d0e0278efe00bfbaafebff1a` | `bff-bff:master-9d4dcb3` (`sha256:5d0460c407b5…`), `d705ffd1a7d9` |
+| CRM | `086e8c71de92668caf57a8f1af9b605f829d2125` | `6a5c182f68d45b3845f60faadbecfb36525f4c94` | `adminapp:crm-6a5c182` (`sha256:099f0267b46e…`), `cc07b7c3c5a4` healthy |
+| client-app, website | — | не менялись | — |
+
+Копия перед миграцией: `/opt/summy-test/backups/fin7-20261001-before-0161.dump`
+(44 862 816 байт, SHA-256
+`f860b6437ac451d67b29c1bfd2cdaf40b7abf07c7fbfd4685cfe1bd24da922f7`, ревизия
+`0160_daily_processes`, полное чтение `pg_restore` успешно). Откат —
+`release.py rollback-crm`, `rollback-master`, `rollback-backend` (downgrade
+новым образом до `0160`, затем прежний compose `sum176b-20260930`).
+
+Состав: отбор очереди закупщика по складу (SUM-157); премия администратора
+50 ₽ за отзыв с фото по карточке `review_photo` (SUM-120; инвентаризация
+по-прежнему без источника); «Обжаловать» штраф у мастера, удержание спорных
+баллов из выплаты и решение управляющей в CRM (SUM-111 P6). Факт доставки — по
+SHA и результату команд выпуска; запросы к TEST и сценарии не проверялись,
+тесты не проводились. Production не менялся.
+
 ## SUM-176 — совместимость со входом production и перенос допусков на общем TEST, 30.09.2026
 
 Опубликовано в `origin/test` fast-forward и развёрнуто на общем TEST выпуском
