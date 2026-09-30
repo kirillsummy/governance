@@ -13,6 +13,26 @@ website `a086b8386fa886960c795ed30e924a76db6473fb` (`main`, `v2.31.0`); БД
 вход не включён. Копия перед миграцией, результаты команд и откат — в
 [отчёте о выкладке](releases/production-rc5-deployment-2026-09-30.md).
 
+## SUM-177 — перенос YClients в CRM: база клиентов, карточка и свежесть зеркала на общем TEST, 01.10.2026
+
+Опубликовано в `origin/test` и развёрнуто выпуском
+`/opt/summy-test/releases/yct-20261001` (`prepare`, `backend`, `crm`,
+`status` — exit 0; LF-архивы, SHA-256 и blob-хеши сверены):
+
+| Продукт | Было на TEST | Установлено | Образ и контейнер |
+|---|---|---|---|
+| backend (API и sync) | `24ee8ab932cf1b19fd56d3034b10e1427a5e51f4` | `32f0f144869c19b27de380830fad939382054f90` | `summy-yct-backend:32f0f14` (`sha256:772b59ddc7fd…`), API `adffdd305efd` healthy, sync `a061f32d53ab` |
+| CRM | `591059176e0f6de2bae7b9b473d5dc2b784e6233` | `e12c14003a9bbccc11d600a79a83a9dbed909c56` | `adminapp:crm-e12c140` (`sha256:b0c1636d28b4…`), `3cc4c3bacaab` healthy |
+| БД, master-app, client-app | — | не менялись (`0162_penalty_appeals`) | — |
+
+Состав: SUM-178 (база клиентов на серверной выборке), SUM-179 (карточка
+клиента по одному клиенту), SUM-180 (свежесть потоков зеркала YClients в
+«Интеграциях»). `YCLIENTS_READ_ONLY=true` и переменные окружения не менялись.
+Откат: `release.py rollback-crm`, `rollback-backend` (прежние образы
+`adminapp:pre-yct-20261001`, `summy-yr-backend:24ee8ab`; миграций нет).
+Тесты не проводились: экраны и HTTP-ответы не проверялись.
+[Карта переноса](yclients-transfer.md).
+
 ## SUM-125 — оклад за смену в ведомости на общем TEST, 01.10.2026
 
 Опубликовано в `origin/test` и развёрнуто выпуском
