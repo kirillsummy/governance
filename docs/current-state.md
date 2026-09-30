@@ -1,5 +1,80 @@
 # Фактическое состояние
 
+## SUM-123 и текущие головы `test` — развернуто на общем TEST, 30.09.2026
+
+Прямое поручение владельца 30.09.2026: развернуть всё на TEST-сервере без
+тестирования. Production не менялся.
+
+| Продукт | Было на TEST (живое чтение 30.09 11:41 МСК) | Голова `origin/test` | Установлено 30.09 11:47–11:53 МСК | Образ и контейнер |
+|---|---|---|---|---|
+| backend (API и sync) | `595e26afeb92e217acd3b6a0831efd28457a25fa`, `summy-sum140-backend:595e26a` | `849d7f4c96980606019bfdd3c2a0191e52ecab80` | `849d7f4c96980606019bfdd3c2a0191e52ecab80` | `summy-sum123-backend:849d7f4` (`sha256:23c2aef7c89b…`), API `41bf01c3eec2` healthy, sync `a864874bea91` running |
+| БД | `0155_complaint_delete_event` | голова кода `0156_client_loyalty_cards` | `0156_client_loyalty_cards` | PostgreSQL `8d64c21e46db` не пересоздавался |
+| CRM | `46adeaab55d9614377ec44f37ca7f50d75c8b513` | `18f3d59c5a63d8d507e304a93da59eb3a8329023` | `18f3d59c5a63d8d507e304a93da59eb3a8329023` | `adminapp:crm-18f3d59` = `adminapp:latest` (`sha256:ea74fb492f06…`), `85affdbcebef` healthy |
+| master-app | `108e2fce65c7d4199e5e7a9d7f6f353b1ef55e92` | `b4ab6b366ea30c33f862aec9dada1959aba12d95` | `b4ab6b366ea30c33f862aec9dada1959aba12d95` | `bff-bff:master-b4ab6b3` = `bff-bff:latest` (`sha256:9742da6eae07…`), `26031c26f11a` running |
+| client-app | `8ad3fce7bc8b652792a8533ee7c8a87eb9d229eb` | `8ad3fce7bc8b652792a8533ee7c8a87eb9d229eb` | не менялся — уже на голове | `summy-sum117-client:8ad3fce`, `48dabd5aac72` |
+| website | `8bc4072a85949e23a63b0da5eeb7160b29f341b4` | `a086b8386fa886960c795ed30e924a76db6473fb` | не менялся | процесс сайта не перезапускался |
+
+Website: `a086b83` отличается от развёрнутого `8bc4072` одной строкой
+`CHANGELOG.md` (запись о прошлой выкладке), исполняемый код совпадает; сайт не
+пересобирался, `VERSION` оставлен `8bc4072…`, чтобы он называл дерево
+фактической сборки.
+
+Что вошло. Backend `849d7f4` = SUM-141 (`392dcfa`: участники лояльности, снимок
+карт YClients, ревизия `0156`) + SUM-123 (`GET /v1/analytics/overview`). CRM
+`18f3d59` = SUM-129, SUM-135, SUM-141 и SUM-123 («Аналитика → Обзор») поверх
+`46adeaa`. Master-app `b4ab6b3` — 108e2fc плюс обновлённый календарь, нижнее
+меню и сворачивание финансовых операций; `bff/docker-compose.bff.yml`,
+`bff/Dockerfile` и `bff/backend-routes.json` между `108e2fc` и `b4ab6b3` не
+менялись. Методика обзора и доступ — в
+[контракте](../contracts/analytics-overview.md). На TEST CRM работает с
+`ADMINAPP_AUTH_PROVIDER=gateway`, то есть ограничение legacy-входа обзора
+здесь не действует; сам вход и экран не проверялись.
+
+Порядок выкладки. Перед началом: блокировка `/var/lock/summy-test-deploy.lock`
+свободна, других `release.py` нет. Сеанс выкладки SUM-141
+(`releases/sum141-20260930`) был остановлен координатором на шаге `prepared`:
+образы собраны, контейнеры, БД и `VERSION` он не менял; его состав целиком
+вошёл в этот выпуск. LF-архивы `git archive` трёх SHA сверены по SHA-256 после
+передачи и по blob-хешам ключевых файлов после распаковки. Шаги
+`release.py`: `prepare` (сохранение действующего compose backend
+`releases/sum140-20260930/backend-next.json`, env, `VERSION`, compose CRM и
+master в `preserved/`; сборка трёх образов по одному; `alembic heads` нового
+образа — `0156_client_loyalty_cards`), `backup`, `backend`, `crm`, `master` —
+все с кодом 0. Действующий compose backend сохранён со всеми прежними
+настройками; изменены только образ и добавлен `LOYALTY_CARDS_SYNC_ENABLED=true`
+для `api` и `sync` (условие выкладки SUM-141). Скрипт подтвердил: прежние ключи
+окружения на месте, добавлен ровно один ключ, `YCLIENTS_READ_ONLY=true`,
+токены YClients есть только у `sync`, флаги `CASH_PAYOUTS_ENABLED`,
+`PHOTO_PROOF_V2_ENABLED`, `YCLIENTS_PAID_AUTO_CLOSE_ENABLED` отсутствуют;
+состав ключей окружения CRM и master не изменился; PostgreSQL, MinIO,
+client-app, оператор и Redis не пересоздавались. `stand/up.sh`, restore и сброс
+БД не запускались. Условием отката при активации служило только состояние
+контейнера по данным Docker (running, встроенный healthcheck контейнера, без
+рестартов) и ревизия БД; запросов к приложениям сеанс не выполнял.
+
+Копия и откат. `/opt/summy-test/backups/sum123-before-20260930.dump` снята при
+остановленных API и sync на ревизии `0155`: 44 342 973 байта, режим 0600,
+SHA-256 `fbf310ed3386b91fb52c2c17178c58eb3751a170e3d6cbaf2d60ab48a3b8daca`,
+1891 запись оглавления, 190 таблиц данных, полное чтение `pg_restore -f
+/dev/null` успешно; restore не выполнялся. Откат backend: `release.py
+rollback-backend` — `alembic downgrade 0155_complaint_delete_event` новым
+образом (удаляет только пересобираемый снимок `client_loyalty_cards`), затем
+прежний compose с `summy-sum140-backend:595e26a`. CRM: `rollback-crm` —
+`adminapp:pre-sum123-20260930` и каталог `crm-prev`. Master: `rollback-master`
+— `bff-bff:pre-sum123-20260930` и каталог `master-app-prev`. Старый образ
+backend на схеме `0156` не стартует, поэтому порядок отката backend именно
+такой.
+
+Граница проверки: после слияния и после выкладки тесты, smoke/e2e, ручные
+сценарии, HTTP-запросы к `/health`, `/ready`, `/api/health`, `/healthz` и
+экранам, lint, typecheck и проверочные сборки не проводились. Подтверждены
+только коды завершения команд, `VERSION`, образы, состояние контейнеров и
+ревизия БД. Не проверены: экран «Аналитика → Обзор» и его числа, экран
+участников лояльности, ход фонового обхода карт `loyalty_cards` (он включён
+флагом и читает YClients в режиме read-only; первый ограниченный прогон
+вручную не запускался, наполнение списка не наблюдалось), новые экраны
+master-app.
+
 ## SUM-117 — два варианта оплаты на общем TEST, 30.09.2026
 
 Решение владельца от 30.09.2026: «Сделай просто два варианта оплаты рядом. Две кнопки на оплату айклинс и новая с картами». Production не менялся.
