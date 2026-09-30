@@ -13,6 +13,24 @@ website `a086b8386fa886960c795ed30e924a76db6473fb` (`main`, `v2.31.0`); БД
 вход не включён. Копия перед миграцией, результаты команд и откат — в
 [отчёте о выкладке](releases/production-rc5-deployment-2026-09-30.md).
 
+## SUM-121 — медкнижка и первый экран кабинета мастера на общем TEST, 01.10.2026
+
+Выпуск `/opt/summy-test/releases/yr121c-20261001` (`prepare`, `backend`,
+`master`, `crm`, `status` — exit 0; LF-архивы, SHA-256 и blob-хеши сверены;
+образ backend переиспользован из прерванного `yr121` той же ревизии из-за
+лимита Docker Hub):
+
+| Продукт | Было на TEST | Установлено | Образ и контейнер |
+|---|---|---|---|
+| backend (API и sync) | `32f0f144869c19b27de380830fad939382054f90` (SUM-177) | `cc19109325c69e552e518c9e414325c5722b78e8` | `summy-yr-backend:cc19109` (`sha256:c5842dcc68a5…`), API `56e21c528448` healthy, sync `b5e244bbb0fb` |
+| master-app | `9d4dcb3e881e17b0d0e0278efe00bfbaafebff1a` | `537b79bbbf864845f0f8e83a812b2c5255e46288` (включает `8fe2316`) | `bff-bff:master-537b79b` (`sha256:13a17845a39f…`), `4771b5dbe17c` |
+| CRM | `e12c14003a9bbccc11d600a79a83a9dbed909c56` (SUM-177) | `08c58cb8e0b2df9439b0f35a23c7c8234bbe9600` | `adminapp:crm-08c58cb` (`sha256:c59707234d90…`), `3dd1ed5266a5` healthy |
+| БД, client-app | — | не менялись (`0162_penalty_appeals`) | — |
+
+Откат: `release.py rollback-crm`, `rollback-master`, `rollback-backend`
+(прежние образы `adminapp:pre-yr121c-20261001`, `bff-bff:pre-yr121c-20261001`,
+`summy-yct-backend:32f0f14`; миграций нет). Экраны и HTTP-ответы не проверялись.
+
 ## SUM-177 — перенос YClients в CRM: база клиентов, карточка и свежесть зеркала на общем TEST, 01.10.2026
 
 Опубликовано в `origin/test` и развёрнуто выпуском
