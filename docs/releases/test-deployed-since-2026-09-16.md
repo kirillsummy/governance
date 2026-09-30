@@ -11,7 +11,7 @@
 | Клиент | [Приложение клиента](https://201.51.9.79/client/login) | [Клиент /login_dev](https://201.51.9.79/client/login_dev) |
 | Сайт | [Публичный сайт TEST](https://201.51.9.79/) | — |
 
-Перед всеми адресами действует HTTP Basic Auth стенда. TEST-учётки и порядок доступа описаны в [закрытой статье YouTrack](https://summy.youtrack.cloud/articles/SUM-A-1/TEST-stend-SUMMY-adresa-i-testovye-uchyotki); секреты здесь не дублируются.
+До 30.09.2026 перед всеми адресами действовал HTTP Basic Auth стенда; он отключён по [SUM-152](https://summy.youtrack.cloud/issue/SUM-152), вход — через собственную авторизацию приложений. TEST-учётки и порядок доступа описаны в [закрытой статье YouTrack](https://summy.youtrack.cloud/articles/SUM-A-1/TEST-stend-SUMMY-adresa-i-testovye-uchyotki); секреты здесь не дублируются.
 
 ## Подтверждённые поставки
 

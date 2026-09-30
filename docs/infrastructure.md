@@ -91,6 +91,11 @@ Timeweb, nginx с защитой входа; наружу сайт на 443, CRM
 Внутри: backend loopback 8091, CRM 3010, master BFF 8082, website 3000;
 backend с PostgreSQL/MinIO в compose, website под pm2. Docker-сеть — summy-internal.
 Это описание установки от 15.09, не live-инвентаризация.
+С 30.09.2026 общий HTTP Basic Auth nginx перед 443, 8443 и 9443 отключён по
+поручению владельца ([SUM-152](https://summy.youtrack.cloud/issue/SUM-152)):
+вход на TEST защищает только собственная авторизация приложений; `noindex` и
+TLS сохранены. Конфигурация, откат и граница проверки — в
+[текущем состоянии](current-state.md#sum-152--общий-http-basic-auth-test-отключён-30092026).
 
 Термин «тестовый pod» не подтверждает Kubernetes: в источниках найден сервер/compose,
 а Kubernetes namespace/pod/ingress для SUMMY не обнаружен в просмотренных файлах.
