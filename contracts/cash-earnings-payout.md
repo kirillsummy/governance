@@ -137,4 +137,4 @@ cash-запроса. Она сохраняет деньги от повторн�
 приёмки по [money-dod](money-dod.md). Локальная проверка синтетического
 сценария не заменяет эти шаги.
 
-**Основание:** [ответ владельца по пункту 9](https://github.com/kirillsummy/master-app/blob/21348358f2db2450865ce3e05f5a0d9851847a71/docs/master-app-v1/owner-decisions-2026-09-23.md), уточнение владельца от 24.09.2026 в задаче №8; `master-app/docs/master-app-v1-executable-backlog-2026-09-23.md` и `backend/docs/earnings-payouts.md` фиксируют границу реализации. Публикация в `work` не означает применения миграции или выдачи на TEST.
+**Основание:** [ответ владельца по пункту 9](https://github.com/kirillsummy/master-app/blob/21348358f2db2450865ce3e05f5a0d9851847a71/docs/master-app-v1/owner-decisions-2026-09-23.md), уточнение владельца от 24.09.2026 в архивной задаче №8; исторический backlog сохранён во вложениях [SUM-84](https://summy.youtrack.cloud/issue/SUM-84), действующая задача наличной выплаты — [SUM-169](https://summy.youtrack.cloud/issue/SUM-169). `backend/docs/earnings-payouts.md` фиксирует границу реализации. Публикация в `work` не означает применения миграции или выдачи на TEST.
