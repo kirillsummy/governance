@@ -13,6 +13,34 @@ website `a086b8386fa886960c795ed30e924a76db6473fb` (`main`, `v2.31.0`); БД
 вход не включён. Копия перед миграцией, результаты команд и откат — в
 [отчёте о выкладке](releases/production-rc5-deployment-2026-09-30.md).
 
+## SUM-182, SUM-125, SUM-185 — открытие смены в SUMMY-local, премии в ведомости, примеры синка на общем TEST, 01.10.2026
+
+Выпуск `/opt/summy-test/releases/fa-20261001` поверх `od-20261001`
+(`prepare`, `backend`, `crm`, `status` — exit 0; LF-архивы, SHA-256 и
+blob-хеши сверены; миграций нет):
+
+| Продукт | Было на TEST | Установлено | Образ и контейнер |
+|---|---|---|---|
+| backend (API и sync) | `085c4f6ae21137c0cde35e15bf4702dad8a4b87b` | `c7a4d3f3daf28b816dde9d2a39f2ac01b3479694` | `summy-fa-backend:c7a4d3f` (`sha256:ed31f98404d6…`), API `ee15365dc608` healthy, sync `7bbb4f85edac` running, RestartCount 0 |
+| CRM | `99e8102377d83127c1168a15ff890b844fdb0f98` | `b1087f8dae281ded8f448d1b297830403faaa5f8` | `adminapp:crm-b1087f8` (`sha256:ef7874b46ed0…`), `78beaa83a7de` healthy |
+| БД | `0163_inventory_cash_totals` | без изменений | копия не снималась: миграций нет |
+| master-app, client-app | — | не менялись (`537b79b…`, `175633f…`) | — |
+
+- SUM-182: для `DEPLOYMENT_ENVIRONMENT=local` открытие смены без QR принимает
+  локальный MinIO на любом порту; TEST и production не затронуты.
+- SUM-125: строка «Премии за день» в «Ведомости»
+  ([payroll-v1](../contracts/payroll-v1.md#администратор)).
+- SUM-185: исправлены примеры ручного прогона синка; эксплуатационная граница
+  — [инфраструктура](infrastructure.md#синк-yclients-расписание-сигнал-и-повтор-sum-185-01102026).
+- Незавершённый выпуск `yct2-20261001` помечен `NOT-ACTIVATED.txt`: его состав
+  (SUM-181) уже доставлен `od-20261001`.
+
+Откат: `release.py rollback-crm`, затем `rollback-backend` (прежний образ
+`summy-od-backend:085c4f6` и compose `od-20261001`, downgrade не нужен).
+YClients read-only, env не менялся. Тесты не проводились: экраны, HTTP-ответы
+и сценарии не проверялись; подтверждены коды завершения, `VERSION`, образы,
+состояние контейнеров и ревизия БД. Production не менялся.
+
 ## SUM-158, SUM-120, SUM-123 — касса бухгалтера, премия за инвентаризацию и «Отчёты» на общем TEST, 01.10.2026
 
 Решения владельца 01.10.2026 (SUM-96). Выпуск
