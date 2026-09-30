@@ -1,5 +1,54 @@
 # Фактическое состояние
 
+## SUM-164 — «МОЁ» в процессах CRM на общем TEST, 30.09.2026
+
+Прямое решение владельца 30.09.2026: раздел «Задачи» убран, личный отбор и
+счётчик перенесены в «Процессы». Production не менялся. Правила и ограничения —
+в [контракте личного отбора](../contracts/process-personal-view.md).
+
+| Продукт | Было на TEST (живое чтение 30.09 15:35 МСК) | Опубликовано в `origin/test` | Установлено 30.09 15:37–15:41 МСК | Образ и контейнер |
+|---|---|---|---|---|
+| backend (API и sync) | `5eaac343d98760aae934ad69366efb848c3bc461`, `summy-roles-backend:5eaac34` | `75f555d1a14ccc2c636a3b1d79958c8e2623bee8` | `75f555d1a14ccc2c636a3b1d79958c8e2623bee8` | `summy-sum164-backend:75f555d` (`sha256:fa87d6f2f1e7…`), API `51200aa68899` healthy, sync `d19878d7e41a` running |
+| БД | `0158_role_workplaces` | голова кода `0158_role_workplaces` | не менялась | PostgreSQL `8d64c21e46db` не пересоздавался |
+| CRM | `c982a1e65282fe02ab18f37231c392874a6c0ee1` | `95ede26ddbf820189cbeb033c79a8f3e02a4cf57` | `95ede26ddbf820189cbeb033c79a8f3e02a4cf57` | `adminapp:crm-95ede26` = `adminapp:latest` (`sha256:d894654dd118…`), `4c06b6e30376` healthy |
+| master-app, client-app, website | `be8e2602b891165b1c5b0e92b9fd2a6859d591f6`, `175633fa52b48430a58bbaf03e4d6cb43f5098c6`, `a086b8386fa886960c795ed30e924a76db6473fb` | — | не менялись | контейнеры `71eaca6eeae6`, `15d5b09c01a6` не пересоздавались, сайт не перезапускался |
+
+Порядок выкладки. Перед началом блокировка `/var/lock/summy-test-deploy.lock`
+свободна, незавершённых выпусков нет; последняя запись — `ACTIVE crm` выпуска
+`roles-20260930` в 15:16. LF-архивы `git archive` двух SHA сверены по SHA-256
+после передачи (backend
+`b25aa5d19fb94973dde950bebd53fc27790e84c99a7ed530bdebcb0fb178d8d4`, CRM
+`eaf704f3248b490305db938c8a0a0244bb2ab8710ec74c65ae1fb5bfdc7e5df8`) и по
+blob-хешам одиннадцати файлов после распаковки. Шаги
+`/opt/summy-test/releases/sum164-20260930/release.py`: `prepare` (сохранение
+действующего compose backend `releases/roles-20260930/backend-next.json`,
+`VERSION`, `.env` и compose CRM в `preserved/`; сборка двух образов по одному;
+`alembic heads` нового образа — `0158_role_workplaces`), `backend`, `crm`,
+`status` — все с кодом 0. В compose backend изменён только образ `api` и
+`sync`; скрипт подтвердил, что состав ключей окружения API, sync и CRM не
+изменился и что контейнеры client-app, master-app, PostgreSQL и MinIO остались
+прежними. `stand/up.sh`, restore и сброс БД не запускались. Условием отката
+при активации служили только состояние контейнера по данным Docker (running,
+встроенный healthcheck, без рестартов) и ревизия БД.
+
+Миграций у SUM-164 нет, поэтому копия БД не снималась. Откат: для backend —
+`release.py rollback-backend` (compose `releases/roles-20260930/backend-next.json`,
+образ `summy-roles-backend:5eaac34`); для CRM — `release.py rollback-crm`
+(каталог `releases/sum164-20260930/crm-prev`, образ
+`adminapp:pre-sum164-20260930`). Порядок отката любой: старый backend параметр
+`mine` игнорирует, новая CRM без подтверждающего заголовка показывает ошибку
+личного отбора, а не общий список.
+
+Граница. Позже в `test` опубликован SUM-165 (backend `a992249`, CRM `f6c6f49`,
+ревизия `0159_courier_deliveries`) без выкладки: TEST стоит на SHA SUM-164 и
+отстаёт от голов `test` на этот коммит. Тесты, smoke/e2e, ручные сценарии,
+HTTP-запросы к приложениям, lint, typecheck и проверочные сборки не
+проводились; образы собраны только как часть развёртывания. Кнопка «МОЁ»,
+счётчик и редирект `/tasks` в браузере не открывались, вход под учётками не
+выполнялся, состав личных списков на данных TEST не сверялся. Подтверждены
+коды завершения команд, `VERSION`, метка ревизии образов, состояние
+контейнеров по данным Docker и ревизия БД.
+
 ## SUM-165 — курьер и заказы доставки, только Git, 30.09.2026
 
 Поручение разработчика-координатора 30.09.2026 с особым ограничением: только

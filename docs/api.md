@@ -165,6 +165,10 @@ CRM использует собственный BFF `/api/admin-shifts` и не 
 `staff_penalties`, включая впоследствии отменённую; действующий финансовый
 итог следует читать из отдельного контура штрафов.
 
+SUM-164 (30.09.2026): `GET /v1/processes` принимает `mine=true` — личный отбор
+учётки действующей CRM-сессии. Условия, заголовок `X-Process-Mine-Enforced` и
+счётчик — в [контракте личного отбора](../contracts/process-personal-view.md).
+
 Этап 6: `GET /v1/processes/workflows` остаётся единственным API options
 анкеты рекламации. `resolution_kind` для нового выбора содержит `redo`,
 `bonus`, `refund`, `reject`; `reject` устанавливает переход в `rejected` с
