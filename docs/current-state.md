@@ -1,5 +1,71 @@
 # Фактическое состояние
 
+## SUM-156, SUM-157, SUM-158 — рабочие места ролей на общем TEST, 30.09.2026
+
+Прямое поручение владельца 30.09.2026: три рабочих места CRM в аккаунте
+разработчика TEST. Production не менялся. Правила и остаток — в
+[контракте рабочих мест](../contracts/role-workplaces.md).
+
+| Продукт | Было на TEST (живое чтение 30.09 14:52 МСК) | Голова `origin/test` | Установлено 30.09 15:12–15:16 МСК | Образ и контейнер |
+|---|---|---|---|---|
+| backend (API и sync) | `9589f1f82e45fb84d0475ad522b1b72ba99608a1`, `summy-origin-test-backend:9589f1f` | `5eaac343d98760aae934ad69366efb848c3bc461` | `5eaac343d98760aae934ad69366efb848c3bc461` | `summy-roles-backend:5eaac34` (`sha256:5af4524bda0d…`), API `b1313f2cb490` healthy, sync `d7483d251268` running |
+| БД | `0157_service_resource_exemptions` | голова кода `0158_role_workplaces` | `0158_role_workplaces` | PostgreSQL `8d64c21e46db` не пересоздавался |
+| CRM | `b18d823b216f6ba66e036f02c6f6c694d5754ed2` | `c982a1e65282fe02ab18f37231c392874a6c0ee1` | `c982a1e65282fe02ab18f37231c392874a6c0ee1` | `adminapp:crm-c982a1e` = `adminapp:latest` (`sha256:ce1d0ddf0095…`), `883a8133f39a` healthy |
+| master-app, client-app, website | `be8e2602b891165b1c5b0e92b9fd2a6859d591f6`, `175633fa52b48430a58bbaf03e4d6cb43f5098c6`, `a086b8386fa886960c795ed30e924a76db6473fb` | — | не менялись | контейнеры `71eaca6eeae6`, `15d5b09c01a6` не пересоздавались, сайт не перезапускался |
+
+Что вошло. Backend `5eaac34` = голова `test`: рабочие места (`722f76a`), а также
+SUM-154 (`0cc59da`, две причины закрытия записи) и SUM-155 (`89d639b`, прогресс
+повторной записи мастера), которые до этого были только в Git; миграций у них
+нет. CRM `c982a1e` — рабочие места поверх `b18d823`.
+
+Порядок выкладки. Перед началом блокировка `/var/lock/summy-test-deploy.lock`
+свободна, других выкладок нет; последняя чужая запись — `DONE` SUM-152 в 12:38.
+LF-архивы `git archive` двух SHA сверены по SHA-256 после передачи (backend
+`332fbcc3f7f8fe1720baa5a0c07211b1c6a51f78991c960dd256e9f39a8b8a9b`, CRM
+`b21c13c8ba2d9c6a0f46bfb9c45b857ec81be0788264c32c0c64e7da80ba2cd3`) и по
+blob-хешам десяти ключевых файлов после распаковки. Шаги `release.py`:
+`prepare` (сохранение действующего compose backend
+`releases/origin-test-20260930/backend-final.json`, `VERSION`, `.env` и compose
+CRM в `preserved/`; сборка двух образов по одному; `alembic heads` нового
+образа — `0158_role_workplaces`), `backend`, `seed`, `crm` — все с кодом 0.
+Действующий compose backend сохранён целиком, изменён только образ `api` и
+`sync`; скрипт подтвердил, что состав ключей окружения API, sync и CRM не
+изменился. PostgreSQL, MinIO, client-app, master-app, оператор и Redis не
+пересоздавались. `stand/up.sh`, restore и сброс БД не запускались. Условием
+отката при активации служили только состояние контейнера по данным Docker
+(running, встроенный healthcheck, без рестартов) и ревизия БД.
+
+Профили. Шаг `seed` выполнил в контейнере API
+`python scripts/seed_test_workplace_profiles.py` (код 0) и создал три допуска:
+`test-storekeeper` / `storekeeper`, `test-purchaser` / `purchaser`,
+`test-accountant` / `accountant`, все активные. До выкладки в
+`gateway_admin_access` TEST были по одному допуску владельца, управляющего и
+администратора и ни одного бухгалтера; эти строки не менялись.
+
+Копия и откат. `/opt/summy-test/backups/roles-before-0158-20260930.dump` снята
+при остановленных API и sync на ревизии `0157`: 44 509 140 байт, режим 0600,
+SHA-256 `e8de274a1375dadc9bdb04977af9fbce632838d34a31c78f72394317e071ee2a`,
+полное чтение `pg_restore -f /dev/null` успешно; restore не выполнялся. Откат
+backend: `release.py rollback-backend` — `alembic downgrade
+0157_service_resource_exemptions` новым образом, затем прежний compose с
+`summy-origin-test-backend:9589f1f`. Ревизия откажет в `downgrade`, если в
+`purchase_requests`, `hr_action_requests` или `accounting_documents` появились
+строки либо остались допуски `storekeeper` и `purchaser`: сначала нужно решить
+судьбу этих данных, удалять их ради отката нельзя. CRM: `release.py
+rollback-crm` — `adminapp:pre-roles-20260930` и каталог `crm-prev`. CRM `c982a1e`
+со старым backend работает, кроме трёх рабочих мест: их двери ответят ошибкой
+платформы.
+
+Граница проверки: тесты, smoke/e2e, ручные сценарии, HTTP-запросы к `/health`,
+`/ready`, `/api/health` и экранам, lint, typecheck и проверочные сборки не
+проводились. Подтверждены коды завершения команд, `VERSION`, образы, состояние
+контейнеров и ревизия БД. Не проверены: вход под тремя профилями, меню и экраны
+рабочих мест, приход и расход, создание заявки и отметка закупщика, решения по
+финансовому отчёту, черновые кадровые заявки, загрузка и чтение файлов
+документов. На момент выкладки на TEST три склада, 178 материалов, ноль
+складских документов и ноль финансовых отчётов смен: остатки начинаются с нуля,
+а раздел «Касса и смены» пуст, пока администратор не сдаст финансовый отчёт.
+
 ## SUM-152 — общий HTTP Basic Auth TEST отключён, 30.09.2026
 
 Прямое поручение владельца 30.09.2026. Production не менялся.
