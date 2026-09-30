@@ -22,6 +22,21 @@ TEST остаётся отдельной БД; её последняя подт�
 не проходил; автоматический возврат образа, downgrade или restore не являются
 универсальным откатом.
 
+## SUM-120 и SUM-158: ревизия `0163_inventory_cash_totals`
+
+Предшественник — `0162_penalty_appeals`. Только данные: вид процесса
+`inventory_check` «Инвентаризация» (`submitted` → `confirmed` / `rejected`) —
+источник премии администратора 1000 ₽
+([payroll-v1](../contracts/payroll-v1.md#администратор)); три необязательных
+поля анкеты `finance_report` — `cash_opening`, `z_cash_total`, `z_card_total`
+([рабочие места](../contracts/role-workplaces.md#бухгалтер)). `downgrade`
+отказывает, пока есть карточки `inventory_check`; значения новых полей в уже
+сданных отчётах не удаляет. На общем TEST применена 01.10.2026 выпуском
+`od-20261001` (backend `085c4f6ae21137c0cde35e15bf4702dad8a4b87b`); копия перед
+ней — `/opt/summy-test/backups/od-20261001-before-0163.dump`. Production не
+получал. Снимок `db/api-contract.json` пересобран генератором,
+`db/schema-contract.json` не менялся (схема та же).
+
 ## SUM-111 P6: ревизия `0162_penalty_appeals`
 
 Предшественник — `0161_review_photo`. Создаёт `staff_penalty_appeals`

@@ -13,6 +13,34 @@ website `a086b8386fa886960c795ed30e924a76db6473fb` (`main`, `v2.31.0`); БД
 вход не включён. Копия перед миграцией, результаты команд и откат — в
 [отчёте о выкладке](releases/production-rc5-deployment-2026-09-30.md).
 
+## SUM-158, SUM-120, SUM-123 — касса бухгалтера, премия за инвентаризацию и «Отчёты» на общем TEST, 01.10.2026
+
+Решения владельца 01.10.2026 (SUM-96). Выпуск
+`/opt/summy-test/releases/od-20261001` поверх `yr121c-20261001` (`prepare`,
+`backend`, `crm`, `status` — exit 0; LF-архивы, SHA-256 и blob-хеши сверены):
+
+| Продукт | Было на TEST | Установлено | Образ и контейнер |
+|---|---|---|---|
+| backend (API и sync) | `cc19109325c69e552e518c9e414325c5722b78e8` | `085c4f6ae21137c0cde35e15bf4702dad8a4b87b` (включает неразвёрнутый ранее SUM-181 `5fa24cf`) | `summy-od-backend:085c4f6` (`sha256:29958fd27a1a…`), API `be06c97bfcb5` healthy, sync `fa031a96abd5` |
+| CRM | `08c58cb8e0b2df9439b0f35a23c7c8234bbe9600` | `99e8102377d83127c1168a15ff890b844fdb0f98` (включает SUM-181 `86590ff`) | `adminapp:crm-99e8102` (`sha256:d2a53bee5cc7…`), `e672c78ed126` healthy |
+| БД | `0162_penalty_appeals` | `0163_inventory_cash_totals` | копия перед миграцией `/opt/summy-test/backups/od-20261001-before-0163.dump` (44 876 389 байт, SHA-256 `4eea22b73fef7e6df43347cf7b1437359648de53034c5d40c2c9b3476bff18e2`, полное чтение `pg_restore` успешно; restore не выполнялся) |
+| master-app, client-app | — | не менялись (`537b79b…`, `175633f…`) | — |
+
+- SUM-158, блок А: касса бухгалтера — ручные итоги, фото, разница без порога,
+  история решений ([рабочие места](../contracts/role-workplaces.md#бухгалтер)).
+- SUM-120: премия 1000 ₽ за подтверждённую карточку «Инвентаризация» с фото,
+  одна на филиал в месяц (временно); исправлен учёт «Отзыва с фото»
+  ([payroll-v1](../contracts/payroll-v1.md#администратор)).
+- SUM-123: `/analytics/reports` на контракте «Обзора»
+  ([analytics-overview](../contracts/analytics-overview.md)).
+
+Откат: `release.py rollback-crm`, затем `rollback-backend` (`alembic downgrade
+0162_penalty_appeals` новым образом, прежний образ `summy-yr-backend:cc19109`;
+downgrade отказывает, если уже есть карточки `inventory_check`). YClients
+read-only, env не менялся. Тесты не проводились: экраны, HTTP-ответы и
+сценарии не проверялись; подтверждены коды завершения, `VERSION`, образы,
+состояние контейнеров и ревизия БД. Production не менялся.
+
 ## SUM-121 — медкнижка и первый экран кабинета мастера на общем TEST, 01.10.2026
 
 Выпуск `/opt/summy-test/releases/yr121c-20261001` (`prepare`, `backend`,
