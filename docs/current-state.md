@@ -24,6 +24,25 @@ website `a086b8386fa886960c795ed30e924a76db6473fb` (`main`, `v2.31.0`); БД
 вход не включён. Копия перед миграцией, результаты команд и откат — в
 [отчёте о выкладке](releases/production-rc5-deployment-2026-09-30.md).
 
+## TEST, 01.10.2026 16:02–16:05 МСК: колокольчик владельца о сбое синка YClients — CRM `e868df3` (`sa-20261001`)
+
+Выпуск `/opt/summy-test/releases/sa-20261001` поверх `bv-20261001`, только
+CRM: LF-архив `git archive` точного SHA, sha256
+`3937c3a05a0becd17231010acb475bbb5fa9e4d0a690d4c41b5ffa7ce67cc511` и
+blob-хеши сверены на сервере, образ собран под общим замком без `429`.
+Команды `prepare`, `crm`, `status` — exit 0. Состояние — по Docker и pm2,
+без HTTP-запросов к приложениям.
+
+| Продукт | Было | Стало | Факт |
+|---|---|---|---|
+| CRM | `e4d33d09394274cf94d7b2d1763d17330648cd91` | `e868df32cea00acb562cde9bc038224561d0726d` | `adminapp:crm-e868df3`, `adminapp` `6c2a43d55f2d` healthy, RestartCount 0; VERSION `version=sa-20261001`, режим 0644; набор ключей env прежний |
+| backend, client-app, master-app, website, БД | `2f6487e`, `c36f92c`, `1fbae55`, `bd2d697`, `0164_client_preferences` | без изменений | ID контейнеров API, sync, client, BFF, postgres, minio, operator, redis и pid сайта прежние |
+
+Откат: `release.py rollback-crm` — `adminapp:pre-sa-20261001` и
+`releases/sa-20261001/crm-prev`. Тесты не проводились: колокольчик после
+выкладки не открывался. На TEST credentials YClients отключены (T12),
+поэтому колокольчик владельца там ожидаемо покажет отставание потоков.
+
 ## TEST, 01.10.2026 15:38–15:47 МСК: баг-репорты во всех приложениях и ответы SUM-97/SUM-96 (`bv-20261001`)
 
 Выпуск `/opt/summy-test/releases/bv-20261001` поверх `mcatch-20261001`:
