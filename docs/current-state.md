@@ -24,6 +24,44 @@ website `a086b8386fa886960c795ed30e924a76db6473fb` (`main`, `v2.31.0`); БД
 вход не включён. Копия перед миграцией, результаты команд и откат — в
 [отчёте о выкладке](releases/production-rc5-deployment-2026-09-30.md).
 
+## Точная доставка `origin/test` на TEST, 01.10.2026 15:13–15:17 МСК: backend `3498987` (БД `0164`) и master-app `8eaeb6b`
+
+По манифесту сверки всех `origin/test` выложены ровно две головы `test`,
+отличавшиеся от TEST; объединений, cherry-pick и расширения состава не было.
+Выпуск `/opt/summy-test/releases/exact-20261001` поверх `fa-20261001` (backend)
+и `all-20261001` (master-app): LF-архивы, SHA-256 и blob-хеши сверены;
+`prepare`, `backend`, `master`, `status` — exit 0.
+
+| Продукт | Было на TEST | Установлено | Образ и контейнер |
+|---|---|---|---|
+| backend (API и sync) | `c7a4d3f3daf28b816dde9d2a39f2ac01b3479694` | `34989879a9ad3b4ebeb4dcdfd4213e09d9ba0f31` (14 коммитов) | `summy-exact-backend:3498987` (`sha256:6b9c5131cb3e…`), API `cc8c4f79b642` healthy, sync `c89a821d88a6` running, RestartCount 0; override `releases/exact-20261001/backend-next.json` (env прежнего `fa-20261001`, `YCLIENTS_READ_ONLY=true`) |
+| master-app (BFF и web) | `77c7816321dcd4349a0073e982880ba31141064e` | `8eaeb6b99d5f137ccc8a92cd87842dd035349a89` (11 коммитов) | `bff-bff:master-8eaeb6b` (`sha256:249a762652bc…`), `bff-bff-1` `d40afa201525` running, RestartCount 0 |
+| БД | `0163_inventory_cash_totals` | `0164_client_preferences` | аддитивно: таблица `client_preferences` и триггер; копия перед миграцией `/opt/summy-test/backups/exact-20261001-before-0164.dump` (45 345 264 байта, SHA-256 `0d8cac6be4828f858a317c3df6cff8f1b21762796c0c391e77831e7b737509a2`, полное чтение `pg_restore` успешно; restore не выполнялся) |
+| CRM, client-app, website | `c17e8f6` / `175633f` / `a086b83` | без изменений | уже совпадали с `origin/test`, не пересобирались |
+
+- Состав backend: SUM-186 (`ccdc084`, `b234519`, `03b763b`), SUM-187
+  (`6f61269`, `766f2b6`, `c72536a`), SUM-189 (`59b9433`, `91dacbc`,
+  `e44cbdc`, `8a9bcf9`, `93cebed`, `3498987`), SUM-188/191 (`fe6c454`,
+  `33587a6`). Состав master-app: SUM-186 `e5c6a6e`; SUM-187 `0f3ee91`,
+  `2e21f41`; SUM-189 `1e52f5d`, `4004300`, `8eaeb6b`; SUM-188/191 `eefe6ae`,
+  `0d103b5`, `523dba1`, `5cf1174`, `ebfd1a9`.
+- Ручка прихода SUM-186 и добавление услуги SUM-188 по коду включены только
+  при `deployment_environment=local`; на TEST (`test`) они недоступны.
+- С выкладкой backend у CRM `c17e8f6` появились серверные ручки предпочтений
+  SUM-187, которых не было на `c7a4d3f`.
+
+Откат (не выполнялся): сначала `release.py rollback-master` (образ
+`bff-bff:pre-exact-20261001`, каталог `master-prev`), затем
+`release.py rollback-backend` — прежний образ `summy-fa-backend:c7a4d3f` с
+`releases/exact-20261001/backend-rollback-0164.json`: это override
+`fa-20261001` с той же env, но командой API без `alembic upgrade head`, потому
+что прежний образ не знает ревизию `0164`. Схема остаётся на `0164`, downgrade
+с удалением таблицы не выполняется; restore из копии — только отдельным
+решением. Env, compose-файлы CRM/client-app и внешние интеграции не менялись.
+Тесты не проводились: экраны, HTTP-ответы и сценарии не проверялись;
+подтверждены коды завершения, `VERSION`, образы, состояние контейнеров и
+ревизия БД. Production не менялся.
+
 ## Инцидент production 01.10.2026: пустые «Процессы» у управляющей — CRM `c17e8f6` на TEST
 
 Причина доказана чтением production (RC5 без изменений): CRM `98973b0`
@@ -42,8 +80,8 @@ website `a086b8386fa886960c795ed30e924a76db6473fb` (`main`, `v2.31.0`); БД
 
 Голова `crm/test` включает CRM-часть SUM-187 (`97b2340`, `53b4b34`), поэтому
 она тоже на TEST. Backend SUM-187 (`6f61269`…`c72536a`, миграция `0164`) и
-SUM-186 на TEST не выкладывались: блок предпочтений в карточке клиента до их
-выкладки владельцем покажет ошибку «Предпочтения не получены».
+SUM-186 на TEST тогда не выкладывались; они выложены 01.10.2026 в 15:15 МСК —
+раздел «Точная доставка `origin/test`» выше.
 Production-кандидат CRM `3f7795fe8187f1f25e0bd7188adb7f1ef494be61` (ветка
 `claude/prod-sveta-processes` поверх RC5 `086e8c7`) на этапе TEST не
 тестировался. Позже, 01.10.2026 12:47 МСК, он утверждён, проверен до выкладки

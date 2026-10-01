@@ -2,6 +2,24 @@
 
 ## [Unreleased]
 
+### Точная доставка `origin/test` на TEST: backend `3498987` с миграцией `0164` и master-app `8eaeb6b` (2026-10-01)
+
+- Выложены ровно две отличавшиеся головы `origin/test`: backend
+  `34989879a9ad3b4ebeb4dcdfd4213e09d9ba0f31` (14 коммитов SUM-186/187/188/189/191)
+  и после него master-app `8eaeb6b99d5f137ccc8a92cd87842dd035349a89`
+  (11 коммитов). Выпуск `/opt/summy-test/releases/exact-20261001`:
+  `prepare`, `backend`, `master`, `status` — exit 0. CRM `c17e8f6`,
+  client-app `175633f`, website `a086b83` уже совпадали с `origin/test` и не
+  пересобирались; объединений веток и cherry-pick не было.
+- БД TEST `0163_inventory_cash_totals` → `0164_client_preferences`
+  (аддитивно). Копия перед миграцией
+  `/opt/summy-test/backups/exact-20261001-before-0164.dump`, SHA-256
+  `0d8cac6b…09a2`, чтение `pg_restore` успешно. Откат без downgrade — прежний
+  образ `summy-fa-backend:c7a4d3f` с override без `alembic upgrade head`;
+  подробности — в [состоянии](docs/current-state.md).
+- Тесты не проводились, запросы к приложениям не выполнялись; production не
+  менялся.
+
 ### SUM-97 T2: лимит Docker Hub при сборке на TEST — базовые образы скачаны повторно (2026-10-01)
 
 - Ответы голосового обсуждения 01.10 записаны в SUM-97 (комментарий `7-731`,
