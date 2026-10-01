@@ -163,6 +163,16 @@ PostgreSQL — разные права и реквизиты. Точный endpo
    на TEST не выполняются. Одна выкладка за раз: общий замок
    `/var/lock/summy-test-deploy.lock` и незавершённые шаги чужого релиза в
    `/opt/summy-test/releases/<имя>/progress.log` сверяются до начала.
+   Базовые образы из Docker Hub (`python:3.14-slim` для backend,
+   `node:24-alpine` для CRM, master-app BFF и client-app) держатся на TEST
+   локально. Без них даже `docker build --pull=false` запрашивает метаданные
+   у Docker Hub. Анонимный лимит считается по общему IPv6-префиксу хостинга;
+   01.10.2026 там было 0 из 100 в час, а по IPv4 `201.51.9.79` — 100 из 100.
+   Еженедельный `docker-prune.timer` (вс 04:00, `prune -af --filter
+   until=168h`) удаляет эти образы. При `429 Too Many Requests` на
+   `load metadata` повторить `docker pull` образа под свободным замком и
+   затем повторить шаг. Зеркала и `docker login` нет
+   ([T2 в SUM-97](https://summy.youtrack.cloud/issue/SUM-97#focus=Comments-7-731.0-0)).
 5. При сбое вернуть предыдущий код/образ и флаги по сохранённому плану.
    `alembic downgrade` не считать безопасным общим откатом после появления
    новых данных; для БД нужен заранее проверенный способ восстановления.
