@@ -24,6 +24,26 @@ website `a086b8386fa886960c795ed30e924a76db6473fb` (`main`, `v2.31.0`); БД
 вход не включён. Копия перед миграцией, результаты команд и откат — в
 [отчёте о выкладке](releases/production-rc5-deployment-2026-09-30.md).
 
+## TEST, 01.10.2026 15:29–15:31 МСК: master-app `fa541b5` (SUM-187, плитки предпочтений)
+
+Поверх точной доставки `exact-20261001` (ниже) выложен один новый коммит
+`master-app/test` — SUM-187, плитки предпочтений клиента 2×3 на карточке
+записи (только web UI: `ClientPreferences.tsx`, `Today.tsx`,
+`today-home.css`, CHANGELOG). Объединений, cherry-pick и иных коммитов не было.
+Выпуск `/opt/summy-test/releases/mcatch-20261001`: LF-архив `git archive`,
+SHA-256 и blob-хеши сверены; `release.py prepare`, `release.py master`,
+`release.py status` — exit 0.
+
+| Продукт | Было на TEST | Установлено | Образ и контейнер |
+|---|---|---|---|
+| master-app (BFF и web) | `8eaeb6b99d5f137ccc8a92cd87842dd035349a89` | `fa541b53eea760c10011f476da6f268d7fb5b012` (1 коммит) | `bff-bff:master-fa541b5` (`sha256:f2b6f54c47dc…`), `bff-bff-1` `74f7ee824cdb` running, RestartCount 0; `.env` и compose прежние, набор ключей env сверен |
+| backend, БД, CRM, client-app, website | `3498987` / `0164_client_preferences` / `c17e8f6` / `175633f` / `a086b83` | без изменений | ID контейнеров API, sync, adminapp, client-app, postgres, minio прежние |
+
+Откат (не выполнялся): `release.py rollback-master` — образ
+`bff-bff:pre-mcatch-20261001` (`sha256:249a762652bc…`, `8eaeb6b`) и каталог
+`releases/mcatch-20261001/master-prev`. Тесты не проводились: экраны,
+HTTP-ответы и сценарии не проверялись; production и YClients не менялись.
+
 ## Точная доставка `origin/test` на TEST, 01.10.2026 15:13–15:17 МСК: backend `3498987` (БД `0164`) и master-app `8eaeb6b`
 
 По манифесту сверки всех `origin/test` выложены ровно две головы `test`,

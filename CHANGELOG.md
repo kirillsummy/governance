@@ -2,6 +2,21 @@
 
 ## [Unreleased]
 
+### TEST: master-app `fa541b5` — плитки предпочтений клиента SUM-187 (2026-10-01)
+
+- На TEST выложен один новый коммит `master-app/test`
+  `fa541b53eea760c10011f476da6f268d7fb5b012` (SUM-187: плитки предпочтений
+  клиента 2×3 на карточке записи, только web UI; fast-forward от `8eaeb6b`).
+  Выпуск `/opt/summy-test/releases/mcatch-20261001` по master-шагу
+  `exact-20261001`: `prepare`, `master`, `status` — exit 0, VERSION
+  master-app `fa541b53eea760c10011f476da6f268d7fb5b012`.
+- Backend `3498987`, БД `0164_client_preferences`, CRM, client-app и website не
+  менялись; миграций и копии БД не было. Откат — `release.py rollback-master`
+  на образ `bff-bff:pre-mcatch-20261001` (`8eaeb6b`); подробности — в
+  [состоянии](docs/current-state.md).
+- Тесты не проводились, запросы к приложениям не выполнялись; production не
+  менялся.
+
 ### SUM-96: очистка открытых вопросов Кириллу по данным ответам (2026-10-01)
 
 - Описание [SUM-96](https://summy.youtrack.cloud/issue/SUM-96) сверено по
