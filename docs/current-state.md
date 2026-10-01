@@ -24,6 +24,26 @@ website `a086b8386fa886960c795ed30e924a76db6473fb` (`main`, `v2.31.0`); БД
 вход не включён. Копия перед миграцией, результаты команд и откат — в
 [отчёте о выкладке](releases/production-rc5-deployment-2026-09-30.md).
 
+## TEST, 01.10.2026 21:46–21:51 МСК: SUM-160 и SUM-161 — CRM `6f9c316`, website `ef6c6b0` (`q160-20261001`)
+
+Выпуск `/opt/summy-test/releases/q160-20261001` поверх `sum191b-20261001`
+(backend, БД 0166) и `sum191m-20261001` (master-app). LF-архивы `git archive`
+точных SHA, sha256 и blob-хеши сверены на сервере, образ CRM и сайт собраны
+под общим замком без `429`. Команды `prepare`, `crm`, `website`, `status` —
+exit 0. Состояние — по Docker и pm2, без HTTP-запросов к приложениям.
+
+| Продукт | Было | Стало | Факт |
+|---|---|---|---|
+| CRM | `e868df32cea00acb562cde9bc038224561d0726d` | `6f9c316a034f09dcac58d8412629bff497d000b8` | `adminapp:crm-6f9c316` (`sha256:f8fe486ebfdf…`), `adminapp` `767fb7afb93e` healthy, RestartCount 0; VERSION `version=q160-20261001`, режим 0644; набор ключей env прежний |
+| website | `bd2d697306b1a28173f2b491b8a10840311129bf` | `ef6c6b013a2935c33b9e145c0f11b16db81a1d47` | `npm run build` под `summy` в `website-next-q160-20261001`, переключение каталога и `pm2 restart summy`: online, pid `3275641` |
+| backend, client-app, master-app, БД | `8190e4b`, `c36f92c`, `fb76db8`, `0166_optional_manicure_closure` | без изменений | ID контейнеров API, sync, client, BFF, postgres, minio, operator, redis прежние |
+
+Откат: `release.py rollback-crm` (`adminapp:pre-q160-20261001`,
+`releases/q160-20261001/crm-prev`) и `release.py rollback-website`
+(`/opt/summy-test/website-prev-q160-20261001`). Миграций нет. Тесты не
+проводились: экраны «Синонимы», «Сотрудники» и подписи блога после выкладки
+не открывались.
+
 ## TEST, 01.10.2026 16:02–16:05 МСК: колокольчик владельца о сбое синка YClients — CRM `e868df3` (`sa-20261001`)
 
 Выпуск `/opt/summy-test/releases/sa-20261001` поверх `bv-20261001`, только
