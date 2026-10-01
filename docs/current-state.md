@@ -24,6 +24,31 @@ website `a086b8386fa886960c795ed30e924a76db6473fb` (`main`, `v2.31.0`); БД
 вход не включён. Копия перед миграцией, результаты команд и откат — в
 [отчёте о выкладке](releases/production-rc5-deployment-2026-09-30.md).
 
+## TEST, 01.10.2026 15:38–15:47 МСК: баг-репорты во всех приложениях и ответы SUM-97/SUM-96 (`bv-20261001`)
+
+Выпуск `/opt/summy-test/releases/bv-20261001` поверх `mcatch-20261001`:
+LF-архивы `git archive` точных SHA, sha256 и blob-хеши сверены на сервере,
+сборки по одной под общим замком, миграций нет. Команды `prepare`, `backend`,
+`crm`, `client`, `master`, `website`, `status` — exit 0. Состояние — по Docker
+и pm2, без HTTP-запросов к приложениям.
+
+| Продукт | Было | Стало | Факт |
+|---|---|---|---|
+| backend (API и sync) | `34989879a9ad3b4ebeb4dcdfd4213e09d9ba0f31` | `2f6487e735fd91c6987a309d2389e037b35a8154` | `summy-bv-backend:2f6487e`, API `ac3a1551b36b` healthy, sync `a97d6943194b` running, RestartCount 0; override `releases/bv-20261001/backend-next.json` (env `exact-20261001`, `YCLIENTS_READ_ONLY=true`, набор ключей сверен) |
+| CRM | `c17e8f6ec55d81d2ad5320f48c77cdea491f684a` | `e4d33d09394274cf94d7b2d1763d17330648cd91` | `adminapp:crm-e4d33d0`, `adminapp` `6849b14f6ecf` healthy; VERSION `version=bv-20261001`, режим 0644 |
+| client-app | `175633fa52b48430a58bbaf03e4d6cb43f5098c6` | `c36f92c93583c21b1ec615fdf4a1f88de3354fdf` | `summy-bv-client:c36f92c`, контейнер `7dddfb956dee` running; compose `releases/bv-20261001/client-next.json` (копия `origin-test-20260930/client-final.json` с новым образом) |
+| master-app (BFF и web) | `fa541b53eea760c10011f476da6f268d7fb5b012` | `1fbae55cab37adfe7cdc0d019429ca8b22c72021` | `bff-bff:master-1fbae55`, `bff-bff-1` `37981785aa60` running; `.env` и compose прежние |
+| website | `a086b8386fa886960c795ed30e924a76db6473fb` | `bd2d697306b1a28173f2b491b8a10840311129bf` | `next build` под `summy` в отдельном каталоге, переключение каталога и `pm2 restart summy`: online, pid `3018009` |
+| БД | `0164_client_preferences` | без изменений | postgres, minio, operator, redis — ID прежние |
+
+Откат: `release.py rollback-<продукт>` — backend на `releases/exact-20261001/backend-next.json`
+(`summy-exact-backend:3498987`), CRM на `adminapp:pre-bv-20261001` и
+`releases/bv-20261001/crm-prev`, client-app на прежний compose
+(`summy-origin-test-client:175633f`), master-app на `bff-bff:pre-bv-20261001` и
+`master-prev`, сайт — каталог `/opt/summy-test/website-prev-bv-20261001` и
+`pm2 restart`. Тесты не проводились: формы, контакты, кнопка оплаты и сайт
+после выкладки не открывались.
+
 ## TEST, 01.10.2026 15:29–15:31 МСК: master-app `fa541b5` (SUM-187, плитки предпочтений)
 
 Поверх точной доставки `exact-20261001` (ниже) выложен один новый коммит
