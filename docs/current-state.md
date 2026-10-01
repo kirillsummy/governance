@@ -13,6 +13,34 @@ website `a086b8386fa886960c795ed30e924a76db6473fb` (`main`, `v2.31.0`); БД
 вход не включён. Копия перед миграцией, результаты команд и откат — в
 [отчёте о выкладке](releases/production-rc5-deployment-2026-09-30.md).
 
+## Общая выкладка всех `test` на TEST, 01.10.2026: master-app `77c7816`
+
+Сверены `origin/test` всех продуктовых репозиториев и `VERSION`/образы TEST.
+Отличался только master-app; выпуск `/opt/summy-test/releases/all-20261001`
+поверх `fa-20261001` (`prepare`, `master`, `status` — exit 0; LF-архив,
+SHA-256 и blob-хеши сверены; миграций нет):
+
+| Продукт | `origin/test` | На TEST | Итог |
+|---|---|---|---|
+| backend (API и sync) | `c7a4d3f3daf28b816dde9d2a39f2ac01b3479694` | тот же | уже актуален, `summy-fa-backend:c7a4d3f` |
+| CRM | `b1087f8dae281ded8f448d1b297830403faaa5f8` | тот же | уже актуален, `adminapp` `78beaa83a7de` |
+| master-app (BFF и web) | `77c7816321dcd4349a0073e982880ba31141064e` | был `537b79bbbf864845f0f8e83a812b2c5255e46288` | установлен: `bff-bff:master-77c7816` (`sha256:3ee8051377ae…`), `bff-bff-1` `cd296912129d` running, RestartCount 0 |
+| client-app | `175633fa52b48430a58bbaf03e4d6cb43f5098c6` | тот же | уже актуален |
+| website | `a086b8386fa886960c795ed30e924a76db6473fb` | тот же | уже актуален |
+| БД | — | `0163_inventory_cash_totals` | без изменений, копия не снималась |
+
+- Состав master-app: `e68ebbf` — нижние шторки формы закрытия записи и выбора
+  услуги не смещаются за экран в production-сборке; `77c7816` — обновлены
+  только web-проверки. Коммиты без ссылки на задачу YouTrack.
+- `summy-ai-operator`: репозиторий не читается ключом этого ПК, ветка `test`
+  не подтверждена; контейнер `summy-ai-operator-test` не трогали.
+
+Откат: `release.py rollback-master` (образ `bff-bff:pre-all-20261001`,
+каталог `master-prev`). Env и внешние интеграции не менялись. Тесты не
+проводились: экраны, HTTP-ответы и сценарии не проверялись; подтверждены коды
+завершения, `VERSION`, образы, состояние контейнеров и ревизия БД. Production
+не менялся.
+
 ## SUM-182, SUM-125, SUM-185 — открытие смены в SUMMY-local, премии в ведомости, примеры синка на общем TEST, 01.10.2026
 
 Выпуск `/opt/summy-test/releases/fa-20261001` поверх `od-20261001`
