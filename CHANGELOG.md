@@ -2,6 +2,14 @@
 
 ## [Unreleased]
 
+### SUM-208: client-app в стиле кабинета мастера и подтверждение визита ([SUM-208](https://summy.youtrack.cloud/issue/SUM-208)), 02.10.2026
+
+- Поручение владельца: переписать интерфейс client-app по подобию кабинета мастера; клиент создаёт запись и подтверждает её (уточнение: подтверждение предстоящего визита, `attendance=2` в YClients).
+- **backend** `test` `3f6e03e` → `d258519e3cfc22254bd0d6475032513ef8f498a4`: `POST /v1/client/orders/{id}/attendance`, таблица `client_visit_confirmations` (миграция `0169_client_visit_confirmations` после `0168`), одна отправка в YClients со сверкой чтением; заказы отдают `visitConfirmation` и `canConfirmVisit`. Контракт — [client-visit-confirmation.md](contracts/client-visit-confirmation.md).
+- **client-app** `test` `24fd18f` → `cdc4b92101b9cb4489b7e614c87dac3017f8144d`: одна колонка, стекло, нижний док из четырёх разделов; запись по шагам с календарём месяца и экраном «Проверь и подтверди»; «Подтвердить визит»; «Выбрать другое время» при отказе студии; заметная «Запросить отмену»; «Записаться снова» в истории, карточке визита и на главной. [ui-kit.md](contracts/ui-kit.md) дополнен мобильным диалектом для client-app.
+- Проверки: по решению владельца тесты и сборка не запускались; `tsc --noEmit`, prettier, `ruff check` изменённых файлов. Ручная проверка на локальном стенде (`summy_local`, БД `0169`): вход по коду, каталог, слоты, заказ, подтверждение визита `pending → confirmed` на синтетическом визите, экраны в браузере. `db/schema-contract.json` не обновлён.
+- **Dev и Prod не менялись.** Полный путь через YClients не проверен: на TEST YClients только для чтения, тестовый филиал не подключён.
+
 ### SUM-207: ревью, уборка и скорость всех продуктов ([SUM-207](https://summy.youtrack.cloud/issue/SUM-207)), 02.10.2026
 
 - **backend** `test` `592e294` → `3f6e03ea708520c737c60db4cd38b2ca2da33ab6`: миграция `0167_read_path_speedup` — 16 индексов внешних ключей нагруженных таблиц и 3 индекса `sync_runs`, снят неиспользуемый `raw_objects_payload_gin_idx`, VIEW `current_external_objects` через `LATERAL` (те же колонки и строки); `0168_process_status_tones` — тоны `duty/returned` → `attention`, `cleaning_defect/dismissed` → `success`. Сводка свежести — индексный поиск на тип. Основание — статистика Dev за 4 дня: 1,87 млн полных переборов `client_contacts`, выборка позиций записей за 30 дней 17,4 с, точечный поиск по срезу сырья 300 мс → 4 мс, премии администратора 957 → 138 мс. Снимки схемы/OpenAPI догнаны (отставали с 0159), тесты приведены к SUM-120/121/176/188, ruff и mypy без замечаний.
