@@ -23,12 +23,18 @@ API и sync стояли ≈2 мин 12 с. Тесты до выкладки, р
 
 ## Dev
 
-Последний записанный выпуск на Dev — `q160-20261001` (01.10.2026 21:46–21:51
-МСК): его состав совпал с кандидатом RC6 (снимок 02.10.2026 02:09 МСК, БД
-`0166_optional_manicure_closure`, замок свободен). Записанных выкладок на
-Dev после этого снимка нет. Коммиты в `test` после RC6 (в том числе правила
-CI и памятки 02.10.2026, master-app SUM-194) на Dev не разворачивались;
-головы `test` — в [ветках](branches.md). Снимок для записи факта —
+Последний записанный выпуск на Dev — `p24-20261002` (02.10.2026 16:13–16:18
+МСК, P24 [SUM-196](https://summy.youtrack.cloud/issue/SUM-196)/[SUM-192](https://summy.youtrack.cloud/issue/SUM-192)):
+backend `0adf690b41f2106cc38ad9a9774dd8f3d5084195` (включает backend-часть
+SUM-194 `a486b9b`), CRM `2cc39389d4a409bd1c37cbe67e0c3cd6b54bd600`,
+client-app `bf9491f29da9efb77882283f313b04789a9a69e2`; master-app
+`fb76db8` и website `ef6c6b0` без изменений, БД
+`0166_optional_manicure_closure` без миграции. Шаги `prepare`, `backend`,
+`crm`, `client`, `status` exit 0; контейнеры running, RestartCount 0.
+`YOUTRACK_TOKEN` на Dev не задан ни у backend, ни у BFF мастера, поэтому
+баг-репорты CRM, клиента и мастера на Dev не отправляются (по коду — ответ 503; HTTP-запросы не выполнялись). Коммиты
+master-app в `test` после RC6 (в том числе SUM-194) на Dev не
+разворачивались; головы `test` — в [ветках](branches.md). Снимок для записи факта —
 `scripts/test_state.py` ([инфраструктура](infrastructure.md#доставка-ветки-test-на-dev)).
 
 ## Включённость функций

@@ -2,6 +2,27 @@
 
 ## [Unreleased]
 
+### P24: рабочий баг-репорт CRM и клиента через YouTrack ([SUM-196](https://summy.youtrack.cloud/issue/SUM-196), клиент — [SUM-192](https://summy.youtrack.cloud/issue/SUM-192)), 02.10.2026
+
+- **Код** (опубликовано в `test`): backend `0adf690b41f2106cc38ad9a9774dd8f3d5084195`
+  (адаптер `app/domains/app_bugs`: `POST /v1/app-bugs` для живой CRM-сессии
+  любой роли, `POST /v1/client/app-bugs` для клиентской сессии; без миграции),
+  CRM `2cc39389d4a409bd1c37cbe67e0c3cd6b54bd600` (заглушка `submitBugReport`
+  заменена дверью `POST /api/app-bugs`, тема и фото, кнопка и на экране
+  открытия смены), client-app `bf9491f29da9efb77882283f313b04789a9a69e2`
+  (`/bug-report` после входа, BFF `/client/api/app-bugs`). Задача `[BUG]`,
+  номер задачи, отдельный повтор фото, идемпотентность по `requestId` с
+  документированным ограничением — [контракт](contracts/bug-reports.md).
+  Мастерский баг-репорт не менялся.
+- **Dev**: выпуск `p24-20261002` 16:13–16:18 МСК, шаги exit 0, БД
+  `0166_optional_manicure_closure` без изменений; backend включает
+  опубликованный SUM-194 `a486b9b`. `YOUTRACK_TOKEN` на Dev не задан (у
+  backend и у BFF мастера) — отправка не работает до решения о серверном
+  токене; новые секреты не создавались. Тесты не проводились, HTTP-запросов и
+  реальных задач YouTrack не было. Prod не менялся.
+- Настройки по имени добавлены в [инфраструктуру](docs/infrastructure.md#конфигурация--имена-не-значения-секретов),
+  Dev — в [текущем состоянии](docs/current-state.md#dev).
+
 ### Правила SUMMY, редакция 02.10.2026: Dev/Prod, CI, структура Governance ([SUM-202](https://summy.youtrack.cloud/issue/SUM-202))
 
 - **Порядок.** Codex ставит задачи и принимает по поручению и фактам
