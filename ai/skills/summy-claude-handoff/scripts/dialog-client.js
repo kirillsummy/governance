@@ -3,6 +3,19 @@ const badge = document.getElementById('status');
 const labels = {idle:'Ждёт указаний',working:'Работает',waiting:'Ждёт ответ',offline:'Не подключен'};
 let previous = '';
 let wasWorking = false;
+const sessionButton = document.getElementById('open-session');
+const sessionDialog = document.getElementById('session-dialog');
+const sessionCommand = document.getElementById('session-command');
+sessionButton.addEventListener('click', () => sessionDialog.showModal());
+document.getElementById('close-session').addEventListener('click', () => sessionDialog.close());
+document.getElementById('copy-session').addEventListener('click', async () => {
+  try {
+    await navigator.clipboard.writeText(sessionCommand.textContent);
+    document.getElementById('copy-status').textContent = 'Скопировано. Вставьте в терминал Codex.';
+  } catch {
+    document.getElementById('copy-status').textContent = 'Выделите и скопируйте команду вручную.';
+  }
+});
 function escapeHtml(value) {
   return value.replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 }
@@ -64,6 +77,11 @@ async function refresh() {
     if (!response.ok) throw Error();
     const state = await response.json();
     setStatus(state.status);
+    sessionButton.disabled = !state.sessionId;
+    sessionCommand.textContent = state.sessionId ? 'cd C:\\Users\\523ur\\Documents\\MyProjects\\Summy\\\nclaude --resume ' + state.sessionId + ' --strict-mcp-config' : '';
+    document.getElementById('session-note').textContent = state.status === 'working'
+      ? 'Claude сейчас работает. Дождитесь завершения перед продолжением этой сессии в терминале.'
+      : 'Команда продолжит текущую сессию с сохранённой историей.';
     if (state.status === 'working') {
       wasWorking = true;
     } else if (wasWorking && state.status === 'idle') {
@@ -90,6 +108,6 @@ async function refresh() {
       box.append(role, body); list.append(box);
     }
     if (nearBottom) window.scrollTo(0, document.body.scrollHeight);
-  } catch { setStatus('offline'); }
+  } catch { setStatus('offline'); sessionButton.disabled = true; sessionDialog.close(); }
 }
 refresh(); setInterval(refresh, 2000);
