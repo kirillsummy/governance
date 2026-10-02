@@ -332,6 +332,32 @@ CRM при переходе на этот контракт не должна п�
 подтверждённого итога. Правила идемпотентности, сверки и хранения ключа во
 вкладке — в [контракте SUM-103](../contracts/client-loyalty.md).
 
+### Ручки автономного пакета 02–03.10.2026 (backend `test`, на Dev)
+
+Все добавлены аддитивно; права проверяет backend по живой CRM-сессии
+(`X-Session-Token`) и сервисному токену, роли и разделы не расширены.
+Определения и остатки — [CHANGELOG](../CHANGELOG.md) и
+[SUM-210](https://summy.youtrack.cloud/issue/SUM-210).
+
+| Ручка | Часть | Доступ |
+|---|---|---|
+| `GET /v1/processes?exclude_type=…` | P02 | прежний; отбор до постраничности, `total` без исключённых |
+| `POST /v1/processes` с `appointment_id` у `appointment_reschedule`, `client_cancellation` | P02/P07 | owner, manager, administrator в филиале записи; живая заявка того же вида — 409 `appointment_request_exists` |
+| `GET /v1/auth/admin-locations/available`, `PUT /v1/auth/admin-locations/{access_id}/grants` | P25 | владелец; управляющая — администраторам в своих филиалах |
+| `GET /v1/clients/{id}/prepaid`, `GET /v1/clients/abonements/expiring?within_days=` | SUM-177 Э5 | manager, owner; источник YClients «не подключён» |
+| `GET /v1/workplaces/accounting/payouts`, `POST …/payouts/{id}/confirm`, `POST …/cash-shifts/{process_id}/discrepancies`, `GET /v1/workplaces/cash-discrepancies` | SUM-158 | accountant, owner; расхождения — управляющей по её филиалам |
+| `GET /v1/admin-shifts/today` (+`server_now`, `shift_date`, `stages`), `POST /v1/admin-shifts/{id}/reports` | P03, P04 | администратор своей смены |
+| `GET/POST /v1/penalty-appeals/mine` | P05 | сотрудник CRM со связью `staff_user`, только свой штраф |
+| `GET /v1/admin/portfolio/works`, `…/facets` | P17 | раздел `staff` |
+| `GET/POST /v1/marketing/campaigns`, `GET /v1/marketing/campaigns/{id}`, `POST …/{id}/versions`, `POST /v1/marketing/qr/{code}/scans` | P09 | manager, owner; сканы — сервисный токен |
+| `/v1/documents/templates*`, `/v1/documents/records*` | P13 | раздел `staff` (шаблоны — также «Настройки») |
+| `GET /v1/appointments/calendar` | P07 | раздел `clients`, разрешённые филиалы, 1–7 дней |
+| `/v1/clients/cycle/thresholds`, `/v1/clients/cycle/board`, `/v1/clients/{id}/cycle` | P10 | manager, owner |
+| `GET /v1/analytics/retention`, `GET /v1/analytics/rfm`, `GET /v1/analytics/rfm/clients` | P12 | раздел аналитики; список клиентов — аналитика и клиенты |
+| `POST /v1/master/appointments/{id}/close` (+`paid_in_cash`) | SUM-111 P9 | мастер своей записи |
+| `GET /v1/payroll/adjustments` (+`period_*`, `payout_on`, `settlement_status`) | SUM-10 | прежний |
+| `GET /v1/admin-payroll*` (+`items` оснований, `bonuses` дня) | P06 | прежний |
+
 ## Как менять стык
 
 Сверить route + DTO + auth backend; серверный адаптер CRM/сайта или allowlist BFF;
