@@ -2,6 +2,15 @@
 
 ## [Unreleased]
 
+### SUM-206: общий UI-кит CRM и client-app по кабинету мастера ([SUM-206](https://summy.youtrack.cloud/issue/SUM-206)), 02.10.2026
+
+- Поручение владельца: единый дизайн-брендинг — стили, кнопки, состояния, эталон — кабинет мастера; уточнения того же дня — «Сайт и мастера не переделывай», «Только клиентское приложение и CRM». Новый канон — [contracts/ui-kit.md](contracts/ui-kit.md); `brand-palette` и `brand-foundations` больше не называют акцент кабинета легаси. Палитра бренда и её пины не менялись.
+- **CRM** (`kirillsummy/crm/test`): `057ac67bba937ed8c226977dc7173c2b35cd1603` → `decf6cca93f1be9f49129217b40ad850d0e57daf` — монохром снят, акцент `#50603a`, Onest вместо Golos, шкала 13/16/22/26, чернильные тени, пары состояний, нажатие `scale(0.97)`; `DESIGN.md` переписан. Канбан-краски не менялись.
+- **client-app** (`kirillsummy/client-app/test`): `bf9491f29da9efb77882283f313b04789a9a69e2` → `db7cc4d21db1d7a9b9bdd58b88165324460f10d4` — токены `--ui-*`, акцент интерфейса `#50603a` вместо `--summy-green`, единый приглушённый тон, кнопки 16px/600 с откликом, фокус акцентом, радиусы по шкале.
+- **website, master-app**: ошибочно опубликованные в `test` правки SUM-206 (`67bdf33a24240465c585360f1a8c0284ebcefb2e`, `a92a33b02f0bbb863401e5f2ae335988d0fcd609`) отменены revert-коммитами `27067d80cc949f425829d7629749d6ec035c1f5d` и `5befb9fd5bd0e1cf03b811053032b3978f4f467d`; содержимое совпадает с прежними головами, на Dev не выкладывались.
+- **Dev**: `sum206-crm-dev-20261002` (`prepare`, `activate` exit 0; CRM running/healthy, RestartCount 0, VERSION 0644, образ `sha256:8267f8b6be35ed9b14f482649b51b4bb7e49ae9107d475621371bf7c3c9cd6e2`), затем `sum206-client-dev-20261002` (`prepare`, `client` exit 0; контейнер running, RestartCount 0, образ `sha256:08d2274e781b2c910e09f572f6b87925effbca3cf0e3c8dbaf410048a2974efa`). backend `7ab3790`, master-app `bf8f86c`, website `3656e18`, БД `0166_optional_manicure_closure` не менялись. Откат: `release.py rollback-crm` / `rollback-client` в каталогах выпусков.
+- Тесты, lint, typecheck и проверочные сборки не запускались; пользовательские сценарии не проверялись.
+
 ### Dev: CRM P26 и фиксация поставленного состава CRM/сайта, 02.10.2026
 
 - `kirillsummy/crm/test` — `bd07f09b04f27022a3a1fde4eb58343eadfb73a2` доставлен выпуском `staff-settings-dev-20261002-r3`; `prepare/activate/status` exit 0, CRM healthy/running, RestartCount 0. Настройка сотрудников перенесена в меню рядом с фильтрами, прежний маршрут и права сохранены. «Настройка» убрана только из шапки «Процессов».

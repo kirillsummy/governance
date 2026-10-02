@@ -23,6 +23,14 @@ API и sync стояли ≈2 мин 12 с. Тесты до выкладки, р
 
 ## Dev
 
+Последний шаг — SUM-206, общий UI-кит ([ui-kit.md](../contracts/ui-kit.md)),
+02.10.2026: `sum206-crm-dev-20261002` поставил CRM
+`decf6cca93f1be9f49129217b40ad850d0e57daf` (поверх `057ac67`), затем
+`sum206-client-dev-20261002` — client-app
+`db7cc4d21db1d7a9b9bdd58b88165324460f10d4` (поверх `bf9491f`). Все шаги exit 0,
+контейнеры running, RestartCount 0. backend `7ab3790`, master-app `bf8f86c`,
+website `3656e18` и БД `0166` не менялись. Ниже — предыдущая запись.
+
 Последний подтверждённый шаг — `staff-settings-dev-20261002-r3` (02.10.2026,
 [SUM-203](https://summy.youtrack.cloud/issue/SUM-203) P26): CRM
 `d7de35a98dad7294b7e0bfd007027571de2833fe` →
