@@ -134,6 +134,16 @@ CRM `4c36c4b9857e283c28890d26e0a0936fe8baeea2`; без миграций. Все 
 `24fd18f8d0360de2479710c8e3ce836b552a3e0d`, website
 `88585f0e0372361e469fc091da64e5738d8bf856`; БД `0177_inventory_auto_assigned`.
 
+## ab12-dev-20261003 — P08 (происхождение записи)
+
+03.10.2026 01:47–01:50 МСК. backend `e6bdd8d93782b7f09d4db85fc86ee04b25845729`,
+CRM `a9200baca75235774f192c748a2cffb21128b555`; без миграций. Все шаги exit 0.
+Состав Dev после ab12: backend `e6bdd8d93782b7f09d4db85fc86ee04b25845729`, CRM
+`a9200baca75235774f192c748a2cffb21128b555`, master-app
+`ec58c807eaccc364d6e583bd61a91ad692cb2bba`, client-app
+`24fd18f8d0360de2479710c8e3ce836b552a3e0d`, website
+`88585f0e0372361e469fc091da64e5738d8bf856`; БД `0177_inventory_auto_assigned`.
+
 Откат каждого шага — предыдущий образ и compose-файлы предыдущего выпуска;
 для backend после миграции — `backend-api-rollback.json` без
 `alembic upgrade` либо восстановление из копии по отдельному решению. YouTrack:

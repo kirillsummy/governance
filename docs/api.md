@@ -351,7 +351,7 @@ CRM при переходе на этот контракт не должна п�
 | `GET /v1/admin/portfolio/works`, `…/facets` | P17 | раздел `staff` |
 | `GET/POST /v1/marketing/campaigns`, `GET /v1/marketing/campaigns/{id}`, `POST …/{id}/versions`, `POST /v1/marketing/qr/{code}/scans` | P09 | manager, owner; сканы — сервисный токен |
 | `/v1/documents/templates*`, `/v1/documents/records*` | P13 | раздел `staff` (шаблоны — также «Настройки») |
-| `GET /v1/appointments/calendar` | P07 | раздел `clients`, разрешённые филиалы, 1–7 дней |
+| `GET /v1/appointments/calendar` (+`origin` записи, P08) | P07, P08 | раздел `clients`, разрешённые филиалы, 1–7 дней |
 | `/v1/clients/cycle/thresholds`, `/v1/clients/cycle/board`, `/v1/clients/{id}/cycle` | P10 | manager, owner |
 | `GET /v1/analytics/retention`, `GET /v1/analytics/rfm`, `GET /v1/analytics/rfm/clients` | P12 | раздел аналитики; список клиентов — аналитика и клиенты |
 | `POST /v1/master/appointments/{id}/close` (+`paid_in_cash`) | SUM-111 P9 | мастер своей записи |

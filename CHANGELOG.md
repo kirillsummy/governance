@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+### Автономный пакет: P08 — происхождение записи в календаре CRM ([SUM-210](https://summy.youtrack.cloud/issue/SUM-210)), 03.10.2026
+
+- backend `test` `eeb82f6` → `e6bdd8d93782b7f09d4db85fc86ee04b25845729`: у записи `GET /v1/appointments/calendar` поле `origin` (`summy_client`/`summy_website`/`summy_master`/`summy_crm` — по связанному заказу SUMMY: прямая связь, внешняя запись или `api_id` неподтверждённого заказа; `summy_redo` — переделка по рекламации; `yclients` — запись из синка без заказа SUMMY; иначе `unknown`); `source_channel` и данные не менялись. CRM `4c36c4b` → `a9200baca75235774f192c748a2cffb21128b555`: подпись происхождения на карточке и в панели записи. Карта функций журнала YClients — [docs/yclients-board-map.md](docs/yclients-board-map.md).
+- Dev: `ab12-dev-20261003` — prepare/backend/crm exit 0, без миграций. Тесты не проводились. Prod не менялся. Вопрос подписи — SUM-96 № 75.
+
 ### Автономный пакет, третья волна: P04, P06, P10, P12, заявки из календаря, SUM-160, карта P08 и сопоставление P27 ([SUM-210](https://summy.youtrack.cloud/issue/SUM-210)), 03.10.2026
 
 - Исполнитель — Юра (523uran523), разработка — Claude; исходный исполнитель частей — 523uran523. Выпуски Dev ab8–ab11 — [запись](docs/releases/dev-autonomous-batch-2026-10-03.md); ручки пакета — [API](docs/api.md).
