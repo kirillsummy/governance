@@ -66,6 +66,45 @@ prepare/backend/crm/website exit 0.
 `24fd18f8d0360de2479710c8e3ce836b552a3e0d`, website
 `88585f0e0372361e469fc091da64e5738d8bf856`; БД `0171_accounting_payout_marks`.
 
+## ab4-dev-20261003 — P03, P05, P17, P09/P13 (backend), SUM-206 CRM
+
+03.10.2026 00:20–00:25 МСК. backend `b2346293aec8d3479bc111e4ce65984523250771`,
+CRM `26c0c9f891d1c31c7096f4b84296ba20ee3abd8e` (включает опубликованный SUM-206
+`126594d` другой сессии; её выпуск `sum206-visual-crm-dev-20261003` помечен
+NOT-ACTIVATED). БД `0171_accounting_payout_marks` → `0173_document_library`.
+Копия `/opt/summy-test/backups/ab4-dev-20261003-before-0173.dump`, sha256
+`29fcbc9ae1d09dc404dceb86dd5fc4a401be986e9317c1262445762fb8154fbb`. Проверки
+миграции: счётчики равны, 9 новых таблиц маркетинга и документов пусты, 6
+триггеров append-only, невалидных индексов 0. prepare/backend/crm exit 0.
+
+## ab5-dev-20261003 — SUM-120, P09/P13 (CRM)
+
+03.10.2026 00:28–00:31 МСК. backend `8e1be4ed003820c1ad3302b614caed4c16194dfb`,
+CRM `a131bd506b017aa0ad41616e1fb55e51a4056cc6`; без миграций. Все шаги exit 0.
+
+## ab6-dev-20261003 — SUM-111 P9, SUM-10, SUM-160, P07 (backend)
+
+03.10.2026 00:42–00:45 МСК. backend `3cb3a9ea4ed33120229bfa20b6ba06f7c4be13ed`,
+CRM `4c88c5f78d74dcc7b45b8ac154cdd2454971139c`. БД `0173_document_library` →
+`0175_paid_closing_exclusion` (через `0174_client_cash_offset`). Копия
+`/opt/summy-test/backups/ab6-dev-20261003-before-0175.dump`, sha256
+`e88a68b238f56882eb368bba3ee5d7592ecce7e2ee5d2f18370832232310f7f2`. Проверки:
+счётчики равны, CHECK `earnings_adjustments_kind_known` содержит `client_cash`,
+строк `client_cash` 0, `contract_v1_paid_closing_exclusions` = 0,
+`contract_v1_earnings_sources` читается, невалидных индексов 0. Все шаги exit 0.
+
+Состав Dev после ab6: backend `3cb3a9ea4ed33120229bfa20b6ba06f7c4be13ed`, CRM
+`4c88c5f78d74dcc7b45b8ac154cdd2454971139c`, master-app
+`ec58c807eaccc364d6e583bd61a91ad692cb2bba`, client-app
+`24fd18f8d0360de2479710c8e3ce836b552a3e0d`, website
+`88585f0e0372361e469fc091da64e5738d8bf856`; БД `0175_paid_closing_exclusion`.
+
+## ab7-dev-20261003 — P07 (CRM)
+
+03.10.2026 00:50 МСК. CRM `4561d64982a5c1ab0578e9ee4ad0e6f2e9299c7d`, без миграций.
+prepare/crm exit 0, adminapp healthy, restarts 0. Состав после ab7 — как после
+ab6, CRM `4561d64982a5c1ab0578e9ee4ad0e6f2e9299c7d`.
+
 Откат каждого шага — предыдущий образ и compose-файлы предыдущего выпуска;
 для backend после миграции — `backend-api-rollback.json` без
 `alembic upgrade` либо восстановление из копии по отдельному решению. YouTrack:
