@@ -23,6 +23,25 @@ API и sync стояли ≈2 мин 12 с. Тесты до выкладки, р
 
 ## Dev
 
+Последний подтверждённый шаг — `ab3-dev-20261002` (03.10.2026 00:01 МСК)
+автономного пакета; выпуски `sum207-dev-20261002`, `ab1-p02-dev-20261002`,
+`ab2-dev-20261002`, `ab3-dev-20261002` — все шаги exit 0
+([запись](releases/dev-autonomous-batch-2026-10-03.md)).
+
+| Компонент | SHA после ab3 |
+|---|---|
+| backend | `233035aa1d5b111546a5169639d1e653b3bd729e` |
+| CRM | `f55f8700d52e9c3b7f4b73da8af8fa68e0bc980e` |
+| master-app | `ec58c807eaccc364d6e583bd61a91ad692cb2bba` |
+| client-app | `24fd18f8d0360de2479710c8e3ce836b552a3e0d` |
+| website | `88585f0e0372361e469fc091da64e5738d8bf856` |
+
+БД `0171_accounting_payout_marks` (миграции 0167–0171 применены 02.10.2026
+23:24–23:56 МСК с копиями перед каждой). `YCLIENTS_READ_ONLY=true` у api и sync;
+api и CRM healthy, restarts 0; сайт под pm2 online.
+
+### Предыдущий снимок — website R5, 02.10.2026 21:39 МСК
+
 Последний подтверждённый шаг — `website-next-dev-20261002-r5`:
 website `3656e18e44c47d556823f2b77dccad4de239e497` →
 `27067d80cc949f425829d7629749d6ec035c1f5d`; доказательство записано
