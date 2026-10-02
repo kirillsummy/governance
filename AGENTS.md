@@ -1,39 +1,32 @@
 # SUMMY · вход для агента
 
-Governance — единая документация разработки SUMMY. Политика репозитория описана
-в [ветках](docs/branches.md). Если актуального контекста ещё нет, начни с
-[порядка работы](ai/WORKFLOW.md) и [ограничений для ИИ](ai/RESTRICTIONS.md).
-Полномочия задаются [уставом](CHARTER.md) и явным решением владельца, не skills.
-Развилку «спросить Кирилла, спросить Юру или решить самостоятельно» выбирай по
-[маршруту решений](ai/WORKFLOW.md#кому-адресовать-развилку). При конфликте со
-старой памяткой продукта действует иерархия источников [устава](CHARTER.md):
-памятка продукта не расширяет права и не заменяет актуальный общий контракт.
-Любая LLM-сессия, изменяющая любой репозиторий `kirillsummy`, обязана в рамках
-той же задачи отразить изменение в Governance `main`: минимум факт и границу
-проверки в [CHANGELOG](CHANGELOG.md), а изменённый контракт — в его единственном
-каноническом разделе. Подробный порядок закреплён в [уставе](CHARTER.md#что-документируем-а-что-нет).
+Governance (`main`) — единственный канон правил SUMMY для любого чата и ПК.
 
-## Найди нужный раздел
+## Порядок чтения
 
-| Задача | Куда смотреть |
+1. [Устав](CHARTER.md) — полномочия и обязательные правила. Читается целиком.
+2. [Порядок работы](ai/WORKFLOW.md) — процедуры: цикл задачи, развилки,
+   YouTrack, релиз Prod, координация Codex и Claude.
+3. По задаче — только нужные разделы из таблицы ниже и `AGENTS.md` продукта.
+
+## Куда смотреть
+
+| Задача | Раздел |
 |---|---|
-| Понять продукт и статус | [Продукт](docs/product.md), [состояние](docs/current-state.md) |
-| Нерешённое / конфликт | [Вопросы Кириллу](https://summy.youtrack.cloud/issue/SUM-96), [Вопросы Юре](https://summy.youtrack.cloud/issue/SUM-97) |
-| Архитектура | [Общая схема](docs/architecture/README.md) |
-| Сайт | [website](docs/architecture/website.md) |
-| Backend | [backend](docs/architecture/backend.md), [БД](docs/database.md), [API](docs/api.md) |
-| CRM | [crm](docs/architecture/crm.md) |
-| Мастер / клиент | [master-app](docs/architecture/master-app.md), [client-app](docs/architecture/client-app.md) |
-| Найти код / источник | [Репозитории](docs/repositories.md), [модули](docs/modules.md), [реестр файлов](docs/sources.md) |
-| Проверки / окружения | [Конвенции](docs/conventions.md), [инфраструктура](docs/infrastructure.md) |
-| Production-доступ и первый релиз | [Инфраструктура](docs/infrastructure.md#доступ-и-резервные-копии-production-проверено-28092026), [выкладка RC2 28.09](docs/releases/production-rc2-deployment-2026-09-28.md), [исторический промт RC1](docs/releases/production-rc1-deploy-prompt-2026-09-28.md) |
-| Подключение к TEST/БД и доставка `test` | [Инфраструктура](docs/infrastructure.md#подключение-к-test-и-бд), [БД](docs/database.md), [ветки](docs/branches.md), [текущее состояние](docs/current-state.md) |
-| Люди / доступы | [Команда](roles/TEAM.md) |
+| Продукт и подтверждённое состояние | [Продукт](docs/product.md), [текущее состояние](docs/current-state.md) |
+| Архитектура и продукты | [Общая схема](docs/architecture/README.md): [backend](docs/architecture/backend.md), [crm](docs/architecture/crm.md), [master-app](docs/architecture/master-app.md), [client-app](docs/architecture/client-app.md), [website](docs/architecture/website.md) |
+| БД, API, миграции | [БД](docs/database.md), [API](docs/api.md) |
+| Межпродуктовое правило | [Контракты](contracts/README.md), [решения ADR](decisions/) |
+| Ветки, CI | [Ветки](docs/branches.md) |
+| Dev, Prod, доставка, доступы | [Инфраструктура](docs/infrastructure.md), [ресурсы](docs/resources.md) |
+| Проверки перед Prod | [Конвенции](docs/conventions.md) |
+| Где код | [Репозитории](docs/repositories.md), [модули](docs/modules.md), [источники](docs/sources.md) |
+| Люди и доступы | [Команда](roles/TEAM.md) |
 | Повторяемая процедура | [Skills](ai/skills/README.md) |
-| Общее бизнес-правило | [Контракты](contracts/README.md) |
+| Шаблоны | [Поручение](templates/kickoff.md), [отчёт](templates/handoff.md), [AGENTS продукта](templates/AGENTS-stub.md) |
+| Вопросы людям | [Кириллу — SUM-96](https://summy.youtrack.cloud/issue/SUM-96), [Юре — SUM-97](https://summy.youtrack.cloud/issue/SUM-97) |
+| Термины | [Глоссарий](GLOSSARY.md) |
+| История, архив, релизы | [CHANGELOG](CHANGELOG.md), [история](docs/history/README.md), [релизы](docs/releases/) |
 
-Выбор репозитория, чтение продуктовых инструкций и проверка Git-состояния описаны
-в [порядке работы](ai/WORKFLOW.md). Соседние каталоги — отдельные продукты.
-Код, feature, deployment и проверенный сценарий — разные уровни доказательства.
-Документы — датированные снимки; [история](docs/history/consolidation-2026-09-19.md)
-объясняет объединение прежних веток без потери источников.
+Документы — датированные снимки: живое состояние Git, YouTrack и сред
+проверяй отдельно.

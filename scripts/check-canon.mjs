@@ -93,21 +93,13 @@ function proverit(d, { noRemote }) {
 
   const ALL_AGENTS = ['agentsSite', 'agentsCrm', 'agentsBackend', 'agentsCabinet', 'agentsClient'];
 
-  has(['charter', 'handoff'],
-    'Агенту релиза: проверь независимую приёмку и поставь', 'финальная строка хендоффа');
+  has(['charter'], '«тесты не проводились»', 'отчёт о Dev называет непрогон');
+  has(['handoff'], 'Тесты не проводились', 'отчёт называет непрогон');
   not(['charter', 'handoff', 'team', ...ALL_AGENTS],
-    /Архитектору: смержи и выкати/, 'хендофф не просит выкатку');
-  has(['charter'], 'Production — отдельное решение Кирилла',
-    'выкатка — за владельцем');
-  rules++;
-  for (const k of ['handoff']) {
-    if (d[k] === null) continue;
-    if (!/Агенту релиза: проверь независимую приёмку и поставь[^\n]*commit <полный SHA>/.test(d[k]))
-      errors.push(`финальная строка без (commit <полный SHA>) в ${FILES[k]}`);
-  }
-
-  has(['charter'], 'коммит заморожен', 'заморозка коммита (канон)');
-  has(ALL_AGENTS, 'новыми коммитами', 'правки поверх новыми коммитами (памятки)');
+    /Архитектору: смержи и выкати/, 'отчёт не просит выкатку');
+  has(['charter'], 'отдельного личного утверждения Кирилла',
+    'релиз Prod — любой участник с действующими правами');
+  has(['charter'], 'Опубликованная история не', 'история append-only (канон)');
   not(['charter', 'handoff', ...ALL_AGENTS],
     /отданную ветку не дописыва|ветка заморожена|новая правка = новая ветка/,
     'нет старой заморозки ветки');
@@ -119,15 +111,18 @@ function proverit(d, { noRemote }) {
     'нет захардкоженного dev');
   not(ALL_AGENTS, /пуш ветки \(не `dev`\/`main`\)|НЕ пушить в `dev`\/`main`/,
     'памятки не сужают запрет до dev/main');
-  has(['branches'], 'Ветку `test` в один момент её обновляет один\nназначенный ответственный',
-    'очередь test (каноническая политика)');
+  has(['branches'], 'pull_request в `test` CI не запускают',
+    'CI не запускается на test (каноническая политика)');
   has(['stub'], 'governance/AGENTS.md', 'памятка продукта ссылается на канон');
-  has(['kickoff'], '[порядок работы](../ai/WORKFLOW.md)',
+  has(['kickoff'], '(../ai/WORKFLOW.md)',
     'шаблон задачи ссылается на workflow');
   rules++;
   const PRODUCTS = [
-    ['agentsCabinet', 'работа ведётся в `test`', ['feature/react-client']],
-    ['agentsBackend', 'работа ведётся в `test`', ['dev']],
+    ['agentsCabinet', 'Рабочая ветка — `test`', ['feature/react-client']],
+    ['agentsBackend', 'Рабочая ветка — `test`', ['dev']],
+    ['agentsCrm', 'Рабочая ветка — `test`', ['main']],
+    ['agentsClient', 'Рабочая ветка — `test`', ['main']],
+    ['agentsSite', 'Рабочая ветка — `test`', ['main']],
   ];
   for (const [key, baseMarker, prot] of PRODUCTS) {
     if (d[key] === null) continue;
@@ -135,31 +130,20 @@ function proverit(d, { noRemote }) {
       errors.push(`база веток: нет «${baseMarker}» в ${FILES[key]}`);
     for (const b of prot) {
       if (!d[key].includes(b))
-        errors.push(`защищённая ветка «${b}» не упомянута в ${FILES[key]}`);
+        errors.push(`production-ветка «${b}» не упомянута в ${FILES[key]}`);
     }
   }
 
-  has(['charter'], 'Строивший не принимает своё', 'инвариант конвейера');
-  has(['team', 'developer', 'release'], 'строивший не принимает своё',
-    'инвариант конвейера');
-  has(['team'], 'повторной проверки сценария', 'ретест перед закрытием');
-  has(['release'], 'повторного прогона', 'ретест перед закрытием');
-  has(['charter'], 'бизнес-решение принимает Кирилл', 'деньги — решение владельца');
-  has(['team', 'developer'], 'архитектор готовит и проверяет',
-    'деньги — решение владельца');
+  has(['charter'], 'бизнес — Кирилл', 'деньги — решение владельца');
   not(['charter', 'team', 'developer'],
     /только через\s+согласование с владельцем(\/| или )архитектором/,
     'нет формулы «владелец ИЛИ архитектор» для денег');
   has(['agentsCabinet'], 'деньги считает БЭКЕНД', 'кабинет: деньги в бэкенде');
   not(['agentsCabinet'], /payout\.py` \+ \[docs/, 'кабинет не шлёт деньги в легаси');
 
-  has(['agentsCrm'], 'но не устав', 'CRM: канон выше памятки');
+  has(['agentsCrm'], 'только по канону', 'CRM: канон выше памятки');
   not(ALL_AGENTS, /этот `AGENTS\.md`[^\n]*побеждает\*\* —/,
     'памятка не выше устава');
-
-  has(['charter'], 'Прежние файлы «эстафеты', 'эстафета: файл не команда');
-  has(['charter'], 'не дают постоянного права на production', 'эстафета: без постоянного права');
-  has(['charter'], 'Перенумерование — НОВЫМ коммитом', 'конфликт миграций: один процесс');
   not(['charter'], /merge-нод/, 'нет merge-ноды');
 
   rules++;
@@ -249,12 +233,12 @@ function proverit(d, { noRemote }) {
 }
 
 const IZLOMY = [
-  ['инвариант конвейера',
-    (d) => ({ ...d, charter: d.charter.replaceAll('Строивший не принимает своё', '') })],
+  ['релиз Prod — любой участник',
+    (d) => ({ ...d, charter: d.charter.replaceAll('отдельного личного утверждения Кирилла', '') })],
   ['не распарсилась',
     (d) => ({ ...d, branches: d.branches.replaceAll('| Репозиторий |', '| Система |') })],
-  ['финальная строка хендоффа',
-    (d) => ({ ...d, handoff: d.handoff.replaceAll('Агенту релиза: проверь независимую приёмку и поставь', '') })],
+  ['отчёт называет непрогон',
+    (d) => ({ ...d, handoff: d.handoff.replaceAll('Тесты не проводились', '') })],
 ];
 let samoizlom = `самоизлом ${IZLOMY.length}/${IZLOMY.length}`;
 if (docs.charter === null || docs.handoff === null || docs.branches === null) {

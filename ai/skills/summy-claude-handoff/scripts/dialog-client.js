@@ -3,42 +3,6 @@ const badge = document.getElementById('status');
 const labels = {idle:'Ждёт указаний',working:'Работает',waiting:'Ждёт ответ',offline:'Не подключен'};
 let previous = '';
 let wasWorking = false;
-const summon = document.createElement('button');
-summon.type = 'button';
-summon.textContent = 'Позвать Codex';
-summon.title = 'Запустить Codex автоматически для текущей сессии Claude';
-summon.style.cssText = 'display:none;margin-left:10px;padding:7px 11px;border:1px solid #58739a;border-radius:9px;background:#263850;color:#e9f2ff;cursor:pointer;font:inherit';
-badge.after(summon);
-summon.addEventListener('click', async () => {
-  summon.disabled = true;
-  summon.textContent = 'Запускаю Codex…';
-  try {
-    const response = await fetch('/api/summon', {method:'POST', headers:{'content-type':'application/json'}, body:'{}'});
-    const result = await response.json();
-    if (!response.ok) throw Error(result.error || 'Не удалось запустить Codex');
-    renderSummon(result);
-  } catch {
-    summon.textContent = 'Ошибка запуска — повторить';
-    summon.disabled = false;
-  }
-});
-
-function renderSummon(job) {
-  if (job.status === 'working') {
-    summon.textContent = 'Codex работает';
-    summon.disabled = true;
-  } else if (job.status === 'completed') {
-    summon.textContent = 'Codex завершил';
-    summon.disabled = true;
-  } else if (job.status === 'failed') {
-    summon.textContent = 'Codex: ошибка — повторить';
-    summon.disabled = false;
-  } else {
-    summon.textContent = 'Позвать Codex';
-    summon.disabled = false;
-  }
-}
-
 function escapeHtml(value) {
   return value.replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 }
@@ -100,12 +64,6 @@ async function refresh() {
     if (!response.ok) throw Error();
     const state = await response.json();
     setStatus(state.status);
-    summon.style.display = state.status === 'idle' && state.messages.some(message => message.role === 'assistant') ? 'inline-block' : 'none';
-    const summonResponse = await fetch('/api/summon', {cache:'no-store'});
-    if (summonResponse.ok) {
-      const job = await summonResponse.json();
-      renderSummon(job.runLog === state.runLog && job.runSize === state.runSize ? job : {status:'idle'});
-    }
     if (state.status === 'working') {
       wasWorking = true;
     } else if (wasWorking && state.status === 'idle') {

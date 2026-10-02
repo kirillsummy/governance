@@ -94,4 +94,4 @@ website `main` — `164dc52`.
 с разрешением на соответствующие проверки и тестовый deployment.
 
 Следующая разработка начинается от актуальной `test` в сохранённой `work`.
-Краткая памятка: [как экономить контекст и токены](../../ai/TOKEN-EFFICIENCY.md).
+Краткая памятка: [как экономить контекст и токены](https://github.com/kirillsummy/governance/blob/e3a948486e7a7358dcc387f05f28ba11f9456eb1/ai/TOKEN-EFFICIENCY.md).
