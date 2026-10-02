@@ -23,34 +23,40 @@ API и sync стояли ≈2 мин 12 с. Тесты до выкладки, р
 
 ## Dev
 
-Последний записанный выпуск — `master-ui-dev-20261002` (02.10.2026,
-[SUM-194](https://summy.youtrack.cloud/issue/SUM-194)/SUM-155): master-app
-`fb76db82f760befdbb16472054a2bab917169c1c` →
-`1ce2cea637f272bed5fdb4990fffce66ed5ca7b4`. Изменения интерфейса мастера,
-контейнер, образ, сохранённый состав и откат — в
-[записи выпуска](releases/dev-master-ui-2026-10-02.md). BFF мастера running,
-RestartCount 0, Docker healthcheck отсутствует. Сборка выполнена для
-поставки; тестов, проверочных сборок и HTTP-запросов не было. Prod не менялся.
+Последний подтверждённый шаг — `staff-settings-dev-20261002-r3` (02.10.2026,
+[SUM-203](https://summy.youtrack.cloud/issue/SUM-203) P26): CRM
+`d7de35a98dad7294b7e0bfd007027571de2833fe` →
+`bd07f09b04f27022a3a1fde4eb58343eadfb73a2`, опубликована в `test`.
+`prepare`, `activate`, `status` завершились с кодом 0; CRM running/healthy,
+RestartCount 0, VERSION 0644. Настройка сотрудников доступна в меню рядом
+с фильтрами; кнопка удалена только из шапки «Процессов».
 
-Backend `0adf690b41f2106cc38ad9a9774dd8f3d5084195` (включает backend-часть
-SUM-194 `a486b9b`), CRM `2cc39389d4a409bd1c37cbe67e0c3cd6b54bd600`,
-client-app `bf9491f29da9efb77882283f313b04789a9a69e2` сохранены после
-`p24-20261002` (02.10.2026 16:13–16:18 МСК, P24
-[SUM-196](https://summy.youtrack.cloud/issue/SUM-196)/[SUM-192](https://summy.youtrack.cloud/issue/SUM-192);
-шаги `prepare`, `backend`, `crm`, `client`, `status` exit 0).
-Website `ef6c6b013a2935c33b9e145c0f11b16db81a1d47` и БД
-`0166_optional_manicure_closure` без изменений; миграций не было. Финальный
-снимок выпуска мастера подтверждает прежние ID остальных контейнеров,
-running и RestartCount 0, healthy у имеющих Docker healthcheck.
-`YOUTRACK_TOKEN` на Dev не задан ни у backend, ни у BFF мастера, поэтому
-баг-репорты CRM, клиента и мастера на Dev не отправляются (по коду — ответ 503;
-HTTP-запросы не выполнялись).
+| Компонент | SHA в итоговом снимке R3 |
+|---|---|
+| backend | `7ab379083e30e1dc0b4766390c2ee5906745f99f` |
+| CRM | `bd07f09b04f27022a3a1fde4eb58343eadfb73a2` |
+| master-app | `bf8f86ce0468b664b36c7700c43a6891f7f67e89` |
+| client-app | `bf9491f29da9efb77882283f313b04789a9a69e2` |
+| website | `3656e18e44c47d556823f2b77dccad4de239e497` |
 
-CRM `df9ce3aa236bace634d2a92b83dbccd50154bc2c` (SUM-203 P01/P02) опубликован
-в `test`, но на Dev пока не доставлен. Начисление за перезапись не включено,
-доставка UI мастера не завершает всю SUM-194. Назначение веток и правила Git —
-в [ветках](branches.md). Снимок для записи факта —
-`scripts/test_state.py` ([инфраструктура](infrastructure.md#доставка-ветки-test-на-dev)).
+БД `0166_optional_manicure_closure`; миграций не было. Состав перед R3
+обновлён параллельным `ot-20261002`: журнал ACTIVE, серверные маркеры и
+сохранённый статус прочитаны, явные exit codes его команд недоступны.
+Результат R3, состав CRM P01/P02/SUM-135/SUM-160, пределы сайта SUM-162 и
+сохранённый откат — в [записи выпуска](releases/dev-crm-and-website-2026-10-02.md).
+Ранняя доставка мастера `1ce2cea` остаётся
+[исторической записью](releases/dev-master-ui-2026-10-02.md).
+
+Остальные контейнеры и PM2 сайта не переключались R3; сайт online, PID
+4128999, restart count 11. Сборки выполнены для поставки, тесты и
+HTTP-сценарии не проводились. Prod не менялся. Наличие `YOUTRACK_TOKEN`
+повторно прочитано только как boolean: false у backend и BFF мастера;
+рабочая отправка баг-репортов этой поставкой не подтверждается.
+
+SUM-203/SUM-196/SUM-194/SUM-195 целиком не завершены. P25 с филиалами и
+P27 с классификацией рекламаций находятся в очереди; уточнения — в
+[записи требований](decisions/2026-10-02-staff-branches-and-complaint-backlog.md).
+Назначение веток и правила Git — в [ветках](branches.md).
 
 ## Включённость функций
 
