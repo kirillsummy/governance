@@ -2,6 +2,41 @@
 
 ## [Unreleased]
 
+### Production RC6: весь код, работающий на TEST (2026-10-02)
+
+- **Утверждение и состав.** Прямое поручение владельца 02.10.2026 —
+  production-релиз всего кода пяти продуктов, фактически работающего на TEST,
+  во внеплановом окне. Кандидат снят с работающих артефактов TEST 02:09 МСК
+  (VERSION и метки ревизии образов): backend `8190e4b2902a013eaa5914d2005461247e80f473`
+  (БД `0166`), CRM `6f9c316a034f09dcac58d8412629bff497d000b8`, master-app
+  `fb76db82f760befdbb16472054a2bab917169c1c`, website
+  `ef6c6b013a2935c33b9e145c0f11b16db81a1d47`, client-app
+  `c36f92c93583c21b1ec615fdf4a1f88de3354fdf`.
+- **Проверки до переключения.** Полные тесты кандидата и production-базы
+  (pytest MSK и денежные UTC, vitest, tsc, eslint, knip, node --test,
+  prettier, проверки сайта), пять production-сборок, репетиция `0160 → 0166`
+  на копии production внутри production-сервера (7/7 ворот, включая RC5 на
+  схеме 0166). Новых дефектов работающего кода нет; новые красные тесты
+  (backend 6, CRM 8, master-app 7) — устаревшие ожидания под утверждённые
+  изменения, один ошибочный тест и один флап, разбор — в
+  [документе выпуска](docs/releases/production-rc6-2026-10-02.md). Их правка —
+  тест-долг.
+- **Выкладка.** `/root/releases/rc6-20261002/rc6.py`: `stage`, `rehearsal`,
+  `backend` (свежая копия `summy-2026-10-02-0257.dump`, 45 104 085 байт,
+  `pg_restore` прочитан полностью; шесть ревизий по одной), `master`, `crm`,
+  `website`, `client` — exit 0; `rc6-postdeploy-check.py` — 50/50. API и sync
+  стояли ≈2 мин 12 с. client-app поставлен неактивно, вход не включён.
+- **Git.** Без force: backend `dev`, master-app `feature/react-client`, website
+  и client-app `main` — fast-forward на развёрнутые SHA; CRM `main` — merge
+  `7b8d4bfa045ee47898b8cc8d45480ac4d7d7493e` (родители RC5.1 `3f7795f` и
+  `6f9c316`, дерево равно `6f9c316`). Теги `v0.3.0`, `v0.179.0` (на `6f9c316`),
+  `v0.81.0`, `v2.32.0`, `v0.1.0`.
+- **Граница.** Env, секреты и интеграции production не менялись, кроме образов
+  и `APP_VERSION` master-app; TEST-БД, env и тестовые входы не переносились.
+  Экраны и вход пользователей не проверялись; платежей, SMS, выплат и записей
+  в YClients не было. Откат не применялся; `rollback-backend` возвращает код
+  RC5 без отката схемы. Текущее состояние — [current-state](docs/current-state.md).
+
 ### SUM-160 и SUM-161: честные состояния CRM и единый портрет мастера на сайте, TEST (2026-10-01)
 
 - **CRM `test` `6f9c316a034f09dcac58d8412629bff497d000b8`** (SUM-160, часть
