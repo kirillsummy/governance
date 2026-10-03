@@ -23,7 +23,11 @@ API и sync стояли ≈2 мин 12 с. Тесты до выкладки, р
 
 ## Dev
 
-Последний подтверждённый шаг — `navlock-dev-20261003` (03.10.2026 17:04 МСК): CRM
+Последний подтверждённый шаг — `bugq-dev-20261003` (03.10.2026 17:24 МСК): backend
+`03a0e88` и master-app `df7fa1d` — баг-репорт отдельной задачей в «Очереди» с тегом «баг»
+([контракт](../contracts/bug-reports.md); на Dev нет `YOUTRACK_TOKEN`, отправка отвечает 503),
+CRM `5652ee2` — меню свёрнуто при запуске, exit 0, без миграций. Перед ним —
+`navlock-dev-20261003` (17:04 МСК): CRM
 `70c78f3` — меню 16.09 и оформление утра 02.10 ([канон](../contracts/crm-navigation.md)),
 exit 0, без миграций. Перед ним — `perf-fe2-dev-20261003` (16:55 МСК): CRM `88de9e9`,
 master-app `1e3a497` задачи SUM-212. Ранее — `all-avail-dev-20261003-r3` (16:46 МСК): CRM
@@ -53,11 +57,11 @@ D01–D03 ревизии вопросов ([решения](decisions/2026-10-03
 ([документ](releases/production-rc7-candidate-2026-10-03.md), BLOCKED), и выпуски
 автономного пакета ([запись](releases/dev-autonomous-batch-2026-10-03.md)).
 
-| Компонент | SHA (03.10.2026 17:04 МСК) |
+| Компонент | SHA (03.10.2026 17:24 МСК) |
 |---|---|
-| backend | `c3beb399eb809c613249d9b39a583d5ed592afd2` |
-| CRM | `70c78f3ffd58d700effe3e664f32b62ba92444f7` |
-| master-app | `1e3a4975ff12ae5637228a060b1070e966a5fcc0` |
+| backend | `03a0e884a5ef709f27f081eb775233dfdbdd3792` |
+| CRM | `5652ee20e671de466eed175fd03be17a720e6ee0` |
+| master-app | `df7fa1dbf3d32b0b72c07a25e271b9ada0c6532a` |
 | client-app | `4aef9584bf72f4dfdcae8ceaf97cc40378bd26ec` |
 | website | `65de6f47c584dd96ea8e8110a641b4281094960d` |
 
