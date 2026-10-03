@@ -23,7 +23,12 @@ API и sync стояли ≈2 мин 12 с. Тесты до выкладки, р
 
 ## Dev
 
-Последний подтверждённый шаг — `board-cards-dev-20261003` (03.10.2026 15:42 МСК): CRM
+Последний подтверждённый шаг — `all-avail-dev-20261003-r3` (03.10.2026 16:46 МСК): CRM
+`1d925d2`; перед ним `all-avail-dev-20261003-r2` (16:40 МСК) и `-r1` (16:24 МСК) —
+вся доступная часть пула ([запись](releases/dev-all-available-2026-10-03.md)), все шаги
+exit 0, своих миграций нет. Между r1 и r2 — `perf-be2-dev-20261003` другой задачи
+(backend `a988209`, миграция `0181_staff_schedule_minutes_cache`), перед r1 —
+`perf-be-dev-20261003` (backend `3e7134c`, миграции `0179`, `0180`). Ранее — `board-cards-dev-20261003` (03.10.2026 15:42 МСК): CRM
 `caa27a7` — доска процессов: прежнее оформление карточек, exit 0, без миграций.
 Перед ним — `process-close2-dev-20261003` (03.10.2026 15:07 МСК): CRM
 `4504e30` — окно карточки процесса без служебного заголовка, крестик закрытия
@@ -45,15 +50,15 @@ D01–D03 ревизии вопросов ([решения](decisions/2026-10-03
 ([документ](releases/production-rc7-candidate-2026-10-03.md), BLOCKED), и выпуски
 автономного пакета ([запись](releases/dev-autonomous-batch-2026-10-03.md)).
 
-| Компонент | SHA (03.10.2026 15:42 МСК) |
+| Компонент | SHA (03.10.2026 16:46 МСК) |
 |---|---|
-| backend | `7fbbd2ad86ab1814628c853ee6da558e29d338c2` |
-| CRM | `caa27a7d4c2243c214c8cc1e01dd78513a0de89e` |
-| master-app | `2183dcfca9ce6b220b6a2c7a2296147d43efbba5` |
-| client-app | `66bcf8556f7fbf8b13cf7adf1bedc29bb260c8d3` |
+| backend | `c3beb399eb809c613249d9b39a583d5ed592afd2` |
+| CRM | `1d925d2b85f3c7f736f1b561b6f598991e173782` |
+| master-app | `a5e2ea9de86eec53a5863398a1ae461e7f157a58` |
+| client-app | `4aef9584bf72f4dfdcae8ceaf97cc40378bd26ec` |
 | website | `65de6f47c584dd96ea8e8110a641b4281094960d` |
 
-БД `0178_portal_order_record_idx`. `YCLIENTS_READ_ONLY=true` у api и sync; api и CRM
+БД `0181_staff_schedule_minutes_cache`. `YCLIENTS_READ_ONLY=true` у api и sync; api и CRM
 healthy, restarts 0; сайт под pm2 online.
 
 ### Предыдущий снимок — website R5, 02.10.2026 21:39 МСК
