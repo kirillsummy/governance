@@ -24,6 +24,19 @@ Application API. Реализация 03.10.2026: backend `docs/comms.md`, CRM �
   Telegram подключается ботом; личный аккаунт, VK и MAX не подтверждены.
 - Прежняя квитанция `queued_mock` адаптера каналов CRM удалена: отправка из
   CRM отвечает отказом `comms_send_disabled`.
+- Прямые каналы первого этапа — Telegram, MAX, Авито (решение 03.10.2026,
+  SUM-97 Q24-11; R136). С 04.10.2026 (backend `eec0ca5`, CRM `93dab1e`)
+  `GET /v1/comms/state` отдаёт `direct_channels`: `not_configured` /
+  `configured` только по наличию серверных настроек
+  (`TELEGRAM_BOT_TOKEN`, `TELEGRAM_WEBHOOK_SECRET`, `MAX_BOT_TOKEN`,
+  `MAX_WEBHOOK_SECRET`, `AVITO_CLIENT_ID`, `AVITO_CLIENT_SECRET`; значения
+  не выдаются, «подключён» не показывается). Готов разбор вебхука Telegram
+  (секрет `X-Telegram-Bot-Api-Secret-Token`, идемпотентность по
+  `update_id`) и сверка секрета MAX (`X-Max-Bot-Api-Secret`). Маршрута
+  вебхука, хранения, миграций и отправки нет: они включаются после доступов и
+  ответа SUM-96 № 50. Разбор тела сообщения MAX — после сверки полей с
+  официальной документацией; Авито — только интерфейс (документация Messenger
+  API не прочитана).
 
 ## Не решено
 

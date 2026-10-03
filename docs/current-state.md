@@ -23,7 +23,10 @@ API и sync стояли ≈2 мин 12 с. Тесты до выкладки, р
 
 ## Dev
 
-Последний подтверждённый шаг — `r132-dev-20261004` (04.10.2026 00:34 МСК): website
+Последний подтверждённый шаг — `r136-dev-20261004` (04.10.2026 00:47 МСК): backend
+`eec0ca52d968b135b1ceefd58f312f83af58f058` и CRM `93dab1eb306b7cea5e1c752be25050b5668b979e`
+(R136, прямые каналы без доступов), exit 0, без миграций; БД `0184_app_bug_reports`. Перед ним —
+`r132-dev-20261004` (04.10.2026 00:34 МСК): website
 `39dac121f991c00181110cab5999c62e340ddb17` (R132). Перед ним в ту же ночь, все exit 0:
 `r131-dev-20261004` (00:29) — backend `cc1fcd274d19c47fa50420e58a3269a73002b4ae`, БД
 `0183_penalty_type_positions` → `0184_app_bug_reports` (копия
@@ -31,7 +34,7 @@ API и sync стояли ≈2 мин 12 с. Тесты до выкладки, р
 `99a6dc87e3f5746a21afd5b36fe85ec9ba89cbe2`; `r134-dev-20261004` (00:16–00:18) — backend
 `b3ae3c876e88f5c45edb492a1d6e108fac35e9f3`, БД `0182_review_source_field` →
 `0183_penalty_type_positions` (копия `…/r134-dev-20261004-before-0183.dump`), CRM
-`6334697daae3d8abec3cf23072b166c0df512fd6`. Итог на Dev: backend `cc1fcd2`, CRM `99a6dc8`,
+`6334697daae3d8abec3cf23072b166c0df512fd6`. Итог на Dev после r136: backend `eec0ca5`, CRM `93dab1e`,
 master-app `8fc4bd2`, client-app `4aef958`, website `39dac12`, БД `0184_app_bug_reports`;
 `YOUTRACK_TOKEN` у api и `YCLIENTS_READ_ONLY=true` сохранены. Тесты не проводились
 ([CHANGELOG](../CHANGELOG.md)).
