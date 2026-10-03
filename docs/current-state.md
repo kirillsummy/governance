@@ -23,7 +23,12 @@ API и sync стояли ≈2 мин 12 с. Тесты до выкладки, р
 
 ## Dev
 
-Последний подтверждённый шаг — `ut2-dev-20261003` (03.10.2026 13:46 МСК):
+Последний подтверждённый шаг — `key-icon-dev-20261003` (03.10.2026 14:05 МСК):
+значок 🛠 на форме входа разработчика CRM, master-app, client-app
+([контракт](../contracts/test-developer-access.md)), exit 0, без миграций. После него начат
+выпуск другой задачи `ut4-dev-20261003` (backend, CRM); его состав записывает та задача.
+Перед ним — `ut3-dev-20261003` другой задачи (backend `44cddae`, миграция
+`0178_portal_order_record_idx`, website `65de6f4`), ранее — `ut2-dev-20261003` (03.10.2026 13:46 МСК):
 D01–D03 ревизии вопросов ([решения](decisions/2026-10-03-technical-decisions-d01-d13.md)),
 перед ним `ut1-dev-20261003`; оба exit 0, без миграций. Ранее —
 `dev-entry-dev-20261003` (вход разработчика,
@@ -31,15 +36,15 @@ D01–D03 ревизии вопросов ([решения](decisions/2026-10-03
 ([документ](releases/production-rc7-candidate-2026-10-03.md), BLOCKED), и выпуски
 автономного пакета ([запись](releases/dev-autonomous-batch-2026-10-03.md)).
 
-| Компонент | SHA (03.10.2026 13:46 МСК) |
+| Компонент | SHA (03.10.2026 14:05 МСК) |
 |---|---|
-| backend | `d596ea2f0057fe7eca604814334994bd24a0f662` |
-| CRM | `a37f708fc5a05479b677e40162adf5a178a123ed` |
-| master-app | `582ceb5189bad42976c92e67f6a0f5c522f56549` |
-| client-app | `d770187bf55a35296c83c829d41fd9492b86072f` |
-| website | `88585f0e0372361e469fc091da64e5738d8bf856` |
+| backend | `44cddae0ec2e4fe48a1d0fd7df8620714d46b6cf` |
+| CRM | `40b3c4c9c01582148940b30438fae157f1e7ea6f` |
+| master-app | `efb9f74a8524422a2800a63badc8cca65a09e88b` |
+| client-app | `66bcf8556f7fbf8b13cf7adf1bedc29bb260c8d3` |
+| website | `65de6f47c584dd96ea8e8110a641b4281094960d` |
 
-БД `0177_inventory_auto_assigned`. `YCLIENTS_READ_ONLY=true` у api и sync; api и CRM
+БД `0178_portal_order_record_idx`. `YCLIENTS_READ_ONLY=true` у api и sync; api и CRM
 healthy, restarts 0; сайт под pm2 online.
 
 ### Предыдущий снимок — website R5, 02.10.2026 21:39 МСК
