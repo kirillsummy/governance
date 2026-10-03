@@ -2,6 +2,14 @@
 
 ## [Unreleased]
 
+### D01–D03 ревизии вопросов: филиал заказов, общий контур заявок, лимит QR ([SUM-203](https://summy.youtrack.cloud/issue/SUM-203)), 03.10.2026
+
+- Решения D01–D13 ревизии вопросов 03.10.2026 записаны как технические — [документ](docs/decisions/2026-10-03-technical-decisions-d01-d13.md); исполнены только D01–D03, D04–D13 — адресные остатки.
+- **backend** `test` `21d6fb5` → `d596ea2f0057fe7eca604814334994bd24a0f662`: D01 (`4c70a96`) — CRM-команды `/v1/orders` (создание, `calendar`, `actions`, `payment`, `refund`, `reconcile`) сверяют филиал записи с допуском сессии, чужой — 403; D02 (`1c9379e`, `53f76a7`) — одна живая заявка отмены/переноса по записи для CRM и клиента, отмена клиентом присоединяется к живой заявке, CRM видит отмены по визиту; D03 (`ba1e16e`) — лимит записи QR-сканов, поле `recorded` в ответе (OpenAPI — одно добавленное поле).
+- **crm** `test` `896c66c` → `a37f708fc5a05479b677e40162adf5a178a123ed`: D03 — короткая ссылка и QR только от `ADMINAPP_PUBLIC_ORIGIN`, без него — 503 `not_configured`.
+- **Dev**: `ut1-dev-20261003` (backend `ba1e16e`, CRM `a37f708`) и `ut2-dev-20261003` (backend `d596ea2`) — prepare/backend/crm exit 0, БД `0177_inventory_auto_assigned` без миграции, api и CRM healthy, restarts 0. Тесты не проводились. Prod, production-ветки и теги не менялись.
+- Остатки: закрытие записи/дня мастером не сливается с заявкой CRM (штраф мастера — бизнес-правило); чтение `/v1/orders` по филиалу не фильтруется.
+
 ### Вход разработчика: компактный CRM и копирование закрытого текста ([SUM-210](https://summy.youtrack.cloud/issue/SUM-210)), 03.10.2026
 
 - **backend** `test` `cb07bbf` → `21d6fb53622c35c53d7c6f26d65d995e9bbaadf5`: закрытая настройка `TEST_DEVELOPER_COPY_TEXT` (только при `TEST_DEVELOPER_ENABLED`), `copy_available` в `/v1/test-developer/session`, `POST /v1/test-developer/copy` по токену разработчика, `no-store`; production OpenAPI не меняется.

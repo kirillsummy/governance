@@ -342,14 +342,15 @@ CRM при переходе на этот контракт не должна п�
 | Ручка | Часть | Доступ |
 |---|---|---|
 | `GET /v1/processes?exclude_type=…` | P02 | прежний; отбор до постраничности, `total` без исключённых |
-| `POST /v1/processes` с `appointment_id` у `appointment_reschedule`, `client_cancellation` | P02/P07 | owner, manager, administrator в филиале записи; живая заявка того же вида — 409 `appointment_request_exists` |
+| `POST /v1/processes` с `appointment_id` у `appointment_reschedule`, `client_cancellation` | P02/P07, D02 | owner, manager, administrator в филиале записи; живая заявка того же вида (в том числе отмена клиента по заказу или визиту) — 409 `appointment_request_exists` с `process_id` |
+| `POST /v1/orders`, `POST /v1/orders/{id}/calendar`, `…/actions`, `…/payment`, `…/refund`, `…/reconcile` | D01 | прежние роли; филиал записи — из допуска сессии (`granted_location_ids`), иначе 403 |
 | `GET /v1/auth/admin-locations/available`, `PUT /v1/auth/admin-locations/{access_id}/grants` | P25 | владелец; управляющая — администраторам в своих филиалах |
 | `GET /v1/clients/{id}/prepaid`, `GET /v1/clients/abonements/expiring?within_days=` | SUM-177 Э5 | manager, owner; источник YClients «не подключён» |
 | `GET /v1/workplaces/accounting/payouts`, `POST …/payouts/{id}/confirm`, `POST …/cash-shifts/{process_id}/discrepancies`, `GET /v1/workplaces/cash-discrepancies` | SUM-158 | accountant, owner; расхождения — управляющей по её филиалам |
 | `GET /v1/admin-shifts/today` (+`server_now`, `shift_date`, `stages`), `POST /v1/admin-shifts/{id}/reports` | P03, P04 | администратор своей смены |
 | `GET/POST /v1/penalty-appeals/mine` | P05 | сотрудник CRM со связью `staff_user`, только свой штраф |
 | `GET /v1/admin/portfolio/works`, `…/facets` | P17 | раздел `staff` |
-| `GET/POST /v1/marketing/campaigns`, `GET /v1/marketing/campaigns/{id}`, `POST …/{id}/versions`, `POST /v1/marketing/qr/{code}/scans` | P09 | manager, owner; сканы — сервисный токен |
+| `GET/POST /v1/marketing/campaigns`, `GET /v1/marketing/campaigns/{id}`, `POST …/{id}/versions`, `POST /v1/marketing/qr/{code}/scans` | P09, D03 | manager, owner; сканы — сервисный токен, запись не чаще раза в 10 с на посетителя и до 300 в минуту на кампанию, сверх лимита `recorded: false` |
 | `/v1/documents/templates*`, `/v1/documents/records*` | P13 | раздел `staff` (шаблоны — также «Настройки») |
 | `GET /v1/appointments/calendar` (+`origin` записи, P08) | P07, P08 | раздел `clients`, разрешённые филиалы, 1–7 дней |
 | `/v1/clients/cycle/thresholds`, `/v1/clients/cycle/board`, `/v1/clients/{id}/cycle` | P10 | manager, owner |
