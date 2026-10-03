@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+### Вход разработчика: компактный CRM и копирование закрытого текста ([SUM-210](https://summy.youtrack.cloud/issue/SUM-210)), 03.10.2026
+
+- **backend** `test` `cb07bbf` → `21d6fb53622c35c53d7c6f26d65d995e9bbaadf5`: закрытая настройка `TEST_DEVELOPER_COPY_TEXT` (только при `TEST_DEVELOPER_ENABLED`), `copy_available` в `/v1/test-developer/session`, `POST /v1/test-developer/copy` по токену разработчика, `no-store`; production OpenAPI не меняется.
+- **crm** `e39777d` → `896c66c7946a30b183bdde2406c48ce0b633370c`: `/login_dev` — семь одинаковых кнопок одним столбиком, без поясняющих абзацев; поле «Скопировать». **master-app** `ec58c80` → `582ceb5189bad42976c92e67f6a0f5c522f56549`, **client-app** `a733de2` → `d770187bf55a35296c83c829d41fd9492b86072f`: поле «Скопировать» во входе разработчика. Контракт — [вход разработчика](contracts/test-developer-access.md).
+- **Dev** `dev-entry-dev-20261003` (13:11–13:17 МСК): prepare/backend/crm/master/client exit 0, без миграций; значение задано только в закрытом compose API Dev. Аудит: значения нет в деревьях `test`, Governance, файлах контейнеров и сборках. Тесты не проводились. Prod, production-ветки и теги не менялись.
+- RC7 ([SUM-211](https://summy.youtrack.cloud/issue/SUM-211)) остаётся зафиксированным прежними SHA и BLOCKED; новые SHA войдут в следующий снимок кандидата.
+
 ### Production-кандидат RC7 подготовлен, BLOCKED ([SUM-211](https://summy.youtrack.cloud/issue/SUM-211)), 03.10.2026
 
 - Кандидат — работающий Dev 03.10.2026 03:12 МСК (= головы `test`): backend `cb07bbf7ad541bda29af3700e15b2ee19289282c` (БД `0177_inventory_auto_assigned`), CRM `e39777d4de6b66f0911252c9ea784bdf490e60c6`, master-app `ec58c807eaccc364d6e583bd61a91ad692cb2bba`, client-app `a733de288ce1a212b5651e0a2b4aed09d74d86bd`, website `88585f0e0372361e469fc091da64e5738d8bf856`; Prod — RC6, БД 0166. Состав, включения, manifest — [документ кандидата](docs/releases/production-rc7-candidate-2026-10-03.md).

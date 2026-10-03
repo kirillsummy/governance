@@ -23,17 +23,18 @@ API и sync стояли ≈2 мин 12 с. Тесты до выкладки, р
 
 ## Dev
 
-Последний подтверждённый шаг — `rc7-fix-dev-20261003` (03.10.2026 02:43 МСК),
-состав зафиксирован кандидатом RC7 ([документ](releases/production-rc7-candidate-2026-10-03.md),
-BLOCKED). Перед ним — `rc7-client-dev-20261003` и выпуски автономного пакета
-([запись](releases/dev-autonomous-batch-2026-10-03.md)); все шаги exit 0.
+Последний подтверждённый шаг — `dev-entry-dev-20261003` (03.10.2026 13:17 МСК):
+вход разработчика ([контракт](../contracts/test-developer-access.md)), exit 0.
+Перед ним — `rc7-fix-dev-20261003`, состав которого зафиксирован кандидатом RC7
+([документ](releases/production-rc7-candidate-2026-10-03.md), BLOCKED), и выпуски
+автономного пакета ([запись](releases/dev-autonomous-batch-2026-10-03.md)).
 
-| Компонент | SHA (03.10.2026 03:12 МСК) |
+| Компонент | SHA (03.10.2026 13:17 МСК) |
 |---|---|
-| backend | `cb07bbf7ad541bda29af3700e15b2ee19289282c` |
-| CRM | `e39777d4de6b66f0911252c9ea784bdf490e60c6` |
-| master-app | `ec58c807eaccc364d6e583bd61a91ad692cb2bba` |
-| client-app | `a733de288ce1a212b5651e0a2b4aed09d74d86bd` |
+| backend | `21d6fb53622c35c53d7c6f26d65d995e9bbaadf5` |
+| CRM | `896c66c7946a30b183bdde2406c48ce0b633370c` |
+| master-app | `582ceb5189bad42976c92e67f6a0f5c522f56549` |
+| client-app | `d770187bf55a35296c83c829d41fd9492b86072f` |
 | website | `88585f0e0372361e469fc091da64e5738d8bf856` |
 
 БД `0177_inventory_auto_assigned`. `YCLIENTS_READ_ONLY=true` у api и sync; api и CRM
