@@ -12,6 +12,13 @@
 новое не равнять» у акцента кабинета в [brand-palette.md](brand-palette.md).
 Палитра бренда (десять `summy-*`) и её тест-пины не менялись.
 
+**CRM выведена из кита 03.10.2026.** Прямое поручение владельца
+([SUM-203](https://summy.youtrack.cloud/issue/SUM-203)): стили и дизайн CRM —
+как утром 02.10.2026. Тема, шрифт и материал кабинета в CRM отменены
+(`crm` `test` `70c78f3ffd58d700effe3e664f32b62ba92444f7`), эталон оформления и
+закреплённое меню CRM — [crm-navigation](crm-navigation.md). Ниже кит
+действует для client-app; упоминания CRM — история решения SUM-206.
+
 ## Источник
 
 Значения — дословно из паспорта кабинета `master-app/web/DESIGN.md` и
@@ -60,7 +67,10 @@
 фолбэка из `master-app/web/DESIGN.md`), нижний плавающий док из четырёх
 разделов и календарь месяца как `MonthDayPicker`. CRM диалект не берёт.
 
-## Материал кабинета в CRM
+## Материал кабинета в CRM (отменён 03.10.2026)
+
+Отменён поручением SUM-203 03.10.2026, см. [crm-navigation](crm-navigation.md);
+раздел сохранён как описание решения 02.10.2026.
 
 Уточнение владельца 02.10.2026 (SUM-206): «тона можешь оставить нужные, но
 визуал перенеси». CRM — настольная раскладка, поэтому берёт материал
@@ -102,8 +112,8 @@ client-app берёт материал через мобильный диале�
 
 | Продукт | Файл | С какого SHA (`test`) |
 |---|---|---|
-| CRM | `src/app/globals.css` (`--ui-*`, роли shadcn), `layout.tsx` (Onest), `DESIGN.md` | `decf6cca93f1be9f49129217b40ad850d0e57daf` |
-| CRM, материал кабинета | `src/app/globals.css` (`glass-*`), `ui/card`, `ui/dialog`, `ui/alert-dialog`, `ui/sheet`, `ui/textarea`, `layout/sidebar`, `layout/app-shell`, `common/nav-tabs`, `tech-cards/category-tabs`, `payroll/bonus-month` | `126594d44302e6c52461feb79ae3a844b88dddae` |
+| CRM (отменено `70c78f3`, 03.10.2026) | `src/app/globals.css` (`--ui-*`, роли shadcn), `layout.tsx` (Onest), `DESIGN.md` | `decf6cca93f1be9f49129217b40ad850d0e57daf` |
+| CRM, материал кабинета (отменено `70c78f3`, 03.10.2026) | `src/app/globals.css` (`glass-*`), `ui/card`, `ui/dialog`, `ui/alert-dialog`, `ui/sheet`, `ui/textarea`, `layout/sidebar`, `layout/app-shell`, `common/nav-tabs`, `tech-cards/category-tabs`, `payroll/bonus-month` | `126594d44302e6c52461feb79ae3a844b88dddae` |
 | client-app | `src/styles.css` (`--ui-*`, кнопки, шкала радиусов) | `db7cc4d21db1d7a9b9bdd58b88165324460f10d4` |
 | client-app, мобильный диалект | `src/styles.css` (стекло, док, календарь), `src/App.tsx` | `cdc4b92101b9cb4489b7e614c87dac3017f8144d` |
 
