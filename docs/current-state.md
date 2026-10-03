@@ -23,7 +23,12 @@ API и sync стояли ≈2 мин 12 с. Тесты до выкладки, р
 
 ## Dev
 
-Последний подтверждённый шаг — `q4b-dev-20261004` (04.10.2026 01:36 МСК): backend `e76d6ff0c05c518d7efb11d6984d2f3e56b6c748`, CRM
+Последний подтверждённый шаг — `as3-dev-20261004` (04.10.2026 02:03 МСК): backend `b8cb1ce181728546c1d49b259c46d0a4b729a16e`, CRM
+`d3ca2b59ccf6d2c99c29fc67021c74f39f99a1f7`; БД `0189_knowledge_library` → `0190_knowledge_file_provenance` (копия
+`/opt/summy-test/backups/as3-dev-20261004-before-0190.dump`). Файлы базы знаний: сумма, состояние в источнике,
+«только владелец»; в каталоге 5 материалов Aspro из закрытого MinIO Dev (черновики). Итог на Dev: backend `b8cb1ce`,
+CRM `d3ca2b5`, master-app `6b8b0e1`, client-app `4aef958`, website `39dac12`. Перед ним —
+`q4b-dev-20261004` (04.10.2026 01:36 МСК): backend `e76d6ff0c05c518d7efb11d6984d2f3e56b6c748`, CRM
 `80efc303dabb208a3ea31c19c693f1c6360e6a3e`, master-app `6b8b0e1ba46c32f22d41cd09f7c63f76625def77`; БД `0189_knowledge_library` (миграции 0185–0189 применены выпуском
 `q4-dev-20261004`, копия `/opt/summy-test/backups/q4-dev-20261004-before-0189.dump`). QR лояльности, отзывы с карт,
 общее расписание мастера, журнал переписки и база знаний — без внешних доступов и отправки. Итог на Dev: backend `e76d6ff`,
