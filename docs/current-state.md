@@ -23,11 +23,12 @@ API и sync стояли ≈2 мин 12 с. Тесты до выкладки, р
 
 ## Dev
 
-Последний подтверждённый шаг — `key-icon-dev-20261003` (03.10.2026 14:05 МСК):
-значок 🛠 на форме входа разработчика CRM, master-app, client-app
-([контракт](../contracts/test-developer-access.md)), exit 0, без миграций. После него начат
-выпуск другой задачи `ut4-dev-20261003` (backend, CRM); его состав записывает та задача.
-Перед ним — `ut3-dev-20261003` другой задачи (backend `44cddae`, миграция
+Последний подтверждённый шаг — `ut6-dev-20261003` (03.10.2026 14:26 МСК): D04–D09
+ревизии вопросов ([решения](decisions/2026-10-03-technical-decisions-d01-d13.md));
+перед ним `ut5`, `ut4` (exit 0, без миграций) и `key-icon-dev-20261003` (значок 🛠 на
+форме входа разработчика CRM, master-app, client-app,
+[контракт](../contracts/test-developer-access.md), exit 0, без миграций).
+Ранее — `ut3-dev-20261003` (backend `44cddae`, миграция
 `0178_portal_order_record_idx`, website `65de6f4`), ранее — `ut2-dev-20261003` (03.10.2026 13:46 МСК):
 D01–D03 ревизии вопросов ([решения](decisions/2026-10-03-technical-decisions-d01-d13.md)),
 перед ним `ut1-dev-20261003`; оба exit 0, без миграций. Ранее —
@@ -36,11 +37,11 @@ D01–D03 ревизии вопросов ([решения](decisions/2026-10-03
 ([документ](releases/production-rc7-candidate-2026-10-03.md), BLOCKED), и выпуски
 автономного пакета ([запись](releases/dev-autonomous-batch-2026-10-03.md)).
 
-| Компонент | SHA (03.10.2026 14:05 МСК) |
+| Компонент | SHA (03.10.2026 14:26 МСК) |
 |---|---|
-| backend | `44cddae0ec2e4fe48a1d0fd7df8620714d46b6cf` |
-| CRM | `40b3c4c9c01582148940b30438fae157f1e7ea6f` |
-| master-app | `efb9f74a8524422a2800a63badc8cca65a09e88b` |
+| backend | `7fbbd2ad86ab1814628c853ee6da558e29d338c2` |
+| CRM | `0eadef883b1e7c3258b8236aedb4dc8ed4b10cd4` |
+| master-app | `2183dcfca9ce6b220b6a2c7a2296147d43efbba5` |
 | client-app | `66bcf8556f7fbf8b13cf7adf1bedc29bb260c8d3` |
 | website | `65de6f47c584dd96ea8e8110a641b4281094960d` |
 

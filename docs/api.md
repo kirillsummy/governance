@@ -348,7 +348,8 @@ CRM при переходе на этот контракт не должна п�
 | `GET /v1/clients/{id}/prepaid`, `GET /v1/clients/abonements/expiring?within_days=` | SUM-177 Э5 | manager, owner; источник YClients «не подключён» |
 | `GET /v1/workplaces/accounting/payouts`, `POST …/payouts/{id}/confirm`, `POST …/cash-shifts/{process_id}/discrepancies`, `GET /v1/workplaces/cash-discrepancies` | SUM-158 | accountant, owner; расхождения — управляющей по её филиалам |
 | `GET /v1/admin-shifts/today` (+`server_now`, `shift_date`, `stages`), `POST /v1/admin-shifts/{id}/reports` | P03, P04 | администратор своей смены |
-| `GET/POST /v1/penalty-appeals/mine` | P05 | сотрудник CRM со связью `staff_user`, только свой штраф |
+| `GET/POST /v1/penalty-appeals/mine` | P05, D06 | сотрудник CRM со связью `staff_user`, только свой штраф; без связи — 404 `staff_link_missing` |
+| `GET /v1/finance/complaints` | D09 | мастер (master-сессия): свои рекламации — статус, история статусов, штрафы и обжалования; без клиентских полей |
 | `GET /v1/admin/portfolio/works`, `…/facets` | P17 | раздел `staff` |
 | `GET/POST /v1/marketing/campaigns`, `GET /v1/marketing/campaigns/{id}`, `POST …/{id}/versions`, `POST /v1/marketing/qr/{code}/scans` | P09, D03 | manager, owner; сканы — сервисный токен, запись не чаще раза в 10 с на посетителя и до 300 в минуту на кампанию, сверх лимита `recorded: false` |
 | `/v1/documents/templates*`, `/v1/documents/records*` | P13 | раздел `staff` (шаблоны — также «Настройки») |
