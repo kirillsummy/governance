@@ -271,7 +271,7 @@ Telegram и внешняя uptime-проверка не подключены. Р
 | Backend DB/S3 | POSTGRES_*, DEFAULT_ORGANIZATION_ID, S3_*; доступ только серверный; отдельная миграционная роль на целевых БД не подтверждена |
 | Backend YClients | YCLIENTS_PARTNER_TOKEN, YCLIENTS_USER_TOKEN, YCLIENTS_COMPANY_IDS, YCLIENTS_READ_ONLY; здесь указаны только имена, не фактические значения |
 | Backend service/auth | SERVICE_API_TOKEN, SESSION_SECRET, INTERNAL_MASTER_API_ENABLED |
-| Backend баг-репорты CRM, клиента и мастера | YOUTRACK_URL, YOUTRACK_TOKEN, YOUTRACK_PROJECT_ID, YOUTRACK_BUG_STAGE_ID (`166-15`), YOUTRACK_BUG_TAG_ID (`10-6`); без токена `/v1/app-bugs`, `/v1/client/app-bugs`, `/v1/master/app-bugs` отвечают 503; на Dev 03.10.2026 не заданы |
+| Backend баг-репорты CRM, клиента и мастера | YOUTRACK_URL, YOUTRACK_TOKEN, YOUTRACK_PROJECT_ID, YOUTRACK_BUG_STAGE_ID (`166-15`), YOUTRACK_BUG_TAG_ID (`10-6`); без токена `/v1/app-bugs`, `/v1/client/app-bugs`, `/v1/master/app-bugs` отвечают 503; на Dev с 03.10.2026 23:05 у api задан только `YOUTRACK_TOKEN` (существующий ключ, env_file вне Git, `ytcfg-dev-20261003`), остальные — по умолчанию кода |
 | Backend деньги клининга (кандидат SUM-120) | CLEANING_LOCATION_RATES_FROM, CLEANING_CHECKLIST_NO_DELAY_FROM — две независимые даты, по умолчанию не заданы; см. чек-лист ниже |
 | Клиентский backend | CLIENT_PORTAL_ENABLED, CLIENT_PORTAL_SECRET, CLIENT_SMS_API_ID, CLIENT_CONSENT_VERSION |
 | Orders sandbox | ORDERS_TEST_ENABLED, ORDERS_TEST_DATABASE = POSTGRES_DB, ORDERS_YCLIENTS_TEST_COMPANIES, YANDEX_PAY_SANDBOX_MERCHANT_ID, ORDERS_CLIENT_URL |
