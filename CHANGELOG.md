@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+### Production-кандидат RC7 подготовлен, BLOCKED ([SUM-211](https://summy.youtrack.cloud/issue/SUM-211)), 03.10.2026
+
+- Кандидат — работающий Dev 03.10.2026 03:12 МСК (= головы `test`): backend `cb07bbf7ad541bda29af3700e15b2ee19289282c` (БД `0177_inventory_auto_assigned`), CRM `e39777d4de6b66f0911252c9ea784bdf490e60c6`, master-app `ec58c807eaccc364d6e583bd61a91ad692cb2bba`, client-app `a733de288ce1a212b5651e0a2b4aed09d74d86bd`, website `88585f0e0372361e469fc091da64e5738d8bf856`; Prod — RC6, БД 0166. Состав, включения, manifest — [документ кандидата](docs/releases/production-rc7-candidate-2026-10-03.md).
+- Исправления подготовки опубликованы в `test` и доставлены на Dev: backend `e6bdd8d` → `cb07bbf` (17 замечаний mypy, дата платформы вместо `None`, снимки схемы до 0177, тест наличного вывода после SUM-10 и новый тест удержания); CRM `a9200ba` → `e39777d` (панель смены без справочника филиалов у ролей без смены, lint); client-app `84bf3e5` → `a733de2` (гонка теста). Dev: `rc7-client-dev-20261003` (client-app `84bf3e5`), `rc7-fix-dev-20261003` — exit 0, без миграций.
+- Проверки на точных SHA: backend — всё exit 0, кроме pytest MSK 2290 passed / 2 failed (цвета видов процессов); CRM — всё exit 0, vitest 1696/1696, кроме сторожа карантина; master-app, client-app, website — всё exit 0. Репетиция 0166 → 0177 на копии БД Prod на сервере Prod (одноразовая БД, внутренняя сеть): 10/10 ворот, откат кода RC6 на схеме 0177 совместим.
+- **BLOCKED:** B1 — истёкший карантин CRM `archive/karantin-do-2026-09-24` (Кирилл, SUM-96 № 76); B2 — краски четырёх видов процессов (Юра, SUM-97 Q207-1). Prod, production-ветки и теги не менялись.
+
 ### Автономный пакет: P08 — происхождение записи в календаре CRM ([SUM-210](https://summy.youtrack.cloud/issue/SUM-210)), 03.10.2026
 
 - backend `test` `eeb82f6` → `e6bdd8d93782b7f09d4db85fc86ee04b25845729`: у записи `GET /v1/appointments/calendar` поле `origin` (`summy_client`/`summy_website`/`summy_master`/`summy_crm` — по связанному заказу SUMMY: прямая связь, внешняя запись или `api_id` неподтверждённого заказа; `summy_redo` — переделка по рекламации; `yclients` — запись из синка без заказа SUMMY; иначе `unknown`); `source_channel` и данные не менялись. CRM `4c36c4b` → `a9200baca75235774f192c748a2cffb21128b555`: подпись происхождения на карточке и в панели записи. Карта функций журнала YClients — [docs/yclients-board-map.md](docs/yclients-board-map.md).

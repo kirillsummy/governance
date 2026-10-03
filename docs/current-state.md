@@ -23,21 +23,20 @@ API и sync стояли ≈2 мин 12 с. Тесты до выкладки, р
 
 ## Dev
 
-Последний подтверждённый шаг — `ab12-dev-20261003` (03.10.2026 01:50 МСК)
-автономного пакета; выпуски `sum207-dev-20261002`, `ab1-p02-dev-20261002`,
-`ab2-dev-20261002`, `ab3-dev-20261002`, `ab4-dev-20261003`–`ab12-dev-20261003`
-— все шаги exit 0 ([запись](releases/dev-autonomous-batch-2026-10-03.md)).
+Последний подтверждённый шаг — `rc7-fix-dev-20261003` (03.10.2026 02:43 МСК),
+состав зафиксирован кандидатом RC7 ([документ](releases/production-rc7-candidate-2026-10-03.md),
+BLOCKED). Перед ним — `rc7-client-dev-20261003` и выпуски автономного пакета
+([запись](releases/dev-autonomous-batch-2026-10-03.md)); все шаги exit 0.
 
-| Компонент | SHA после ab12 |
+| Компонент | SHA (03.10.2026 03:12 МСК) |
 |---|---|
-| backend | `e6bdd8d93782b7f09d4db85fc86ee04b25845729` |
-| CRM | `a9200baca75235774f192c748a2cffb21128b555` |
+| backend | `cb07bbf7ad541bda29af3700e15b2ee19289282c` |
+| CRM | `e39777d4de6b66f0911252c9ea784bdf490e60c6` |
 | master-app | `ec58c807eaccc364d6e583bd61a91ad692cb2bba` |
-| client-app | `24fd18f8d0360de2479710c8e3ce836b552a3e0d` |
+| client-app | `a733de288ce1a212b5651e0a2b4aed09d74d86bd` |
 | website | `88585f0e0372361e469fc091da64e5738d8bf856` |
 
-БД `0177_inventory_auto_assigned` (миграции 0167–0177 применены 02–03.10.2026
-с копиями перед каждой). `YCLIENTS_READ_ONLY=true` у api и sync; api и CRM
+БД `0177_inventory_auto_assigned`. `YCLIENTS_READ_ONLY=true` у api и sync; api и CRM
 healthy, restarts 0; сайт под pm2 online.
 
 ### Предыдущий снимок — website R5, 02.10.2026 21:39 МСК
