@@ -23,7 +23,20 @@ API и sync стояли ≈2 мин 12 с. Тесты до выкладки, р
 
 ## Dev
 
-Последний подтверждённый шаг — `dlv1003-dev-20261003` (03.10.2026 23:52–23:59 МСК): backend `fa9ffcef45684544f0cbf90f7b5b6ea385bf210c` (D01, D05, D08 и Q207-1), БД `0181_staff_schedule_minutes_cache` → `0182_review_source_field`, CRM `04e8720859813489c010f8e09c8a5307a2a2283a`, master-app `8fc4bd2ec74648ba0068e185e6fe7351826111d5`, website `f8666f09fee70229bb08fddfbc5294e05ea71a8c`; client-app прежний `4aef958`. Все шаги exit 0; копия БД перед 0182 `/opt/summy-test/backups/dlv1003-dev-20261003-before-0182.dump`, число строк контрольных таблиц не изменилось; env api/sync прежние, `YCLIENTS_READ_ONLY=true`. Тесты и проверки на Dev не проводились ([CHANGELOG](../CHANGELOG.md)). Перед ним — `ytcfg-dev-20261003` (23:05 МСК): у backend api задан `YOUTRACK_TOKEN` (существующий ключ, значение не выводилось), образ прежний `7c315c5`; реальный баг-репорт не отправлялся. Пакет `rt1003-dev-20261003` не запускался и заменён.
+Последний подтверждённый шаг — `r132-dev-20261004` (04.10.2026 00:34 МСК): website
+`39dac121f991c00181110cab5999c62e340ddb17` (R132). Перед ним в ту же ночь, все exit 0:
+`r131-dev-20261004` (00:29) — backend `cc1fcd274d19c47fa50420e58a3269a73002b4ae`, БД
+`0183_penalty_type_positions` → `0184_app_bug_reports` (копия
+`/opt/summy-test/backups/r131-dev-20261004-before-0184.dump`); `r130-dev-20261004` (00:24) — CRM
+`99a6dc87e3f5746a21afd5b36fe85ec9ba89cbe2`; `r134-dev-20261004` (00:16–00:18) — backend
+`b3ae3c876e88f5c45edb492a1d6e108fac35e9f3`, БД `0182_review_source_field` →
+`0183_penalty_type_positions` (копия `…/r134-dev-20261004-before-0183.dump`), CRM
+`6334697daae3d8abec3cf23072b166c0df512fd6`. Итог на Dev: backend `cc1fcd2`, CRM `99a6dc8`,
+master-app `8fc4bd2`, client-app `4aef958`, website `39dac12`, БД `0184_app_bug_reports`;
+`YOUTRACK_TOKEN` у api и `YCLIENTS_READ_ONLY=true` сохранены. Тесты не проводились
+([CHANGELOG](../CHANGELOG.md)).
+
+Перед ними — `dlv1003-dev-20261003` (03.10.2026 23:52–23:59 МСК): backend `fa9ffcef45684544f0cbf90f7b5b6ea385bf210c` (D01, D05, D08 и Q207-1), БД `0181_staff_schedule_minutes_cache` → `0182_review_source_field`, CRM `04e8720859813489c010f8e09c8a5307a2a2283a`, master-app `8fc4bd2ec74648ba0068e185e6fe7351826111d5`, website `f8666f09fee70229bb08fddfbc5294e05ea71a8c`; client-app прежний `4aef958`. Все шаги exit 0; копия БД перед 0182 `/opt/summy-test/backups/dlv1003-dev-20261003-before-0182.dump`, число строк контрольных таблиц не изменилось; env api/sync прежние, `YCLIENTS_READ_ONLY=true`. Тесты и проверки на Dev не проводились ([CHANGELOG](../CHANGELOG.md)). Перед ним — `ytcfg-dev-20261003` (23:05 МСК): у backend api задан `YOUTRACK_TOKEN` (существующий ключ, значение не выводилось), образ прежний `7c315c5`; реальный баг-репорт не отправлялся. Пакет `rt1003-dev-20261003` не запускался и заменён.
 
 Перед ними — `crmstyle-dev-20261003` (03.10.2026 17:36 МСК): CRM
 `d45e3d2` — оформление CRM по эталону 01.10.2026 `6f9c316`, кроме кнопки открытия смены
