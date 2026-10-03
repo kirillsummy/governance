@@ -86,10 +86,10 @@
 - Это не свёрнутость самой панели (cookie `sidebar_state`, ⌘/Ctrl+B) — она
   не менялась. Верхний уровень, права, маршруты и оформление не менялись.
 - Код — `crm` `test` `5652ee20e671de466eed175fd03be17a720e6ee0`,
-  `src/components/layout/sidebar.tsx`. Прежние тесты
-  `src/components/layout/sidebar.test.tsx` раскрывают меню через
-  `sidebar-closed-blocks` и ждут запись туда — до Prod их нужно привести к
-  этому контракту.
+  `src/components/layout/sidebar.tsx`. Проверки
+  `src/components/layout/sidebar.test.tsx` приведены к контракту (`crm`
+  `12cf577`): разделы раскрываются кликом, отдельно проверены свёрнутое
+  меню при запуске, отказ от хранилища и повторный запуск.
 - Все прежние адреса сохранены, включая `/processes?type=sterilization` и
   `/workplace/*`; маршруты и проверки доступа страниц не менялись.
 

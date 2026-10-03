@@ -52,6 +52,15 @@ TEST остаётся отдельной БД; её последняя подт�
 `/opt/summy-test/backups/fin7-20261001-before-0161.dump`. Production не получал.
 Снимки `db/schema-contract.json` и `db/views.sql` не пересобирались.
 
+## D08: ревизия `0182_review_source_field`
+
+Предшественник — `0181_staff_schedule_minutes_cache`. Только данные: виду
+`review_photo` добавлено необязательное поле `review_source` «Источник
+отзыва» (`kind` `text`); схема не меняется. Повтор источника у живой карточки
+backend отклоняет 409 `review_source_taken`. `downgrade` отказывает, пока у
+карточек есть значение поля. Проверена на БД Dev в откатываемой транзакции;
+на Dev не применена (03.10.2026).
+
 ## SUM-120: ревизия `0161_review_photo`
 
 Предшественник — `0160_daily_processes`. Только данные: вид процесса

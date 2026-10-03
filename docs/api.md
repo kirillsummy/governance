@@ -344,6 +344,7 @@ CRM при переходе на этот контракт не должна п�
 | `GET /v1/processes?exclude_type=…` | P02 | прежний; отбор до постраничности, `total` без исключённых |
 | `POST /v1/processes` с `appointment_id` у `appointment_reschedule`, `client_cancellation` | P02/P07, D02 | owner, manager, administrator в филиале записи; живая заявка того же вида (в том числе отмена клиента по заказу или визиту) — 409 `appointment_request_exists` с `process_id` |
 | `POST /v1/orders`, `POST /v1/orders/{id}/calendar`, `…/actions`, `…/payment`, `…/refund`, `…/reconcile` | D01 | прежние роли; филиал записи — из допуска сессии (`granted_location_ids`), иначе 403 |
+| `GET /v1/orders`, `GET /v1/orders/{id}`, `GET /v1/orders/{id}/slots`, `GET /v1/orders/slots` | D01 | прежние роли; список отфильтрован по допуску до `LIMIT`, пустой допуск — 403; карточка, слоты переноса и слоты студии — филиал из допуска, иначе 403 |
 | `GET /v1/auth/admin-locations/available`, `PUT /v1/auth/admin-locations/{access_id}/grants` | P25 | владелец; управляющая — администраторам в своих филиалах |
 | `GET /v1/clients/{id}/prepaid`, `GET /v1/clients/abonements/expiring?within_days=` | SUM-177 Э5 | manager, owner; источник YClients «не подключён» |
 | `GET /v1/workplaces/accounting/payouts`, `POST …/payouts/{id}/confirm`, `POST …/cash-shifts/{process_id}/discrepancies`, `GET /v1/workplaces/cash-discrepancies` | SUM-158 | accountant, owner; расхождения — управляющей по её филиалам |
