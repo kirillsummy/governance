@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+### «Документы» — только владелец и бухгалтер: test и Dev ([SUM-203](https://summy.youtrack.cloud/issue/SUM-203)), 04.10.2026
+
+- Прямое решение владельца 04.10.2026 записано в [contracts/crm-navigation.md](contracts/crm-navigation.md#доступ-к-документам--только-владелец-и-бухгалтер-04102026). backend `fa848657214c5ca99a89f41c6846d80e5e0513f7`: единый guard раздела `documents` (owner/accountant до настроенных прав) на `/v1/documents/*`, `/v1/knowledge/*`, `/v1/cleaning/qr`, `/v1/cleaning/reports` и снимке листа (`no-store`); CRM `a58e62075e9476ba9e1f545530a20f4e16020be1`: `SectionKey documents` с потолком ролей, меню, страницы, прежние адреса, `/cleaning-sheet`, BFF документов, знаний и каталога уборки; кнопка «Лист» в этапе смены убрана.
+- Dev — `dak-dev-20261004`: без миграций (БД `0193_puzzle_games`), backend и CRM exit 0, api healthy, рестартов 0, `YCLIENTS_READ_ONLY=true`. Перед выпуском на Dev освобождено место удалением образов своих выпусков, отставших на два и более шага (q4, q4b, as3, fpd backend; CRM 80efc30, d3ca2b5, ace8ea0); откат на fpd3 сохранён. Тесты не проводились. Prod не менялся.
+
 ### T01: список клиентов CRM — серверная пагинация и поиск по всей базе ([SUM-196](https://summy.youtrack.cloud/issue/SUM-196)), 04.10.2026
 
 - backend `36fe8c27b09fb111d31c565b9707896a8b597695`: `/v1/analytics/clients` — `category` несколькими значениями и фильтр `client_id` (аддитивно); CRM `8eeba2fc58d7e0cfdb759658e3357752122950df`: список «Клиенты» запрашивает страницы с поиском (имя или номер), сегментом, мастером и категорией у платформы вместо выгрузки до 5000 строк, карточка клиента читает одну строку по `client_id`; телефоны маскированы, как прежде.
