@@ -23,7 +23,11 @@ API и sync стояли ≈2 мин 12 с. Тесты до выкладки, р
 
 ## Dev
 
-Последний подтверждённый шаг — `bonus-dev-20261004` (04.10.2026 14:16 МСК): backend `ca3ba362a3b3aa3716da9e60957e90814970af4c`, CRM `8e6cf1e530dc3a27adf02fe3c669c2bbc39227a4`,
+Последний подтверждённый шаг — `adm2-dev-20261004` (04.10.2026): backend `0eec9e70bbf50c4d3ab520de0ba7f5d9520ebb59`, CRM `ec542e39a189f023f97747e1ad0c402287b9f567`,
+master-app `cfcb6e0ce5af9337e65f31d1079527194007b6e5` (кадры, табель по ролям и Excel, сводка, выбор филиалов мастером), БД `0198` → `0200_master_location_choices`
+(копия `/opt/summy-test/backups/adm2-dev-20261004-before-0200.dump`); client-app `e508cf7`, website `7733966`. Перед ним — чужие `pi4` (backend `12c60c7`, 0198) и `pi3b` (0197),
+затем `adm1-dev-20261004`: backend `35279728ec5b6486605294542912a2c588eafb43`, CRM `6f357d77e6ebe5140c9e0cc5baf311f1ae368994`, master-app `10b28ac260d7b134e7220dfa130f4f8b41560ddc`,
+client-app `e508cf75fe0b46699830f7eca8c5eedcec1eb60d`, БД `0195` → `0196_master_hours_admin_closures`. `YCLIENTS_READ_ONLY=true`. Перед ними — `bonus-dev-20261004` (04.10.2026 14:16 МСК): backend `ca3ba362a3b3aa3716da9e60957e90814970af4c`, CRM `8e6cf1e530dc3a27adf02fe3c669c2bbc39227a4`,
 client-app `1d1e39e3b12158fe3432604756d6aa18ee5b746d` (правила бонусов по категориям, «без скидки при бонусах», сроки), БД `0194` → `0195_loyalty_bonus_rules`
 (копия `/opt/summy-test/backups/bonus-dev-20261004-before-0195.dump`); master-app `6b8b0e1`, website `7733966` прежние. Списание бонусов не подключено,
 `YCLIENTS_READ_ONLY=true`. Перед ним — `dak2-dev-20261004` (04.10.2026): backend `8802e27e2360692d1daea4c806424703b71a885d`, CRM `14f02e90669ee9f0a45d00cad040d69501763279`
