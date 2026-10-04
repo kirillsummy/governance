@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+### T01: список клиентов CRM — серверная пагинация и поиск по всей базе ([SUM-196](https://summy.youtrack.cloud/issue/SUM-196)), 04.10.2026
+
+- backend `36fe8c27b09fb111d31c565b9707896a8b597695`: `/v1/analytics/clients` — `category` несколькими значениями и фильтр `client_id` (аддитивно); CRM `8eeba2fc58d7e0cfdb759658e3357752122950df`: список «Клиенты» запрашивает страницы с поиском (имя или номер), сегментом, мастером и категорией у платформы вместо выгрузки до 5000 строк, карточка клиента читает одну строку по `client_id`; телефоны маскированы, как прежде.
+- Dev — `fpd3-dev-20261004`: без миграций (БД `0193_puzzle_games`), backend и CRM exit 0, api healthy, рестартов 0, `YCLIENTS_READ_ONLY=true`. Тесты не проводились. Prod не менялся.
+
 ### Документы и процессы CRM, перенос переписки, пул 04.10: test и Dev ([SUM-203](https://summy.youtrack.cloud/issue/SUM-203), [SUM-196](https://summy.youtrack.cloud/issue/SUM-196), [SUM-209](https://summy.youtrack.cloud/issue/SUM-209), [SUM-132](https://summy.youtrack.cloud/issue/SUM-132), [SUM-204](https://summy.youtrack.cloud/issue/SUM-204)), 04.10.2026
 
 - **Структура CRM (прямое поручение 04.10.2026)** — CRM `ace8ea03bf94be80ec0d5637be08256336e978f2`: в меню «Документы» между «Сотрудниками» и «Медиатекой» ([контракт](contracts/crm-navigation.md)); раздел `/documents` — документы и реестры (отбор `?staffId=`), шаблоны, формы (QR-бланк листа уборки и сданные листы), база знаний; вкладки «Медиатека работ» и «Документы» убраны из «Сотрудников», работы мастеров — вкладка «Медиатеки» `/media/works` по праву «Сотрудники»; прежние `/staff/documents/*`, `/staff/works`, `/processes/cleaning-reports` переадресуют с отбором. «Процессы»: верхние ссылки убраны, «Создать → Дежурство» — существующая форма `/api/daily/duties` с `request_id` (карточку заводит backend), обзор и график — по ссылке из формы; этап «Отчёт об уборке» в панели смены показывает сданный лист (backend `8e9881bb232fcadcb15b50f0b249148e22a3b1e0`: `AdminShiftStage.document_id`).
