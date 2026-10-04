@@ -23,6 +23,8 @@ API и sync стояли ≈2 мин 12 с. Тесты до выкладки, р
 
 ## Dev
 
+04.10.2026: codex-owner-thoughts-20261004 — backend 1d2cc93f479bb03c4f77c53cd6910b36a05617c9, CRM 0ce3e32e60190e9f7c80fdd5e82f69e216b1981b (кнопка буфера в заголовке и «Мысли Кирилла», SUM-214). prepare/backend/crm exit 0, api/adminapp healthy, RestartCount=0; БД 0204_hr_action_request_links без миграций; master/client/website — состав u21n3 ниже. Тесты не проводились, реальное замечание не отправлялось. Prod не менялся.
+
 04.10.2026: Codex развернул точечный фикс переключения категорий процессов, CRM 0135ddd7236b82922de15dc73b6178b06e9bda3d, релиз codex-process-tabs-20261004, prepare/crm exit 0, running/healthy, RestartCount=0. БД 0204_hr_action_request_links без миграций; остальные продукты — состав u21n3 ниже. Тесты не проводились; Prod не менялся.
 04.10.2026, независимая сверка Codex перед точечным исправлением: свежие test и Dev VERSION совпадают — backend `b965e2a771c1e4d80c785311533d4f559adc09ef`, CRM `174c3958a1d492e36b5c8b8931df71a1dd2f2dce`, master-app `3f5e4b764be6fad2b1a6a0c001449049acef784e`, client-app `0f0a38da921d2d64164e890693179fa897f4f735`, website `7733966b31949a2e405ab6cf9a965ed9188231ff`. Метки revision работающих контейнеров совпадают, API/CRM healthy, RestartCount=0; БД `0204_hr_action_request_links`. Последний завершённый выпуск `u21n3-dev-20261004`, общий замок свободен. Это сверка доставки, функциональные тесты не проводились.
 
