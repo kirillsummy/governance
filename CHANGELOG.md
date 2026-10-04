@@ -1,5 +1,12 @@
 # Changelog
 
+## 04.10.2026 — переключение категорий процессов CRM
+
+- Codex по прямому поручению владельца исправил переинициализацию начальных фильтров при переключении семейства процессов: ключ ProcessesScreen учитывает type и family. Категории применяются без ручной перезагрузки; дизайн, API и бизнес-правила не менялись.
+- CRM `0135ddd7236b82922de15dc73b6178b06e9bda3d` опубликован в test. Запись работы — SUM-203, доставка — SUM-210.
+- Dev: codex-process-tabs-20261004, prepare и crm exit 0; CRM VERSION и образ соответствуют 0135ddd7236b82922de15dc73b6178b06e9bda3d, adminapp running/healthy, RestartCount=0. Образ sha256:dde128c66904475d46603c7414ca6a811bfa84b2ad1b32d39eea425c0b60e983. БД 0204 без миграций; остальные продукты не переключались. Откат: сохранены crm-prev и adminapp:pre-codex-process-tabs-20261004, команда release.py rollback-crm.
+- Тесты не проводились; миграций нет. Prod не менялся.
+
 ## [Unreleased]
 
 ### Норма часов ГМ, касса и премии, кадры, табель и Excel, управленческая сводка, смена без блокировки, бонусы по категориям — test и Dev ([SUM-96](https://summy.youtrack.cloud/issue/SUM-96) № 1, 8, 10, 11, 13–16; [SUM-210](https://summy.youtrack.cloud/issue/SUM-210), [SUM-213](https://summy.youtrack.cloud/issue/SUM-213), [SUM-209](https://summy.youtrack.cloud/issue/SUM-209)), 04.10.2026

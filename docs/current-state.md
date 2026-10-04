@@ -23,6 +23,10 @@ API и sync стояли ≈2 мин 12 с. Тесты до выкладки, р
 
 ## Dev
 
+04.10.2026: Codex развернул точечный фикс переключения категорий процессов, CRM 0135ddd7236b82922de15dc73b6178b06e9bda3d, релиз codex-process-tabs-20261004, prepare/crm exit 0, running/healthy, RestartCount=0. БД 0204_hr_action_request_links без миграций; остальные продукты — состав u21n3 ниже. Тесты не проводились; Prod не менялся.
+04.10.2026, независимая сверка Codex перед точечным исправлением: свежие test и Dev VERSION совпадают — backend `b965e2a771c1e4d80c785311533d4f559adc09ef`, CRM `174c3958a1d492e36b5c8b8931df71a1dd2f2dce`, master-app `3f5e4b764be6fad2b1a6a0c001449049acef784e`, client-app `0f0a38da921d2d64164e890693179fa897f4f735`, website `7733966b31949a2e405ab6cf9a965ed9188231ff`. Метки revision работающих контейнеров совпадают, API/CRM healthy, RestartCount=0; БД `0204_hr_action_request_links`. Последний завершённый выпуск `u21n3-dev-20261004`, общий замок свободен. Это сверка доставки, функциональные тесты не проводились.
+
+
 Последний подтверждённый шаг — `adm2-dev-20261004` (04.10.2026): backend `0eec9e70bbf50c4d3ab520de0ba7f5d9520ebb59`, CRM `ec542e39a189f023f97747e1ad0c402287b9f567`,
 master-app `cfcb6e0ce5af9337e65f31d1079527194007b6e5` (кадры, табель по ролям и Excel, сводка, выбор филиалов мастером), БД `0198` → `0200_master_location_choices`
 (копия `/opt/summy-test/backups/adm2-dev-20261004-before-0200.dump`); client-app `e508cf7`, website `7733966`. Перед ним — чужие `pi4` (backend `12c60c7`, 0198) и `pi3b` (0197),
