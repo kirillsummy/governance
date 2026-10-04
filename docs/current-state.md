@@ -23,6 +23,8 @@ API и sync стояли ≈2 мин 12 с. Тесты до выкладки, р
 
 ## Dev
 
+05.10.2026 02:04: `p14c-dev-20261005` после `p14b-dev-20261005` (00:19) — backend `7ec52fd2acc922535619ef0197564b19a4937a4f`, CRM `21a42adcaf183722d2df60da0621e40d42ab3c99`, master-app `62ea7965e3bc3b8b3e4a1f9eac1056c4d213fda2`, client-app `9a2cbd1787e73db09eb0d64e964e8eb9c40f276b`, website `fa90db7238a0a5eb17835838e99940b829916422`, БД `0204_hr_action_request_links`, `YCLIENTS_READ_ONLY=true` (партия 14, см. CHANGELOG 05.10). Prod не менялся: RC6.
+
 04.10.2026: codex-owner-thoughts-20261004 — backend 1d2cc93f479bb03c4f77c53cd6910b36a05617c9, CRM 0ce3e32e60190e9f7c80fdd5e82f69e216b1981b (кнопка буфера в заголовке и «Мысли Кирилла», SUM-214). prepare/backend/crm exit 0, api/adminapp healthy, RestartCount=0; БД 0204_hr_action_request_links без миграций; master/client/website — состав u21n3 ниже. Тесты не проводились, реальное замечание не отправлялось. Prod не менялся.
 
 04.10.2026: Codex развернул точечный фикс переключения категорий процессов, CRM 0135ddd7236b82922de15dc73b6178b06e9bda3d, релиз codex-process-tabs-20261004, prepare/crm exit 0, running/healthy, RestartCount=0. БД 0204_hr_action_request_links без миграций; остальные продукты — состав u21n3 ниже. Тесты не проводились; Prod не менялся.
