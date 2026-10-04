@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+### Бонусы: временное правило «без скидки при бонусах», правила категорий и сроки — test и Dev ([SUM-96](https://summy.youtrack.cloud/issue/SUM-96) № 8, № 63; [SUM-209](https://summy.youtrack.cloud/issue/SUM-209), [SUM-210](https://summy.youtrack.cloud/issue/SUM-210), [SUM-192](https://summy.youtrack.cloud/issue/SUM-192)), 04.10.2026
+
+- Прямые требования 04.10.2026 записаны в [contracts/client-loyalty.md](contracts/client-loyalty.md#правила-бонусов-временное-правило-и-расчёт-оплаты-04102026); абзац о бонусах в [orders-payments-test](contracts/orders-payments-test.md) помечен устаревшим в этой части. backend `ca3ba362a3b3aa3716da9e60957e90814970af4c` (код `d8eb55cc618b3db34a55bbd9f2d8a3b59dfae351`): `0195_loyalty_bonus_rules`, `GET/PUT /v1/loyalty/bonus-rules`, `GET /v1/client/orders/{id}/payment-quote`, срок и категория в ручном начислении, сроки QR по категориям, потолок 50 %; CRM `8e6cf1e530dc3a27adf02fe3c669c2bbc39227a4`: панель «Правила бонусов по категориям» в «QR лояльности», сроки в форме QR и в «Добавить бонусы»; client-app `1d1e39e3b12158fe3432604756d6aa18ee5b746d`: выбор «Применить / Не применять бонусы» по расчёту backend. master-app не менялся: бонусов клиента и скидок он не показывает.
+- Граница: списание бонусов при оплате не подключено (`redeemConnected=false`), срок и категория в YClients не передаются (`manual_transaction` принимает только сумму и название), второго баланса нет; на Dev `YCLIENTS_READ_ONLY=true`, начислений, списаний и сообщений не было.
+- Dev — `bonus-dev-20261004` (14:10–14:16 МСК): копия `/opt/summy-test/backups/bonus-dev-20261004-before-0195.dump` (pg_restore-check ok), 0194 → 0195, backend, CRM, client-app exit 0, api healthy, рестартов 0, счётчики 16 контрольных таблиц без изменений, невалидных индексов 0, новые таблицы и поля пусты. Перед выпуском очищен кэш сборки Docker старше 12 ч (≈4,4 ГБ); образы не удалялись.
+- Проверены только миграции БД: 0195 — пробный прогон в откатываемой транзакции на Dev (из него — строки снимка схемы) и применение выпуском. Тесты, lint, typecheck, smoke не проводились. Prod не менялся.
+
 ### Показатели KPI и КДО в CRM: test и Dev ([SUM-96](https://summy.youtrack.cloud/issue/SUM-96) № 37, [SUM-210](https://summy.youtrack.cloud/issue/SUM-210)), 04.10.2026
 
 - Прямое поручение владельца: методы KPI.bi на данных SUMMY — [contracts/analytics-kpi.md](contracts/analytics-kpi.md). backend `8802e27e2360692d1daea4c806424703b71a885d`: `/v1/analytics/kpi/*` (heatmap, compare, return-240, opz, funnel, assortment, factors, facts, kdo), `0194_client_care_tasks`; CRM `14f02e90669ee9f0a45d00cad040d69501763279`: «Аналитика → Показатели KPI», «Клиенты → КДО».
