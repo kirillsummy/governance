@@ -23,7 +23,12 @@ API и sync стояли ≈2 мин 12 с. Тесты до выкладки, р
 
 ## Dev
 
-Последний подтверждённый шаг — `as3-dev-20261004` (04.10.2026 02:03 МСК): backend `b8cb1ce181728546c1d49b259c46d0a4b729a16e`, CRM
+Последний подтверждённый шаг — `fpd2-dev-20261004` (04.10.2026 ≈11:56 МСК): backend `e5fe9bb6bc685819bedd702d63dbce0d0056950b`, CRM `9b826e89fe277c7cdf4972898cd1a3c0af53d02e`,
+client-app `4ca1dbe0e9274e07ab5046710720b8766be229e8`, website `7733966b31949a2e405ab6cf9a965ed9188231ff`; БД `0191_comms_import` → `0193_puzzle_games` (копия
+`/opt/summy-test/backups/fpd2-dev-20261004-before-0193.dump`). Перед ним — `fpd-dev-20261004` (11:28 МСК): backend
+`8e9881bb232fcadcb15b50f0b249148e22a3b1e0`, CRM `ace8ea03bf94be80ec0d5637be08256336e978f2`, БД `0190` → `0191_comms_import`. Итог на Dev: backend `e5fe9bb`, CRM `9b826e8`,
+master-app `6b8b0e1`, client-app `4ca1dbe`, website `7733966`; `CHATWOOT_*` на Dev не заданы (перенос переписки —
+«Функция в разработке»). Перед ними — `as3-dev-20261004` (04.10.2026 02:03 МСК): backend `b8cb1ce181728546c1d49b259c46d0a4b729a16e`, CRM
 `d3ca2b59ccf6d2c99c29fc67021c74f39f99a1f7`; БД `0189_knowledge_library` → `0190_knowledge_file_provenance` (копия
 `/opt/summy-test/backups/as3-dev-20261004-before-0190.dump`). Файлы базы знаний: сумма, состояние в источнике,
 «только владелец»; в каталоге 5 материалов Aspro из закрытого MinIO Dev (черновики). Итог на Dev: backend `b8cb1ce`,

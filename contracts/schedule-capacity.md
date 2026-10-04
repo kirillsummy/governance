@@ -33,7 +33,9 @@
 ### Порядок команды
 
 1. master-app отправляет `requestId` (UUID нажатия) с каждой правкой дня,
-   закрытием дня и закрытием промежутка.
+   закрытием дня и закрытием промежутка. С 04.10.2026 (R77, SUM-97 № 5)
+   `requestId` обязателен: без него `POST /v1/schedule/day/{day}` и
+   `/close-interval` отвечают 422 `request_id_required` (backend `e5fe9bb6bc685819bedd702d63dbce0d0056950b`).
 2. Backend под advisory-lock мастера и дня проверяет ключ: тот же `requestId`
    с другим составом — 409 `idempotency_conflict`.
 3. Для новой команды под advisory-lock `capacity:<location>:<day>`:
