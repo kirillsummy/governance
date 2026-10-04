@@ -58,7 +58,7 @@
   `import_yclients_clients.py`; `sweep` → `sweep_deleted_records.py` (жёстко удалённые);
   `schedule` → `import_yclients_schedule.py`; `resource_schedule` →
   `import_yclients_resource_schedule.py`; `transactions` →
-  `import-yclients-transactions.py`; `reviews` → `import_yclients_comments.py`; платформенные
+  `import_yclients_transactions.py`; `reviews` → `import_yclients_comments.py`; платформенные
   `paid_auto_close`, `loyalty_cards`, `master_shifts`. Свежесть — `GET /v1/freshness`,
   сверка зеркала — `GET /v1/mirror-check`.
 - **Read-only allowlist** `app/integrations/yclients/read_only.py` (включается

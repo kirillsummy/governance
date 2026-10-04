@@ -47,7 +47,7 @@ YouTrack при его подготовке не менялись и не выз
 | `clients` | `import_yclients_clients.py` | сутки | — | `clients`, `client_contacts` (DELETE+INSERT), `appointments.client_id` |
 | `schedule` | `import_yclients_schedule.py` | час | −1…+90 дн | `staff_schedules`, `data_quality_issues` |
 | `resource_schedule` | `import_yclients_resource_schedule.py` | час | −1…+90 дн | `resource_schedules` |
-| `transactions` | `import-yclients-transactions.py` | час | −7…0 дн | только `raw_objects` + `external_refs` (сырьём, в core не моделируется); только компания 481570 |
+| `transactions` | `import_yclients_transactions.py` | час | −7…0 дн | только `raw_objects` + `external_refs` (сырьём, в core не моделируется); только компания 481570 |
 | `reviews` | `import_yclients_comments.py` | час | — | `staff_reviews` |
 
 Задания с источником `platform` (`paid_auto_close`, `loyalty_cards`,
@@ -59,8 +59,9 @@ YouTrack при его подготовке не менялись и не выз
 (записи, графики), `SYNC_OBJECT_TYPE` (записи), `CATALOG_ALLOW_EMPTY`,
 `CATALOG_LIST_LIMIT`, `CATALOG_MAX_PAGES`, `CATALOG_PAGE_SIZE` (каталог),
 `SWEEP_DAYS` (уборка удалённых); транзакции дополнительно читают
-`YCLIENTS_PARTNER_TOKEN`/`YCLIENTS_USER_TOKEN` и необязательный
-`.env.transactions.local`.
+`YCLIENTS_TX_START`/`YCLIENTS_TX_END`, `YCLIENTS_TX_BEHIND_DAYS`,
+`YCLIENTS_TRANSACTIONS_PATH`; список компаний — `COMPANIES` в скрипте (481570).
+Отдельного `.env.transactions.local` нет с 04.10.2026 (И2).
 
 ## 3. Чего импортёры не берут
 
@@ -78,13 +79,16 @@ YouTrack при его подготовке не менялись и не выз
 1. Каркас запуска повторён в каждом скрипте: свой `journal_failed` /
    `journal_succeeded`, `_resolve_context` (организация, локация и подключение по
    `company_id`), `_upsert_ref`, `_snapshot`. Общий модуль `app/sync/helpers.py`
-   закрывает только окружение, адрес БД, стабильный JSON и хеш.
+   закрывает только окружение, адрес БД, стабильный JSON и хеш. Устранено
+   04.10.2026 (И1) для каталога, клиентов, отзывов, графиков и метлы, для
+   записей (`import_yclients_records.py`) — backend `61988b0dcca14ec9717e9b891d865447dadfaaea`.
 2. Записи и клиенты используют `psycopg` синхронно, а домены приложения —
    async SQLAlchemy; общий код между ними не переиспользуется.
 3. Контакты клиента пересоздаются DELETE+INSERT на каждом прогоне; у записей
    позиции пересоздаются только при изменении (`_items_unchanged`, SUM-212).
 4. Транзакции живут вне общего порядка: дефис в имени файла, свой файл
-   окружения, отказ работать для компании, отличной от 481570.
+   окружения, отказ работать для компании, отличной от 481570. Устранено
+   04.10.2026 (И2): общее имя и окружение цикла, компании — `COMPANIES`.
 5. Окна дат и интервалы — константы `schedule.py` и переменные `loop.py`; в
    `sync_runs` окно попадает, но реестра «что и когда покрыто» нет.
 
@@ -95,8 +99,8 @@ YouTrack при его подготовке не менялись и не выз
 
 | № | Задача | Готово, когда |
 |---|---|---|
-| И1 | Вынести каркас запуска (`journal_*`, `_resolve_context`, `_upsert_ref`, `_snapshot`) в `app/sync/importer.py` и перевести на него каталог, клиентов, отзывы, графики и уборку | одинаковые функции не повторяются в скриптах; `sync_runs` и `external_refs` пишутся тем же кодом |
-| И2 | Импортёр транзакций привести к общему виду: имя `import_yclients_transactions.py`, окружение цикла, список компаний — параметром с прежним значением 481570 | поведение прежнее, отдельный `.env.transactions.local` не нужен |
+| И1 | Вынести каркас запуска (`journal_*`, `_resolve_context`, `_upsert_ref`, `_snapshot`) в `app/sync/importer.py` и перевести на него каталог, клиентов, отзывы, графики и уборку | одинаковые функции не повторяются в скриптах; `sync_runs` и `external_refs` пишутся тем же кодом — **выполнено 04.10.2026**, backend `dbe7a7f8f4e60a9de6e336702a290531cdaa10f0`: каркас `app/sync/importer.py`; каталог, клиенты, отзывы, графики и метла переведены; записи (`import_yclients_records.py`) — backend `61988b0dcca14ec9717e9b891d865447dadfaaea`, 04.10.2026 |
+| И2 | Импортёр транзакций привести к общему виду: имя `import_yclients_transactions.py`, окружение цикла, список компаний — параметром с прежним значением 481570 | поведение прежнее, отдельный `.env.transactions.local` не нужен — **выполнено 04.10.2026**, backend `dbe7a7f8f4e60a9de6e336702a290531cdaa10f0`: новое имя, окружение цикла, `COMPANIES = ("481570",)`, регистрация в `schedule.py` |
 | И3 | Контакты клиента обновлять по разнице, как позиции записей | неизменённые контакты не пересоздаются — **выполнено 04.10.2026**, backend `e5fe9bb6bc685819bedd702d63dbce0d0056950b`: телефон и почта по разнице, контакты других типов импортёр клиентов не трогает |
 | И4 | Сторож охвата: тест, что каждое задание `default_jobs` с источником `yclients` вызывает только пути из `read_only.py` | новый путь импортёра без ревью ловится тестом |
 | И5 | Реестр покрытия: представление по `sync_runs` «задание × компания × последнее окно × исход» для «Интеграций» CRM | видно, какой период каждого класса данных подтверждён — **выполнено 04.10.2026**: `GET /v1/freshness/coverage` (backend `e5fe9bb6bc685819bedd702d63dbce0d0056950b`), таблица в «Интеграциях» (CRM `9b826e89fe277c7cdf4972898cd1a3c0af53d02e`) |

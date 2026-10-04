@@ -107,7 +107,7 @@ SUMMY нет. Чтение — снимок/запрос backend к YClients с 
 
 Сверено по коду `backend/test` `c7a4d3f3daf28b816dde9d2a39f2ac01b3479694`, без запросов к БД и
 YClients. Кассовые транзакции импортирует задание `transactions`
-(`scripts/import-yclients-transactions.py`, раз в час, окно 7 дней) только
+(`scripts/import_yclients_transactions.py`, раз в час, окно 7 дней) только
 **сырьём** в `raw_objects` и только для компании 481570: компанию 386571, чью
 базу клиентов переносим, импортёр по решению владельца 23.07 не собирает. В core
 транзакции не моделируются, поля ответа по версии API YClients импортёр

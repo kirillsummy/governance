@@ -35,8 +35,17 @@ Application API. Реализация 03.10.2026: backend `docs/comms.md`, CRM �
   `update_id`) и сверка секрета MAX (`X-Max-Bot-Api-Secret`). Маршрута
   вебхука, хранения, миграций и отправки нет: они включаются после доступов и
   ответа SUM-96 № 50. Разбор тела сообщения MAX — после сверки полей с
-  официальной документацией; Авито — только интерфейс (документация Messenger
-  API не прочитана).
+  официальной документацией. Авито — читающий адаптер
+  `app/domains/comms/avito.py` (backend `61988b0dcca14ec9717e9b891d865447dadfaaea`) по публичному
+  экспорту OpenAPI каталога Avito Business API (03.10.2026; официальный портал
+  из среды отвечал 429 — сверить до подключения): `POST /token`
+  (client_credentials), `GET /core/v1/accounts/self`,
+  `GET /messenger/v2/accounts/{user_id}/chats` и `/chats/{chat_id}`,
+  `GET /messenger/v3/accounts/{user_id}/chats/{chat_id}/messages/` (не помечает
+  чат прочитанным), `GET /messenger/v1/accounts/{user_id}/getVoiceFiles`
+  (ссылка живёт час). Отправка, отметка прочтения, удаление, blacklist и
+  регистрация вебхука не используются; модуль ни к чему не подключён (backend
+  DEBT, пункт 23), канал — «Функция в разработке».
 
 ## Журнал переписки SUMMY (04.10.2026)
 
@@ -60,7 +69,10 @@ Chatwoot сохранено как необязательный источник
 - Вебхуки: CRM `/hooks/comms/telegram|max` пересылает тело и заголовок секрета
   в backend `/v1/comms/webhooks/*`. Telegram — секрет и идемпотентность по
   `update_id`, контакт — подпись чата канала; MAX — только сверка секрета
-  (`pending_parser`); Авито — нет. Без ключей канала — 503. Клиент SUMMY
+  (`pending_parser`); Авито — разбор тела вебхука v3 готов (`parse_webhook`,
+  событие для существующего `store_event`), маршрута нет: в публичной схеме
+  нет подписи или секрета вебхука, проверка подлинности — решение SUM-97.
+  Без ключей канала — 503. Клиент SUMMY
   привязывается только явно (`client_id`), не по имени и телефону.
 - `GET /v1/comms/state` дополнительно отдаёт `inbox_available`.
 
@@ -92,7 +104,12 @@ Chatwoot) и экспорт Telegram Desktop — источники. Backend `8e
   runtime (`CHATWOOT_URL`, `CHATWOOT_ACCOUNT_ID`, `CHATWOOT_API_TOKEN`); без
   них — «Функция в разработке».
 - MAX: вебхук разбирает `message_created` по официальной документации
-  (dev.max.ru); Авито Messenger — без адаптера.
+  (dev.max.ru). Авито Messenger: нормализация для переноса готова (направление
+  `in`/`out`, тип сообщения как есть, неизвестный — неизвестен; image и voice —
+  вложения, у appCall/file/video контент источник не отдаёт; происхождение
+  `api.avito.ru/{user_id}` + id чата). REST отдаёт не дальше offset 1000 без
+  total — прогон обязан показывать неполноту. Импорт требует значения
+  `source='avito'` (миграция) и доступа.
 
 ## Не решено
 
