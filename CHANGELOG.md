@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+### Показатели KPI и КДО в CRM: test и Dev ([SUM-96](https://summy.youtrack.cloud/issue/SUM-96) № 37, [SUM-210](https://summy.youtrack.cloud/issue/SUM-210)), 04.10.2026
+
+- Прямое поручение владельца: методы KPI.bi на данных SUMMY — [contracts/analytics-kpi.md](contracts/analytics-kpi.md). backend `8802e27e2360692d1daea4c806424703b71a885d`: `/v1/analytics/kpi/*` (heatmap, compare, return-240, opz, funnel, assortment, factors, facts, kdo), `0194_client_care_tasks`; CRM `14f02e90669ee9f0a45d00cad040d69501763279`: «Аналитика → Показатели KPI», «Клиенты → КДО».
+- Dev — `dak2-dev-20261004`: копия `/opt/summy-test/backups/dak2-dev-20261004-before-0194.dump`, 0193 → 0194, backend и CRM exit 0, api healthy, рестартов 0, `YCLIENTS_READ_ONLY=true`. Для порога свободного места удалены образы собственных выпусков на два и более шага назад (fpd2, r131, r134, r136 и CRM к ним) и висячие образы; откат на `dak-dev-20261004` сохранён.
+- Проверены только миграции БД: `0194` — upgrade → downgrade → upgrade на одноразовой PostgreSQL 18 и применена на Dev; SQL отчётов до Dev не исполнялся, тесты не проводились. Prod не менялся. SUM-96 № 37 — часть про показатели перенесена в ответы.
+
 ### «Документы» — только владелец и бухгалтер: test и Dev ([SUM-203](https://summy.youtrack.cloud/issue/SUM-203)), 04.10.2026
 
 - Прямое решение владельца 04.10.2026 записано в [contracts/crm-navigation.md](contracts/crm-navigation.md#доступ-к-документам--только-владелец-и-бухгалтер-04102026). backend `fa848657214c5ca99a89f41c6846d80e5e0513f7`: единый guard раздела `documents` (owner/accountant до настроенных прав) на `/v1/documents/*`, `/v1/knowledge/*`, `/v1/cleaning/qr`, `/v1/cleaning/reports` и снимке листа (`no-store`); CRM `a58e62075e9476ba9e1f545530a20f4e16020be1`: `SectionKey documents` с потолком ролей, меню, страницы, прежние адреса, `/cleaning-sheet`, BFF документов, знаний и каталога уборки; кнопка «Лист» в этапе смены убрана.
