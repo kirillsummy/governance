@@ -67,6 +67,7 @@ Kubernetes pod не подтверждены. Дзен в source задан пу
   не проверен и не выдумывается. S3 endpoint `s3.twcstorage.ru` — инфраструктурный host,
   не публичная ссылка на клиентские файлы.
 - Яндекс Пэй sandbox host `sandbox.pay.yandex.ru` — адаптер интеграции, не SUMMY UI.
+- Плановая уборка Dev: исходники [scripts/dev-maintenance](../scripts/dev-maintenance/), на сервере — `/opt/summy-test/maintenance/`, журналы — `/var/log/summy-dev-cleanup/`; порядок — [инфраструктура](infrastructure.md#плановая-уборка-dev).
 - [Контракт тестовых заказов](../contracts/orders-payments-test.md)
   описывает payment-link feature; новое требование карты отмечено в current-state.
 

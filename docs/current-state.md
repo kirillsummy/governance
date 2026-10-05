@@ -23,6 +23,8 @@ API и sync стояли ≈2 мин 12 с. Тесты до выкладки, р
 
 ## Dev
 
+05.10.2026 11:52: `s194-dev-20261005` после `cons4` — backend `bb86c7fb0a0370f8cd963d98dbb25ccbf436aef4` (SUM-194), CRM `d100b4fd20616a6238c08fcacd11651334abe99c`, master-app `9040821e1a937d1368b9ab0956419a891e95de69` (SUM-194), client-app `9a2cbd1787e73db09eb0d64e964e8eb9c40f276b`, website `fa90db7238a0a5eb17835838e99940b829916422`, БД `0204_hr_action_request_links`, `YCLIENTS_READ_ONLY=true`. Состав совпадает с `test`. Плановая уборка Dev — еженедельно, вс 04:00 МСК ([инфраструктура](infrastructure.md#плановая-уборка-dev)). Тесты не проводились.
+
 05.10.2026 10:15: `cons4-dev-20261005` после `p14c` — backend `43d86ab1650f01238f7cc6f6d97c8b9f00a6076e`, CRM `6457d2adaf45d9e9070ad6a76f33343bafff2736` (консолидация локальных пакетов, включает release2 `558986e`/`76ad506`), master-app `62ea7965e3bc3b8b3e4a1f9eac1056c4d213fda2`, client-app `9a2cbd1787e73db09eb0d64e964e8eb9c40f276b`, website `fa90db7238a0a5eb17835838e99940b829916422`, БД `0204_hr_action_request_links`, `YCLIENTS_READ_ONLY=true`. Состав совпадает с `test`. Тесты не проводились (см. CHANGELOG 05.10). Prod не менялся: RC6.
 
 05.10.2026 02:04: `p14c-dev-20261005` после `p14b-dev-20261005` (00:19) — backend `7ec52fd2acc922535619ef0197564b19a4937a4f`, CRM `21a42adcaf183722d2df60da0621e40d42ab3c99`, master-app `62ea7965e3bc3b8b3e4a1f9eac1056c4d213fda2`, client-app `9a2cbd1787e73db09eb0d64e964e8eb9c40f276b`, website `fa90db7238a0a5eb17835838e99940b829916422`, БД `0204_hr_action_request_links`, `YCLIENTS_READ_ONLY=true` (партия 14, см. CHANGELOG 05.10). Prod не менялся: RC6.
