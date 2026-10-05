@@ -37,6 +37,10 @@ website `fa90db7238a0a5eb17835838e99940b829916422` (`main`, `v2.33.0`); БД
 
 ## Dev
 
+06.10.2026 00:23: `pool21-dev-20261006` — backend `e18d8ad76f6d1ccf68fa95b31f6ec802c1c9f0c7` (предпросмотр отмены, поздние отмены в выключенном расчёте предоплаты), client-app `5f83710ac488ba4c146e32c3e97e505be206161f` (предупреждение при отмене, честные состояния, типы заказа); CRM `78c4fc3`, master-app `84b6b48`; БД `0226` без изменений; exit 0.
+
+06.10.2026 00:07: `pool20-dev-20261005` — backend `f45f5ea`, CRM `78c4fc3`, master-app `84b6b48` (волна crmmanager); БД `0226` без изменений; exit 0. `CLIENT_PREPAYMENT_ENABLED_FROM` на Dev не задан — правило предоплаты выключено.
+
 05.10.2026 23:32: `pool19-dev-20261005` — backend `eca222d280f13141ee74b04e411ae3392b49e8ed`, CRM `ea6404f491c675becee62b9f350f693286dd9f98`, client-app `a57ceb17be90115f41cf3650a412aaf2d93e4590` (исправления ревью crmfinish, листание шаблонов, товары в карточке клиента, итоги сводки по направлениям); master-app `1aee0c3`; БД `0226` без изменений; exit 0.
 
 05.10.2026 23:23: `pool18-dev-20261005` — backend `84e391d`, CRM `7bd1d3a` (период сводки, crmfollowup), master-app `1aee0c3` (документ к апелляции), client-app `15432fe` (никнейм); БД `0226` без изменений; exit 0. CRM и master-app включают чужие коммиты тестов SUM-218 (`3f1c82de`, `c04cbd1`).
