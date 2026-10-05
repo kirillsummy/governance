@@ -37,6 +37,12 @@ website `fa90db7238a0a5eb17835838e99940b829916422` (`main`, `v2.33.0`); БД
 
 ## Dev
 
+05.10.2026 20:43: `pool3-dev-20261005` — backend `f5aaab09db98a36f95fbbf3a8b982bbe94b2e9cd`, CRM `7d9b38a19d21bd4c6ad0777cebd2862e8529ecfd` (отчёт «Неполные данные · дыры покрытия», SUM-96 № 37); БД `0211_puzzle_reward_settings` без изменений; prepare/backend/crm exit 0.
+
+05.10.2026 20:37: `pool2-dev-20261005` — backend `b87bf0fe3c8b51752f75477b30d42b8f6e9291b2`, CRM `8b2cb4b8ba3071bfc6422431090fe28fd8e9aeaa` (настройки наград игры — [контракт](../contracts/puzzle-rewards.md); календарь T05/P08; последствия снятия филиала мастером P25/№ 57; журнал прогонов интеграций T10; честные отказы склада T06; процессы без дублей; шестой остаток SUM-160); БД `0210_comms_thread_locations` → `0211_puzzle_reward_settings` (копия `pool2-dev-20261005-before-0211.dump`); prepare/backend/crm exit 0. Награды игры не включены.
+
+05.10.2026 20:20: `pool1-dev-20261005` — backend `21fa90274ac145393e9abb0328acde8756dab9d3`, CRM `7e41eb4404a97fff6331e5c05496142983e1ab2b` (библиотека документов T02/P13, остаток DTO SUM-135, карточка клиента T01/P10); БД `0210` без изменений; prepare/backend/crm exit 0. Все три выпуска: master-app `fdd585a`, client-app `9a2cbd1`, website `GRADE2+f6dd7b8` прежние, `YCLIENTS_READ_ONLY=true`; тесты не проводились, проверены только миграция и сохранность данных; Prod не менялся.
+
 05.10.2026 19:52: `crr2-dev-20261005` после `crr1-dev-20261005` — только CRM `d5dbb72bb81a03b2b5e8fd067974d8c970df0555` (SUM-160 пятый остаток честных состояний, SUM-135 журнал переписки и состав услуг на закреплённом OpenAPI); prepare/crm exit 0; backend, БД и остальные продукты прежние. Тесты не проводились.
 
 05.10.2026 19:41: `crr1-dev-20261005` после `sbd-dev-20261005` — backend `04ad395383fe3e669381aaf3b97c5c75638edeea`, CRM `cbdcceeebcfab7b8f3c86bf3938659e0ccb4d1b2` (P19/P20: администратор видит чаты клиентов своих филиалов и отвечает — [контракт](../contracts/client-comms.md)); БД `0209_staff_birthday_push` → `0210_comms_thread_locations` (копия `crr1-dev-20261005-before-0210.dump`); диалогов в журнале Dev 0; отправка наружу выключена. Проверены только миграция и сохранность данных; Prod не менялся.
