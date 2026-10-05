@@ -1,5 +1,13 @@
 # Changelog
 
+## 05.10.2026 — имя уборщицы для QR и листа: ФИО или фамилия и имя из карточки (SUM-203 → SUM-210)
+
+- Прямой ответ 05.10.2026: если «Полное ФИО» карточки пусто, QR, печатный лист и Word формируются по достоверным фамилии и имени из той же карточки; отчество необязательно. Правило — [daily-processes](contracts/daily-processes.md#qr-уборщицы-фио-в-коде-05102026) (источник ФИО, выпуск, скан); прежнее «имя из YClients ФИО не считается» заменено.
+- **backend** `test` `08d71b7` → `e078657` (слияние со свежей `test` с правкой CI — `ecc741a5e556286cd167c8abb9d59ac19d8496cc`): `app/domains/cleaning/cleaner_name.py` — полное ФИО → фамилия и имя полей карточки → имя карточки (2–3 слова-имени без служебных слов), иначе 422; одно имя в выпуске и списке QR (`name_source`), payload и `resolve-qr`; `GET /v1/cleaning/qr/name`. Снимок OpenAPI — только добавления, миграций нет.
+- **CRM** `test` `b0078a4` → `ccdc493af0652d45beea1078bd87d743fa8a0991`: «Лист уборщицы» берёт имя с сервера, показывает источник; собственный критерий `fullName` и ложное предупреждение убраны; при отказе — причина сервера и «Заполнить в карточке».
+- **Dev** `cnf-dev-20261005` после `csa-dev-20261005`: prepare 15:45:07, backend 15:45:57, crm 15:46:05 — exit 0; VERSION backend `ecc741a…`, CRM `version=cnf-dev-20261005 sha=ccdc493…`; образы `summy-cnf-backend:ecc741a` (`sha256:a2946bc3…`), `adminapp:crm-ccdc493` (`sha256:ee43fdf0…`) с метками ревизии = SHA; api и adminapp healthy, sync running, RestartCount 0; БД `0204_hr_action_request_links` без миграций; `YCLIENTS_READ_ONLY=true`. Новое разрешение, прогнанное только чтением по строкам Dev (выведены лишь счётчики): 9 из 9 уборщиц — имя карточки, отказов 0.
+- Проверки: тесты, lint, typecheck, smoke и ручные сценарии не проводились; сборки для выкладки (backend, CRM `next build`) успешны.
+
 ## 05.10.2026 — Prod S194: CI выпущенных SHA и лимит полного контура backend ([SUM-211](https://summy.youtrack.cloud/issue/SUM-211))
 
 - **GitHub Actions по выпущенным SHA** (чтение Codex через подключение `523uran523`, 12:29 UTC):
