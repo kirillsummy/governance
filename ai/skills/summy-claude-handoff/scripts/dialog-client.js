@@ -15,7 +15,9 @@ const sendButton = document.getElementById('send');
 const sendStatus = document.getElementById('send-status');
 const delivery = document.getElementById('delivery');
 const token = document.querySelector('meta[name="dialog-token"]')?.content || '';
-const storageKey = 'summy-claude-dialog-session';
+const legacySelectionKey = 'summy-claude-dialog-session';
+const selectionKey = 'summy-claude-dialog-session:v2';
+const migratedKey = 'summy-claude-dialog-session:v2-migrated';
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const labels = { working: 'Работает', waiting: 'Ждёт ответ', idle: 'Запуск завершён', failed: 'Ошибка запуска',
   stopped: 'Прервался', unknown: 'Состояние не проверено', offline: 'Не подключен' };
@@ -30,7 +32,7 @@ const safeFormat = format => value => {
 };
 const time = { format: safeFormat(timeFormat) };
 const dateTime = { format: safeFormat(dateTimeFormat) };
-const draftKey = 'summy-claude-dialog-draft';
+const draftPrefix = 'summy-claude-dialog-draft:v2:';
 
 let sessions = [];
 let selectedId = '';
@@ -40,8 +42,25 @@ let previousHistory = '';
 let savedSelection = '';
 let draftId = '';
 let draftText = '';
+let draftSession = '';
 let sending = false;
-try { savedSelection = localStorage.getItem(storageKey) || ''; } catch {}
+function readSelection() {
+  try {
+    const own = sessionStorage.getItem(selectionKey) || '';
+    if (UUID.test(own)) return own;
+    if (sessionStorage.getItem(migratedKey)) return '';
+    sessionStorage.setItem(migratedKey, '1');
+    const legacy = localStorage.getItem(legacySelectionKey) || '';
+    if (UUID.test(legacy)) { sessionStorage.setItem(selectionKey, legacy); return legacy; }
+  } catch {}
+  return '';
+}
+
+function writeSelection(id) {
+  try { sessionStorage.setItem(selectionKey, id); sessionStorage.setItem(migratedKey, '1'); } catch {}
+}
+
+savedSelection = readSelection();
 
 function escapeHtml(value) {
   return value.replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
@@ -118,22 +137,26 @@ function newDraftId() {
   draftId = typeof crypto.randomUUID === 'function' ? crypto.randomUUID()
     : '10000000-1000-4000-8000-100000000000'.replace(/[018]/g, c => (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16));
   draftText = '';
+  draftSession = selectedId;
 }
 
 function savePendingDraft(session, id, text) {
-  try { sessionStorage.setItem(draftKey, JSON.stringify({ session, id, text })); } catch {}
+  if (!UUID.test(session || '')) return;
+  try { sessionStorage.setItem(draftPrefix + session, JSON.stringify({ session, id, text })); } catch {}
 }
 
-function clearPendingDraft() {
-  try { sessionStorage.removeItem(draftKey); } catch {}
+function clearPendingDraft(session) {
+  if (!UUID.test(session || '')) return;
+  try { sessionStorage.removeItem(draftPrefix + session); } catch {}
 }
 
 function restorePendingDraft(session) {
   let saved = null;
-  try { saved = JSON.parse(sessionStorage.getItem(draftKey) || 'null'); } catch {}
+  try { saved = JSON.parse(sessionStorage.getItem(draftPrefix + session) || 'null'); } catch {}
   if (!saved || saved.session !== session || !UUID.test(saved.id || '') || typeof saved.text !== 'string') return false;
   draftId = saved.id;
   draftText = saved.text;
+  draftSession = session;
   textarea.value = saved.text;
   sendStatus.textContent = 'Восстановлено неподтверждённое уточнение — отправка не создаст дубль.';
   return true;
@@ -304,29 +327,30 @@ function updateComposer() {
 
 async function submit() {
   if (sending || !selectedId) return;
+  const id = selectedId;
   const text = textarea.value;
   if (!text.trim()) return;
-  if (text !== draftText) {
-    if (draftText) newDraftId();
+  if (draftSession !== id || text !== draftText) {
+    if (draftText || draftSession !== id) newDraftId();
     draftText = text;
   }
-  savePendingDraft(selectedId, draftId, text);
+  const messageId = draftId;
+  savePendingDraft(id, messageId, text);
   sending = true;
   updateComposer();
   sendStatus.classList.remove('is-error');
   sendStatus.textContent = 'Отправляем…';
-  const id = selectedId;
   try {
     const response = await fetch('/api/messages', { method: 'POST', cache: 'no-store',
       headers: { 'content-type': 'application/json', 'x-dialog-token': token },
-      body: JSON.stringify({ session: id, id: draftId, text }) });
+      body: JSON.stringify({ session: id, id: messageId, text }) });
     let body = {};
     try { body = await response.json(); } catch {}
     if (!response.ok) {
-      if (response.status === 409 || response.status === 400) clearPendingDraft();
+      if (response.status === 409 || response.status === 400) clearPendingDraft(id);
       throw new Error(body.error || 'HTTP ' + response.status);
     }
-    clearPendingDraft();
+    clearPendingDraft(id);
     if (id === selectedId) {
       textarea.value = '';
       newDraftId();
@@ -356,7 +380,7 @@ textarea.addEventListener('keydown', event => {
 sessionSelect.addEventListener('change', () => {
   if (!sessions.some(session => session.id === sessionSelect.value)) return;
   savedSelection = sessionSelect.value;
-  try { localStorage.setItem(storageKey, savedSelection); } catch {}
+  writeSelection(savedSelection);
   selectSession(sessionSelect.value);
 });
 sessionButton.addEventListener('click', () => sessionDialog.showModal());

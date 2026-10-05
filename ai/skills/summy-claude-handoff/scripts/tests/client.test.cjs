@@ -1,0 +1,131 @@
+'use strict';
+
+const test = require('node:test');
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const vm = require('node:vm');
+
+const SOURCE = fs.readFileSync(path.join(__dirname, '..', 'dialog-client.js'), 'utf8');
+const X = '11111111-2222-4333-8444-555555555555';
+const Y = '66666666-7777-4888-9999-aaaaaaaaaaaa';
+const Z = 'bbbbbbbb-cccc-4ddd-8eee-ffffffffffff';
+
+class FakeStorage {
+  constructor() { this.map = new Map(); }
+  getItem(key) { return this.map.has(key) ? this.map.get(key) : null; }
+  setItem(key, value) { this.map.set(key, String(value)); }
+  removeItem(key) { this.map.delete(key); }
+}
+
+class FakeElement {
+  constructor(id = '') {
+    this.id = id; this.children = []; this.listeners = {}; this.dataset = {}; this.disabled = false;
+    this.textContent = ''; this.innerHTML = ''; this.className = ''; this.value = '';
+    this.classList = { add() {}, remove() {}, toggle() {} };
+  }
+  addEventListener(type, fn) { (this.listeners[type] ||= []).push(fn); }
+  dispatch(type, event = {}) { for (const fn of this.listeners[type] || []) fn({ preventDefault() {}, ...event }); }
+  replaceChildren(...nodes) { this.children = nodes; }
+  append(...nodes) { this.children.push(...nodes); }
+  close() {} showModal() {} focus() {}
+  get options() { return this.children; }
+}
+
+function loadTab({ session, local, sessions, posts }) {
+  const elements = new Map();
+  const document = {
+    title: '', activeElement: null, body: { scrollHeight: 0 },
+    getElementById(id) { if (!elements.has(id)) elements.set(id, new FakeElement(id)); return elements.get(id); },
+    querySelector: () => ({ content: 'token' }),
+    createElement: () => new FakeElement(),
+  };
+  const fetch = async (url, options = {}) => {
+    if (options.method === 'POST') {
+      posts.push(JSON.parse(options.body));
+      return { ok: true, status: 201, json: async () => ({ message: { state: 'queued' } }) };
+    }
+    let body;
+    if (url.startsWith('/api/sessions')) body = { sessions: sessions.map(id => ({ id, task: 'Поток ' + id.slice(0, 4), status: 'idle' })) };
+    else if (url.startsWith('/api/dialog')) body = { id: new URLSearchParams(url.split('?')[1]).get('session'), status: 'idle', task: 'Поток', messages: [] };
+    else body = { delivery: { mode: 'resume', text: '' }, messages: [] };
+    return { ok: true, status: 200, json: async () => body };
+  };
+  const context = vm.createContext({
+    document, window: { innerHeight: 0, scrollY: 0, scrollTo() {} }, fetch, sessionStorage: session, localStorage: local,
+    navigator: {}, crypto: globalThis.crypto, Intl, URLSearchParams, setInterval: () => 0, console,
+  });
+  vm.runInContext(SOURCE, context);
+  return { select: document.getElementById('session-select'), textarea: document.getElementById('clarify-text'),
+    composer: document.getElementById('composer') };
+}
+
+const settle = () => new Promise(resolve => setTimeout(resolve, 30));
+
+test('выбор потока у каждой вкладки свой: чужая вкладка и перезагрузка его не меняют', async () => {
+  const local = new FakeStorage();
+  local.setItem('summy-claude-dialog-session', Y);
+  const sessions = [X, Y, Z];
+  const posts = [];
+  const tabA = new FakeStorage();
+  const tabB = new FakeStorage();
+
+  let a = loadTab({ session: tabA, local, sessions, posts });
+  await settle();
+  assert.equal(a.select.value, Y, 'однократная миграция прежнего общего ключа');
+  a.select.value = X;
+  a.select.dispatch('change');
+  await settle();
+
+  let b = loadTab({ session: tabB, local, sessions, posts });
+  await settle();
+  b.select.value = Z;
+  b.select.dispatch('change');
+  await settle();
+
+  local.setItem('summy-claude-dialog-session', Y);
+  a = loadTab({ session: tabA, local, sessions, posts });
+  await settle();
+  assert.equal(a.select.value, X, 'вкладка A после перезагрузки сохраняет свой выбор');
+  b = loadTab({ session: tabB, local, sessions, posts });
+  await settle();
+  assert.equal(b.select.value, Z, 'вкладка B после перезагрузки сохраняет свой выбор');
+  assert.equal(local.getItem('summy-claude-dialog-session'), Y, 'общий ключ больше не перезаписывается');
+
+  const fresh = new FakeStorage();
+  fresh.setItem('summy-claude-dialog-session:v2-migrated', '1');
+  const c = loadTab({ session: fresh, local, sessions, posts });
+  await settle();
+  assert.equal(c.select.value, X, 'после миграции общий ключ не используется, берётся первый поток');
+});
+
+test('уточнение привязано к потоку на момент отправки, переключение не переносит черновик', async () => {
+  const local = new FakeStorage();
+  const posts = [];
+  const tab = loadTab({ session: new FakeStorage(), local, sessions: [X, Y], posts });
+  await settle();
+  assert.equal(tab.select.value, X);
+  tab.textarea.value = 'Текст для потока X';
+  tab.select.value = Y;
+  tab.select.dispatch('change');
+  await settle();
+  assert.equal(tab.textarea.value, '', 'черновик не переехал в другой поток');
+  tab.composer.dispatch('submit');
+  await settle();
+  assert.equal(posts.length, 0);
+  tab.textarea.value = 'Текст для потока Y';
+  tab.composer.dispatch('submit');
+  await settle();
+  assert.equal(posts.length, 1);
+  assert.equal(posts[0].session, Y);
+  assert.equal(posts[0].text, 'Текст для потока Y');
+  tab.select.value = X;
+  tab.select.dispatch('change');
+  await settle();
+  tab.textarea.value = 'Текст для потока Y';
+  tab.composer.dispatch('submit');
+  await settle();
+  assert.equal(posts.length, 2);
+  assert.equal(posts[1].session, X);
+  assert.notEqual(posts[1].id, posts[0].id, 'новый id для другого потока');
+});
