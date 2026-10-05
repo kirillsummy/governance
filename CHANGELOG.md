@@ -1,5 +1,28 @@
 # Changelog
 
+## 05.10.2026 — Prod S194: состав Dev s194 и исправления подготовки ([SUM-211](https://summy.youtrack.cloud/issue/SUM-211))
+
+- Прямое поручение 05.10.2026: выпустить на Prod состав Dev `s194-dev-20261005` после проверок. Кандидат снят под общим замком Dev 12:44:24–12:44:25 МСК (VERSION, метки ревизии и ID образов, БД `0204`), замок сразу отпущен; новые коммиты `test` после фиксации не включались.
+- **Исправления подготовки** (поведение прежнее): backend `db2860e`, `dfde65b` — ruff, mypy, снимок OpenAPI без локального `open-test`; CRM `4c98480`, `792d123` — 38 директив `set-state-in-effect` у загрузчиков, тип и мок в двух тестах; master-app `04643ca` — тесты без незавершённого запроса сессии. В `test` слиты: backend `c3ceba8690cbb58f9285788416c2dcd8c6213d12`, CRM `292eee753b9a6a8b75bb60e89062fc6f96fd967b`, master-app `92f460b9a59a1f44282445a51823009750f85319`.
+- **Проверки на точных SHA** — CI-эквивалент production-веток (Linux, uv.lock, PostgreSQL 18, Node 24):
+  - backend `dfde65b` — все шаги exit 0, pytest MSK 2325 passed, UTC 258 passed;
+  - CRM `792d123` — всё exit 0, vitest 1702/1702;
+  - master-app `04643ca` — всё exit 0, vitest 315/315;
+  - client-app `9a2cbd1`, website `fa90db7` — всё exit 0.
+- **Репетиция 0166 → 0204** на копии ночного дампа Prod на сервере Prod (внутренняя сеть). Ворота 9/9:
+  - потерь строк нет, содержимое изменилось только в `process_types`;
+  - 255 GET-маршрутов нового API без новых 5xx;
+  - API RC6 на 0204 совместим (откат кода без отката схемы);
+  - downgrade и повторный upgrade дают ту же схему.
+- **Prod 14:16–14:20 МСК** (`/root/releases/s194-20261005/s194.py`): stage, rehearsal, backend, master, crm, website, client — exit 0; пост-проверка 50/50.
+  - Миграция одной транзакцией за 7 с; API и sync стояли ≈2 мин 25 с.
+  - Свежая копия `summy-2026-10-05-1416.dump` (sha256 `060f8ddd…`), полное чтение `pg_restore` exit 0.
+  - Выпущены backend `dfde65b4526fe6a329e9f6455f8d408308d04078`, CRM `792d123e765b0c784c2c2aeccef519d62fa879b7`, master-app `04643caaee3111c00a292b06db07270396b44895`, website `fa90db7238a0a5eb17835838e99940b829916422`; client-app `9a2cbd1787e73db09eb0d64e964e8eb9c40f276b` поставлен неактивно; БД `0204_hr_action_request_links`.
+- Production-ветки продвинуты fast-forward, теги: backend `dev` `v0.4.0`, CRM `main` `v0.180.0`, master-app `feature/react-client` `v0.82.0`, client-app `main` `v0.2.0`, website `main` `v2.33.0`.
+- Env Prod не менялся (кроме образов и `APP_VERSION` master). Решения владельца SUM-194 работают по умолчанию: добавление согласованной услуги в запись YClients и сужение окон при закрытии дня. Живая отправка в YClients не проверялась; платежей, сообщений и изменений YClients не было.
+- **Dev** `s194fix-dev-20261005` (14:08–14:14): backend `c3ceba8`, CRM `292eee7`, master-app `92f460b` — prepare/backend/crm/master exit 0, БД `0204` без миграций, `YCLIENTS_READ_ONLY=true`. На Dev тесты не проводились.
+- Документ — [production-s194-2026-10-05](docs/releases/production-s194-2026-10-05.md); [текущее состояние](docs/current-state.md) и указатель в [инфраструктуре](docs/infrastructure.md#prod) обновлены.
+
 ## 05.10.2026 — QR уборщицы с ФИО внутри кода (SUM-203 → SUM-210)
 
 - Прямое требование 05.10.2026 (передано разработчиком-координатором): QR уборщицы содержит как минимум её ФИО. Найден и доработан существующий генератор SUM-176 («Документы → Формы», `/cleaning-sheet`) и его потребитель — скан отчёта об уборке при открытии смены (`resolve-qr`, `POST /v1/cleaning/reports`). Формат и правила — [контракт](contracts/daily-processes.md#qr-уборщицы-фио-в-коде-05102026).

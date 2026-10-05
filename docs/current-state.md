@@ -5,23 +5,27 @@ YouTrack, изменения — в [CHANGELOG](../CHANGELOG.md), датиров
 02.10.2026 — в [журнале](history/current-state-log-2026-10-02.md). Перед
 выводом о среде сверяй живое состояние: VERSION, образы, ревизию БД.
 
-## Prod: RC6 с 02.10.2026 03:00 МСК
+## Prod: S194 с 05.10.2026 14:20 МСК
 
-Прямое поручение владельца 02.10.2026: выпустить весь код пяти продуктов,
-работающий на TEST. Работают backend `8190e4b2902a013eaa5914d2005461247e80f473`
-(`dev`, `v0.3.0`), CRM `6f9c316a034f09dcac58d8412629bff497d000b8` (`v0.179.0`;
-`main` = merge `7b8d4bf` с тем же деревом), master-app
-`fb76db82f760befdbb16472054a2bab917169c1c` (`feature/react-client`, `v0.81.0`),
-website `ef6c6b013a2935c33b9e145c0f11b16db81a1d47` (`main`, `v2.32.0`); БД
-`0166_optional_manicure_closure`, вход CRM `gateway`. client-app
-`c36f92c93583c21b1ec615fdf4a1f88de3354fdf` (`main`, `v0.1.0`) только поставлен:
-образ и файлы запуска неактивны, клиентский вход не включён — на production нет
-его runtime-конфигурации. Deploy-фазы exit 0, проверка после выкладки 50/50,
-API и sync стояли ≈2 мин 12 с. Тесты до выкладки, репетиция миграций, копия
-БД и откат — в [документе выпуска](releases/production-rc6-2026-10-02.md).
-Прежние выпуски — [журнал](history/current-state-log-2026-10-02.md) и [релизы](releases/).
+Прямое поручение 05.10.2026: состав Dev `s194-dev-20261005` после проверок
+([SUM-211](https://summy.youtrack.cloud/issue/SUM-211)). Работают backend
+`dfde65b4526fe6a329e9f6455f8d408308d04078` (`dev`, `v0.4.0`), CRM
+`792d123e765b0c784c2c2aeccef519d62fa879b7` (`main`, `v0.180.0`), master-app
+`04643caaee3111c00a292b06db07270396b44895` (`feature/react-client`, `v0.82.0`),
+website `fa90db7238a0a5eb17835838e99940b829916422` (`main`, `v2.33.0`); БД
+`0204_hr_action_request_links`, вход CRM `gateway`. client-app
+`9a2cbd1787e73db09eb0d64e964e8eb9c40f276b` (`main`, `v0.2.0`) только поставлен,
+клиентский вход не включён. Это Dev-состав `bb86c7f`/`d100b4f`/`9040821` плюс
+исправления подготовки (lint, типы, тесты, снимок OpenAPI). Все фазы exit 0,
+проверка после выкладки 50/50, API и sync стояли ≈2 мин 25 с. Проверки,
+репетиция 0166→0204 на копии Prod, копия БД, флаги SUM-194 и откат — в
+[документе выпуска](releases/production-s194-2026-10-05.md). Прежний Prod —
+[RC6](releases/production-rc6-2026-10-02.md); более ранние —
+[журнал](history/current-state-log-2026-10-02.md) и [релизы](releases/).
 
 ## Dev
+
+05.10.2026 14:14: `s194fix-dev-20261005` после `cqr-dev-20261005` — исправления подготовки Prod S194 слиянием со свежей `test`: backend `c3ceba8690cbb58f9285788416c2dcd8c6213d12`, CRM `292eee753b9a6a8b75bb60e89062fc6f96fd967b`, master-app `92f460b9a59a1f44282445a51823009750f85319` (включает опубликованные в `test` коммиты Жени `c0fdaab`…`b24da07`); client-app `9a2cbd1787e73db09eb0d64e964e8eb9c40f276b`, website `fa90db7238a0a5eb17835838e99940b829916422` прежние. prepare/backend/crm/master exit 0, метки ревизии образов = SHA, api и adminapp healthy, RestartCount 0, БД `0204_hr_action_request_links` без миграций, `YCLIENTS_READ_ONLY=true`. Тесты на Dev не проводились (проверки — до Prod, см. [S194](releases/production-s194-2026-10-05.md)).
 
 05.10.2026 13:23: `cqr-dev-20261005` после `mobile2-dev-20261005` — backend `295cc3ba6a633e07222f7bfde336e1f287b8e8ef` и CRM `9173fa5c4d4eaac00081a9986ecbb2d08cc85198` (QR уборщицы с ФИО внутри кода, SUM-203 → SUM-210, [контракт](../contracts/daily-processes.md#qr-уборщицы-фио-в-коде-05102026); CRM включает мобильную CRM `ee654ba` и закрытие смены `7efd4f6`, backend — `0819d6b`); master-app `9040821e1a937d1368b9ab0956419a891e95de69`, client-app `9a2cbd1787e73db09eb0d64e964e8eb9c40f276b`, website `fa90db7238a0a5eb17835838e99940b829916422` прежние; БД `0204_hr_action_request_links` без миграций, `YCLIENTS_READ_ONLY=true`. Состав совпадает с `test` на момент выкладки. Тесты не проводились; Prod не менялся.
 
