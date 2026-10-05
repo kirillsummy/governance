@@ -5,6 +5,13 @@ description: Передавать задачи SUMMY в Claude Code, показ�
 
 # Координация Claude Code
 
+Комплект окна с панелью лимитов и настройкой локальных путей:
+[запуск приложения](references/dialog-application.md).
+Для поручения «11 потоков с менеджером» используй
+[summy-claude-team-11](../summy-claude-team-11/SKILL.md).
+Native Agent Teams требуют интерактивного CLI; managed runner `-p`
+сам по себе teammates не создаёт.
+
 Роли Codex и Claude, приёмка и отчёт — в [уставе](../../../CHARTER.md#роли-и-ответственность),
 процедура — в [порядке работы](../../WORKFLOW.md#координация-codex-и-claude).
 Здесь — способ запуска и наблюдения, переносимый на любой ПК.

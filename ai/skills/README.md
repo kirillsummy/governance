@@ -14,5 +14,6 @@ YAML `name`/`description` и коротким рабочим процессом.
 | [summy-test-delivery](summy-test-delivery/SKILL.md) | Развернуть опубликованные SHA `test` на Dev |
 | [summy-production-release](summy-production-release/SKILL.md) | Подготовить, проверить и выпустить кандидата на Prod |
 | [summy-claude-handoff](summy-claude-handoff/SKILL.md) | Передать задачу Claude Code, показать ход в локальном окне и принять результат |
+| [summy-claude-team-11](summy-claude-team-11/SKILL.md) | Менеджер Claude и десять исполнителей: очередь, владение файлами и сбор результатов; Agent Teams отдельно от `-p`-окна |
 
 Имена `summy-test-*` сохранены для совместимости ссылок; среда в них — Dev.
