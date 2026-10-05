@@ -25,6 +25,8 @@ website `fa90db7238a0a5eb17835838e99940b829916422` (`main`, `v2.33.0`); БД
 
 ## Dev
 
+05.10.2026 15:58: `dlk-dev-20261005` после `cnf-dev-20261005` — backend `76d848be0f1865d95f33f9beca2f44f5e511a7b6`, CRM `13f3a0bb1d67bfa175d459e685219f475cb36c95` («Неразобранные» документы, включает SUM-194/SUM-171 из `test`); БД `0204_hr_action_request_links` → `0208_document_link_triage` (копия `dlk-dev-20261005-before-0208.dump`); master-app `92f460b9a59a1f44282445a51823009750f85319`, client-app `9a2cbd1787e73db09eb0d64e964e8eb9c40f276b`, website `008ebb282fd07d97b0644a5e7b7d5401b88c341f` прежние; `YCLIENTS_READ_ONLY=true`. Проверены только миграция и сохранность связей и объектов этой операции; Prod не менялся.
+
 05.10.2026 15:46: `cnf-dev-20261005` после `csa-dev-20261005` — backend `ecc741a5e556286cd167c8abb9d59ac19d8496cc` (имя уборщицы: полное ФИО или фамилия и имя из карточки), CRM `ccdc493af0652d45beea1078bd87d743fa8a0991`; master-app `92f460b9a59a1f44282445a51823009750f85319`, client-app `9a2cbd1787e73db09eb0d64e964e8eb9c40f276b`, website `fa90db7238a0a5eb17835838e99940b829916422`, БД `0204_hr_action_request_links`, `YCLIENTS_READ_ONLY=true`. Тесты не проводились; Prod не менялся.
 
 05.10.2026 14:48: `csa-dev-20261005` после `cfi-dev-20261005` и `s194fix-dev-20261005` — backend `08d71b79faf2065b51272be7b689c10ea392c1bf` (чек-лист филиала для листа уборщицы), CRM `b0078a4d696433b8404f9a1eef1272a95c5f9ae5` (лист уборщицы в «Приложениях», общий шаблон, Word); master-app `92f460b9a59a1f44282445a51823009750f85319`, client-app `9a2cbd1787e73db09eb0d64e964e8eb9c40f276b`, website `fa90db7238a0a5eb17835838e99940b829916422`, БД `0204_hr_action_request_links`, `YCLIENTS_READ_ONLY=true`. Тесты не проводились; Prod не менялся.
