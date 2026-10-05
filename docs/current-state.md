@@ -37,6 +37,14 @@ website `fa90db7238a0a5eb17835838e99940b829916422` (`main`, `v2.33.0`); БД
 
 ## Dev
 
+05.10.2026 22:48: `pool15-dev-20261005` — backend `f1009cd80ed61e347f637376c0b7821258a18810` (ушедший мастер: 403 `master_departed`, экран остатка `/v1/master/departure`), master-app `612c7714ea54ea01d8071786c861bd57c8556b46` (экран ушедшего мастера; включает `59da353` из `s194s2-dev-20261005`); БД `0223` без изменений; prepare/backend/master exit 0. `pool14` — сборка master-app не прошла, не активирован.
+
+05.10.2026 22:34: `pool13-dev-20261005` — backend `0e51e03007d3bfd72a33b62d22e7145207540e5e`, CRM `7af9b651e2ec31e18e0b65b01371989ee0a2e5c3` (дата ухода, окна закрыты с момента ухода); БД `0222` → `0223_dismissal_departure`, копия `pool13-dev-20261005-before-0223.dump`; exit 0.
+
+05.10.2026 22:21: `pool12-dev-20261005` — backend `36155e263b7e92b008185653fbb4866d24ce4c45`, CRM `76780ab602def2eac945bc1954bf86f4b710655c` (процесс «Уход мастера: обзвон клиентов»); БД `0221` → `0222_master_departure_process` (+1 вид процесса), копия `pool12-dev-20261005-before-0222.dump`; exit 0.
+
+05.10.2026 22:09: `pool11-dev-20261005` — backend `1713f0197a5f9ea5c59d42e0a4d6f4b044020ad9`, CRM `10d3068ab3f7b9d8901e78787732b61bd00c41f1` (файлы бухгалтера к расхождению кассы); БД `0220` → `0221_cash_discrepancy_files`, копия `pool11-dev-20261005-before-0221.dump`; exit 0. Во всех: client-app `d29e946`, website `GRADE2+f6dd7b8` прежние, `YCLIENTS_READ_ONLY=true`, тесты не проводились.
+
 05.10.2026 21:54: `pool10-dev-20261005` — backend `4a1f876e310d64b5bb340924a9723692e8e3c5d9` («Активность» без часов, закрытых самим мастером, SUM-96 № 11); БД `0219_penalty_type_draft` → `0220_activity_master_closed_hours`, копия `pool10-dev-20261005-before-0220.dump` (sha256 `9e21ce96…`); prepare/backend exit 0; CRM `0cd59f6`, client-app `d29e946`, master-app `fdd585a`, website `GRADE2+f6dd7b8` прежние.
 
 05.10.2026 21:43: `pool9-dev-20261005` — backend `ddcf805100930b40f197492906a8fe31a598cb23`, CRM `0cd59f6774c904e75e3674c2abc00097990af876`, client-app `d29e94698cc31eae25697ff46bad4041c3e19697` (Э5 — заканчивающиеся абонементы и предложения, № 62; P05 — черновик вида штрафа и обжалование после выплаты, № 61); БД `0217_loyalty_discount_mode` → `0219_penalty_type_draft` (через `0218_client_abonement_offers`), копия `pool9-dev-20261005-before-0219.dump` (sha256 `b5f105f5…`); prepare/backend/crm/client exit 0. Master-app `fdd585a`, website `GRADE2+f6dd7b8` прежние, `YCLIENTS_READ_ONLY=true`.
