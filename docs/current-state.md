@@ -37,6 +37,14 @@ website `fa90db7238a0a5eb17835838e99940b829916422` (`main`, `v2.33.0`); БД
 
 ## Dev
 
+05.10.2026 21:43: `pool9-dev-20261005` — backend `ddcf805100930b40f197492906a8fe31a598cb23`, CRM `0cd59f6774c904e75e3674c2abc00097990af876`, client-app `d29e94698cc31eae25697ff46bad4041c3e19697` (Э5 — заканчивающиеся абонементы и предложения, № 62; P05 — черновик вида штрафа и обжалование после выплаты, № 61); БД `0217_loyalty_discount_mode` → `0219_penalty_type_draft` (через `0218_client_abonement_offers`), копия `pool9-dev-20261005-before-0219.dump` (sha256 `b5f105f5…`); prepare/backend/crm/client exit 0. Master-app `fdd585a`, website `GRADE2+f6dd7b8` прежние, `YCLIENTS_READ_ONLY=true`.
+
+05.10.2026 21:33: `pool8-dev-20261005` — backend `5e0d49afa04025eb586091c41390ae2f676da0ff`, CRM `787df070df28e42cb10418edccf389500c4d1d53` (пять малых правок уведомлений, медкнижки и цикла клиента); БД `0217` без изменений; prepare/backend/crm exit 0.
+
+05.10.2026 21:29: `pool7-dev-20261005` — backend `daadbf5103937317922bca5def77e98eef84b881`, CRM `48d87c86265c7ab7ea7bbae4da582306046443c1`, client-app `5bf582afe57f154d48d3730fd4c4d23f499cfaf6` (режим «скидка и бонусы», SUM-96 № 8; режим не включался); БД `0216` → `0217_loyalty_discount_mode`, копия `pool7-dev-20261005-before-0217.dump` (sha256 `2e1e97f8…`); prepare/backend/crm/client exit 0.
+
+05.10.2026 21:09: `pool6-dev-20261005` — backend `3eb30a4a98396040564b8a481ed7b1d88c69fbea`, CRM `bdf0bf9a197e0995aea5a4fdb81d1c8d2d746e39` (вторая волна CRM-потоков: медкнижка, цикл клиента, покрытие, вложения процессов, закупки № 33, склад № 34, доставка № 35, уведомления № 36, SUM-135); БД `0211` → `0216_delivery_order_changes`, копия `pool6-dev-20261005-before-0216.dump` (sha256 `28ae1ae8…`); prepare/backend/crm exit 0. `pool4`/`pool5` — сборка CRM не прошла, не активированы, Dev не менялся. Тесты во всех выпусках не проводились.
+
 05.10.2026 20:43: `pool3-dev-20261005` — backend `f5aaab09db98a36f95fbbf3a8b982bbe94b2e9cd`, CRM `7d9b38a19d21bd4c6ad0777cebd2862e8529ecfd` (отчёт «Неполные данные · дыры покрытия», SUM-96 № 37); БД `0211_puzzle_reward_settings` без изменений; prepare/backend/crm exit 0.
 
 05.10.2026 20:37: `pool2-dev-20261005` — backend `b87bf0fe3c8b51752f75477b30d42b8f6e9291b2`, CRM `8b2cb4b8ba3071bfc6422431090fe28fd8e9aeaa` (настройки наград игры — [контракт](../contracts/puzzle-rewards.md); календарь T05/P08; последствия снятия филиала мастером P25/№ 57; журнал прогонов интеграций T10; честные отказы склада T06; процессы без дублей; шестой остаток SUM-160); БД `0210_comms_thread_locations` → `0211_puzzle_reward_settings` (копия `pool2-dev-20261005-before-0211.dump`); prepare/backend/crm exit 0. Награды игры не включены.
