@@ -37,6 +37,14 @@ website `fa90db7238a0a5eb17835838e99940b829916422` (`main`, `v2.33.0`); БД
 
 ## Dev
 
+05.10.2026 23:32: `pool19-dev-20261005` — backend `eca222d280f13141ee74b04e411ae3392b49e8ed`, CRM `ea6404f491c675becee62b9f350f693286dd9f98`, client-app `a57ceb17be90115f41cf3650a412aaf2d93e4590` (исправления ревью crmfinish, листание шаблонов, товары в карточке клиента, итоги сводки по направлениям); master-app `1aee0c3`; БД `0226` без изменений; exit 0.
+
+05.10.2026 23:23: `pool18-dev-20261005` — backend `84e391d`, CRM `7bd1d3a` (период сводки, crmfollowup), master-app `1aee0c3` (документ к апелляции), client-app `15432fe` (никнейм); БД `0226` без изменений; exit 0. CRM и master-app включают чужие коммиты тестов SUM-218 (`3f1c82de`, `c04cbd1`).
+
+05.10.2026 23:16: `pool17-dev-20261005` — backend `ad5eeb5`, CRM `768e215`, master-app `a73a10c` (кадровые документы, «Мои документы», данные для должности); БД `0225` → `0226_hr_documents`, копия `pool17-dev-20261005-before-0226.dump`; exit 0.
+
+05.10.2026 23:02: `pool16-dev-20261005` — backend `371c2fe`, CRM `4fca5b2`, master-app `5c1b55a` (волна crmnext); БД `0223` → `0225_puzzle_nicknames`; exit 0. Тесты во всех выпусках не проводились; website `GRADE2+f6dd7b8` прежний, `YCLIENTS_READ_ONLY=true`.
+
 05.10.2026 22:48: `pool15-dev-20261005` — backend `f1009cd80ed61e347f637376c0b7821258a18810` (ушедший мастер: 403 `master_departed`, экран остатка `/v1/master/departure`), master-app `612c7714ea54ea01d8071786c861bd57c8556b46` (экран ушедшего мастера; включает `59da353` из `s194s2-dev-20261005`); БД `0223` без изменений; prepare/backend/master exit 0. `pool14` — сборка master-app не прошла, не активирован.
 
 05.10.2026 22:34: `pool13-dev-20261005` — backend `0e51e03007d3bfd72a33b62d22e7145207540e5e`, CRM `7af9b651e2ec31e18e0b65b01371989ee0a2e5c3` (дата ухода, окна закрыты с момента ухода); БД `0222` → `0223_dismissal_departure`, копия `pool13-dev-20261005-before-0223.dump`; exit 0.
