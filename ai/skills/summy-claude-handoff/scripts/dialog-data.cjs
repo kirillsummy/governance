@@ -140,6 +140,15 @@ function createDialogData(root, { processes } = {}) {
     return { state: 'stopped' };
   }
 
+  function sessionTask(entry) {
+    for (const run of entry.runs) {
+      if (run.task) return run.task;
+      const status = run.statusFile ? readJson(run.statusFile, 256 * 1024) : null;
+      if (status && typeof status.task === 'string' && status.task.trim()) return status.task.trim().slice(0, 200);
+    }
+    return '';
+  }
+
   function sessionState(entry, snapshot, owner) {
     const latest = entry.latest;
     const run = runState(latest, snapshot);
@@ -168,7 +177,7 @@ function createDialogData(root, { processes } = {}) {
       statusUpdatedAt: typeof status.updatedAt === 'string' ? status.updatedAt : '',
       launchedAt: latest.launchedAt ? new Date(latest.launchedAt).toISOString() : '',
       endedAt: run.endedAt || '', exitCode: run.exitCode ?? null,
-      task: latest.task || (typeof status.task === 'string' ? status.task.slice(0, 200) : '') || latest.runName,
+      task: sessionTask(entry) || latest.runName,
       busyProcesses: busy.length,
     };
   }
@@ -262,6 +271,11 @@ function createDialogData(root, { processes } = {}) {
       runSize: log ? log.runSize : 0, runModifiedAt: log ? log.modifiedAt : '', messages };
   }
 
+  function taskFor(sessionId) {
+    const entry = find(sessionId);
+    return entry ? sessionTask(entry) : '';
+  }
+
   function busyFor(sessionId) {
     const entry = find(sessionId);
     const snap = snapshot();
@@ -278,7 +292,7 @@ function createDialogData(root, { processes } = {}) {
     return { busy: false, reason: '' };
   }
 
-  return { registry, sessions, dialog, find, busyFor, observe };
+  return { registry, sessions, dialog, find, busyFor, observe, taskFor };
 }
 
 module.exports = { createDialogData, logEncoding, tailStart };

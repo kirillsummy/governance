@@ -169,6 +169,8 @@ function createGateway({ root, data, processes, config, spawnRunner }) {
       for (const message of waiting) store.updateMessage(sid, message, 'starting', { runName, waitingReason: '', attempts: (message.attempts || 0) + 1 });
       const args = ['--root', path.resolve(root), '--run', runName, '--resume', sid, '--claude', config.claude, '--cwd', config.cwd,
         '--model', 'opus', '--effort', 'high'];
+      const task = data.taskFor(sid);
+      if (task) args.push('--task', task);
       try {
         (spawnRunner || defaultSpawn)(args);
       } catch (error) {

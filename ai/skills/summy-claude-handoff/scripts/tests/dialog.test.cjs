@@ -245,12 +245,14 @@ test('управляемый запуск: уточнение во время р
 test('свободная сессия: уточнение продолжает её управляемым запуском с --resume', async () => {
   const root = tempRoot();
   const temp = path.join(root, '.tmp');
-  writeLaunch(root, 'claude-done-20261005', { sessionId: SID, launchedAt: '2026-10-05T10:00:00Z', runnerPid: 1 });
+  writeLaunch(root, 'claude-done-20261005', { sessionId: SID, launchedAt: '2026-10-05T10:00:00Z', runnerPid: 1, task: 'Окно Claude: исходная задача' });
   fs.writeFileSync(path.join(temp, 'claude-done-20261005.runner-result.json'), JSON.stringify({ exitCode: 0 }));
   const argsFile = path.join(root, 'args.json');
   const children = [];
+  const spawnedArgs = [];
   const monitor = fakeMonitor([]);
   const instance = await startServer(root, monitor, { spawnRunner: args => {
+    spawnedArgs.push(args);
     const child = spawn(process.execPath, [RUNNER, ...args], { env: { ...process.env, FAKE_DELAY_MS: '200', FAKE_CLAUDE_ARGS_FILE: argsFile, SUMMY_DIALOG_IDLE_CLOSE_MS: '400' }, stdio: 'ignore' });
     children.push(new Promise(resolve => child.on('exit', resolve)));
     return child.pid;
@@ -267,9 +269,13 @@ test('свободная сессия: уточнение продолжает �
     await Promise.all(children);
     const args = JSON.parse(fs.readFileSync(argsFile, 'utf8'));
     assert.ok(args.includes('--resume') && args.includes(SID));
+    await new Promise(resolve => setTimeout(resolve, 1100));
     const latest = instance.data.registry()[0].latest;
     assert.equal(latest.managed, true);
     assert.match(latest.runName, /^claude-dialog-11111111-/);
+    assert.equal(spawnedArgs[0][spawnedArgs[0].indexOf('--task') + 1], 'Окно Claude: исходная задача');
+    assert.equal(latest.task, 'Окно Claude: исходная задача');
+    assert.equal(instance.data.sessions().sessions[0].task, 'Окно Claude: исходная задача');
     instance.gateway.tick();
     assert.equal(children.length, 1);
   } finally { await instance.close(); }
@@ -371,4 +377,26 @@ test('пустое поручение: runner не висит', async () => {
     '--prompt-file', prompt, '--claude', FAKE, '--cwd', root], { stdio: 'ignore' });
   const code = await Promise.race([new Promise(resolve => runner.on('exit', resolve)), new Promise(resolve => setTimeout(() => resolve('висит'), 15000))]);
   assert.equal(code, 0);
+});
+
+test('продолжение без task: название потока наследуется от прежнего запуска той же сессии', async () => {
+  const root = tempRoot();
+  const temp = path.join(root, '.tmp');
+  writeLaunch(root, 'claude-first-20261005', { sessionId: SID, launchedAt: '2026-10-05T10:00:00Z', task: 'Окно Claude: сообщения в поток' });
+  fs.writeFileSync(path.join(temp, 'claude-first-20261005.runner-result.json'), JSON.stringify({ exitCode: 0 }));
+  writeLaunch(root, 'claude-other-20261005', { sessionId: SID2, launchedAt: '2026-10-05T12:00:00Z', task: 'Чужая задача' });
+  const prompt = path.join(temp, 'claude-dialog-11111111-20261005154830.txt');
+  fs.writeFileSync(prompt, 'Продолжение');
+  const runner = spawn(process.execPath, [RUNNER, '--root', root, '--run', 'claude-dialog-11111111-20261005154830', '--resume', SID,
+    '--prompt-file', prompt, '--claude', FAKE, '--cwd', root], { env: { ...process.env, FAKE_DELAY_MS: '100', SUMMY_DIALOG_IDLE_CLOSE_MS: '300' }, stdio: 'ignore' });
+  assert.equal(await new Promise(resolve => runner.on('exit', resolve)), 0);
+  const launch = JSON.parse(fs.readFileSync(path.join(temp, 'claude-dialog-11111111-20261005154830.launch.json'), 'utf8'));
+  assert.equal(launch.task, '');
+  const data = createDialogData(root, { processes: fakeMonitor() });
+  const session = data.sessions().sessions.find(item => item.id === SID);
+  assert.equal(session.runName, 'claude-dialog-11111111-20261005154830');
+  assert.equal(session.task, 'Окно Claude: сообщения в поток');
+  assert.equal(data.dialog(SID).task, 'Окно Claude: сообщения в поток');
+  assert.equal(data.taskFor(SID), 'Окно Claude: сообщения в поток');
+  assert.equal(data.sessions().sessions.find(item => item.id === SID2).task, 'Чужая задача');
 });
