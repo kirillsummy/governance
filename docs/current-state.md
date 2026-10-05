@@ -5,7 +5,15 @@ YouTrack, изменения — в [CHANGELOG](../CHANGELOG.md), датиров
 02.10.2026 — в [журнале](history/current-state-log-2026-10-02.md). Перед
 выводом о среде сверяй живое состояние: VERSION, образы, ревизию БД.
 
-## Prod: S194 с 05.10.2026 14:20 МСК
+## Prod: S194 с 05.10.2026 14:20 МСК, сайт — хотфикс GRADE1 с 16:04
+
+05.10.2026 16:04 МСК поверх S194 выпущен только сайт: website
+`008ebb282fd07d97b0644a5e7b7d5401b88c341f` (`main`, `v2.33.1`, VERSION
+`GRADE1+008ebb2…`, BUILD_ID `St6xm8XBsnkHTm7DNIGcK`). Грейд мастера в
+карточках берётся с платформы, как в профиле
+([SUM-215](https://summy.youtrack.cloud/issue/SUM-215)). Выпущено без тестов
+по прямому поручению 05.10.2026. Остальные продукты — S194 ниже без
+изменений. Подробности — в [документе выпуска](releases/production-grade1-2026-10-05.md).
 
 Прямое поручение 05.10.2026: состав Dev `s194-dev-20261005` после проверок
 ([SUM-211](https://summy.youtrack.cloud/issue/SUM-211)). Работают backend
@@ -26,6 +34,8 @@ website `fa90db7238a0a5eb17835838e99940b829916422` (`main`, `v2.33.0`); БД
 ## Dev
 
 05.10.2026 15:58: `dlk-dev-20261005` после `cnf-dev-20261005` — backend `76d848be0f1865d95f33f9beca2f44f5e511a7b6`, CRM `13f3a0bb1d67bfa175d459e685219f475cb36c95` («Неразобранные» документы, включает SUM-194/SUM-171 из `test`); БД `0204_hr_action_request_links` → `0208_document_link_triage` (копия `dlk-dev-20261005-before-0208.dump`); master-app `92f460b9a59a1f44282445a51823009750f85319`, client-app `9a2cbd1787e73db09eb0d64e964e8eb9c40f276b`, website `008ebb282fd07d97b0644a5e7b7d5401b88c341f` прежние; `YCLIENTS_READ_ONLY=true`. Проверены только миграция и сохранность связей и объектов этой операции; Prod не менялся.
+
+05.10.2026 15:48: `wgh-dev-20261005` после `cnf-dev-20261005` — только website `008ebb282fd07d97b0644a5e7b7d5401b88c341f` (грейд мастера в карточках с платформы, SUM-215; BUILD_ID `DnUXc-6H7EgH0AKOVSvmZ`), prepare/website exit 0; остальные продукты и БД `0204_hr_action_request_links` прежние. Тесты не проводились. Этот же фикс выпущен на Prod (GRADE1, выше).
 
 05.10.2026 15:46: `cnf-dev-20261005` после `csa-dev-20261005` — backend `ecc741a5e556286cd167c8abb9d59ac19d8496cc` (имя уборщицы: полное ФИО или фамилия и имя из карточки), CRM `ccdc493af0652d45beea1078bd87d743fa8a0991`; master-app `92f460b9a59a1f44282445a51823009750f85319`, client-app `9a2cbd1787e73db09eb0d64e964e8eb9c40f276b`, website `fa90db7238a0a5eb17835838e99940b829916422`, БД `0204_hr_action_request_links`, `YCLIENTS_READ_ONLY=true`. Тесты не проводились; Prod не менялся.
 

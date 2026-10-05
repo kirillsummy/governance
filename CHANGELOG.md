@@ -1,5 +1,12 @@
 # Changelog
 
+## 05.10.2026 — Prod GRADE1: точечный хотфикс сайта, грейд мастера в карточках (SUM-215, SUM-216)
+
+- Прямое поручение 05.10.2026: фикс сначала на Dev, затем без тестов на Prod — только он. Причина: профиль мастера брал грейд с платформы (`grade_label`), карточки каталога, направлений и главной — из `content/masters.ts`.
+- **website** `test` и `main` `fa90db7` → `008ebb282fd07d97b0644a5e7b7d5401b88c341f` (fast-forward, тег `v2.33.1`): `withPlatformGrades` в `src/lib/platform.ts` на главной, `/mastera` и `/mastera/<направление>` по правилу профиля. 5 файлов, +25/−8, миграций нет, backend не менялся.
+- **Dev** `wgh-dev-20261005`: prepare/website exit 0, BUILD_ID `DnUXc-6H7EgH0AKOVSvmZ`.
+- **Prod** `gradefix-20261005` 16:03–16:04 МСК: `stage`/`website` exit 0, VERSION `GRADE1+008ebb2…`, BUILD_ID `St6xm8XBsnkHTm7DNIGcK`, артефакт sha256 `0a4c96e3…` (330 файлов = blob коммита), pm2 online; контейнеры и VERSION остальных продуктов не изменились. Откат — `gradefix.py rollback-website` к `S194+fa90db7…`. **Выпущено без тестов по прямому поручению 05.10.2026** ([документ выпуска](docs/releases/production-grade1-2026-10-05.md)).
+
 ## 05.10.2026 — разбор связей перенесённых документов, «Неразобранные» в CRM (SUM-203 → SUM-210)
 
 - Прямое разрешение 05.10.2026: достоверные связи — привязать, неясные — список с ручной привязкой. Правило и механизм — [knowledge-library](contracts/knowledge-library.md#разбор-связей-и-неразобранные-документы-05102026), раздел CRM — [crm-navigation](contracts/crm-navigation.md).
