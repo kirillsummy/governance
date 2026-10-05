@@ -37,6 +37,8 @@ website `fa90db7238a0a5eb17835838e99940b829916422` (`main`, `v2.33.0`); БД
 
 ## Dev
 
+05.10.2026 21:54: `pool10-dev-20261005` — backend `4a1f876e310d64b5bb340924a9723692e8e3c5d9` («Активность» без часов, закрытых самим мастером, SUM-96 № 11); БД `0219_penalty_type_draft` → `0220_activity_master_closed_hours`, копия `pool10-dev-20261005-before-0220.dump` (sha256 `9e21ce96…`); prepare/backend exit 0; CRM `0cd59f6`, client-app `d29e946`, master-app `fdd585a`, website `GRADE2+f6dd7b8` прежние.
+
 05.10.2026 21:43: `pool9-dev-20261005` — backend `ddcf805100930b40f197492906a8fe31a598cb23`, CRM `0cd59f6774c904e75e3674c2abc00097990af876`, client-app `d29e94698cc31eae25697ff46bad4041c3e19697` (Э5 — заканчивающиеся абонементы и предложения, № 62; P05 — черновик вида штрафа и обжалование после выплаты, № 61); БД `0217_loyalty_discount_mode` → `0219_penalty_type_draft` (через `0218_client_abonement_offers`), копия `pool9-dev-20261005-before-0219.dump` (sha256 `b5f105f5…`); prepare/backend/crm/client exit 0. Master-app `fdd585a`, website `GRADE2+f6dd7b8` прежние, `YCLIENTS_READ_ONLY=true`.
 
 05.10.2026 21:33: `pool8-dev-20261005` — backend `5e0d49afa04025eb586091c41390ae2f676da0ff`, CRM `787df070df28e42cb10418edccf389500c4d1d53` (пять малых правок уведомлений, медкнижки и цикла клиента); БД `0217` без изменений; prepare/backend/crm exit 0.
