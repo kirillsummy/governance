@@ -18,7 +18,7 @@ LOCK = Path("/var/lock/summy-test-deploy.lock")
 LOG_DIR = Path("/var/log/summy-dev-cleanup")
 LOG_KEEP = 30
 SENTINEL_CONTAINER = "summy-stand-postgres-1"
-ROLLBACK_SCAN_LIMIT = 12
+IMAGE_REF = re.compile(r"^[a-z0-9][a-z0-9._/-]*(:[A-Za-z0-9_][A-Za-z0-9._-]{0,127})?(@sha256:[0-9a-f]{64})?$")
 FAMILIES = [
     re.compile(r"^summy-[a-z0-9-]+-backend$"),
     re.compile(r"^summy-[a-z0-9-]+-api$"),
@@ -35,6 +35,12 @@ PRODUCTS = {
     "master": lambda tag, sha, rel: ["bff-bff:master-%s" % sha],
     "client": lambda tag, sha, rel: ["summy-%s-client:%s" % (tag, sha)],
 }
+PRODUCT_FAMILY = {
+    "backend": re.compile(r"^(summy-[a-z0-9-]+-backend|summy-[a-z0-9-]+-api|summy-stand-api)$"),
+    "crm": re.compile(r"^adminapp$"),
+    "master": re.compile(r"^bff-bff$"),
+    "client": re.compile(r"^(summy-[a-z0-9-]+-client|summy-client)$"),
+}
 PREVIOUS = {
     "crm": "adminapp:pre-%s",
     "master": "bff-bff:pre-%s",
@@ -44,7 +50,6 @@ COMPOSE_JSON = re.compile(r"^(backend-[a-z-]+|client-[a-z-]+)\.json$")
 NON_COMPOSE_JSON = {"config.json", "manifest.json", "state.json", "preserved.sha256.json", "backup.json"}
 SHA40 = re.compile(r"^[0-9a-f]{40}$")
 IMAGE_ID = re.compile(r"sha256:[0-9a-f]{64}")
-YAML_IMAGE = re.compile(r"^\s*image:\s*['\"]?([^'\"\s#]+)['\"]?\s*(#.*)?$")
 EX_OK, EX_REFUSED, EX_INVENTORY, EX_BLOCKED, EX_PARTIAL, EX_ERROR, EX_LOCKED = 0, 2, 3, 4, 5, 6, 75
 
 
@@ -93,22 +98,9 @@ def compose_refs(path):
                 if not isinstance(s["image"], str) or not s["image"] or "$" in s["image"]:
                     return None, "service %s has unresolved image" % name
                 refs.add(s["image"])
+        if not refs:
+            return None, "compose document without images"
         return sorted(refs), "json"
-    if p.suffix in (".yml", ".yaml"):
-        try:
-            text = p.read_text()
-        except FileNotFoundError:
-            return None, "missing"
-        except OSError:
-            return None, "unreadable"
-        refs = set()
-        for line in text.splitlines():
-            if re.match(r"^\s*image\s*:", line):
-                m = YAML_IMAGE.match(line)
-                if not m or "$" in m.group(1):
-                    return None, "unresolved image line"
-                refs.add(m.group(1))
-        return sorted(refs), "yaml-image-lines"
     return None, "unsupported format"
 
 
@@ -136,11 +128,44 @@ def containers():
         raise InventoryError("no containers listed")
     try:
         data = json.loads(checked(["docker", "inspect", *ids]))
-        return [{"name": c["Name"].lstrip("/"), "image": c["Image"], "ref": c["Config"]["Image"],
-                 "compose": (c["Config"].get("Labels") or {}).get("com.docker.compose.project.config_files") or ""}
-                for c in data]
+        res = []
+        for c in data:
+            labels = c["Config"].get("Labels") or {}
+            res.append({"name": c["Name"].lstrip("/"), "image": c["Image"], "ref": c["Config"]["Image"],
+                        "compose": labels.get("com.docker.compose.project.config_files") or "",
+                        "project": labels.get("com.docker.compose.project") or "",
+                        "workdir": labels.get("com.docker.compose.project.working_dir") or "",
+                        "envfile": labels.get("com.docker.compose.project.environment_file") or ""})
+        return res
     except (ValueError, KeyError, TypeError) as e:
         raise InventoryError("container inspect not understood: %s" % e)
+
+
+def normalize_ref(ref):
+    if "@" in ref:
+        return ref
+    name = ref.rsplit("/", 1)[-1]
+    return ref if ":" in name else ref + ":latest"
+
+
+def live_compose_images(project, workdir, envfile, files):
+    if not project or not workdir or not files:
+        return None, "compose labels incomplete"
+    args = ["docker", "compose", "-p", project, "--project-directory", workdir]
+    if envfile:
+        args += ["--env-file", envfile]
+    for f in files.split(","):
+        args += ["-f", f]
+    r = run(args + ["config", "--images"])
+    if r.returncode != 0:
+        return None, "docker compose config failed (exit %s, %d stderr lines)" % (r.returncode, len((r.stderr or "").splitlines()))
+    refs = [x.strip() for x in (r.stdout or "").splitlines() if x.strip()]
+    if not refs:
+        return None, "docker compose config returned no images"
+    bad = [x for x in refs if not IMAGE_REF.match(x)]
+    if bad:
+        return None, "docker compose config returned unrecognised image names"
+    return sorted(set(refs)), "docker compose config --images"
 
 
 def activated(d, k):
@@ -218,6 +243,7 @@ def plan(grace_hours, keep):
     if not RELEASES.is_dir():
         raise InventoryError("release directory missing")
     by_ref = {r: iid for iid, v in imgs.items() for r in v["refs"]}
+    lookup = lambda r: by_ref.get(normalize_ref(r)) if r else None
     protected, blockers, notes = {}, [], []
 
     def protect(iid, why):
@@ -226,18 +252,23 @@ def plan(grace_hours, keep):
             return True
         return False
 
+    groups = {}
     for c in conts:
         if not protect(c["image"], "container:" + c["name"]):
             blockers.append("container %s image %s not in image listing" % (c["name"], c["image"]))
-        protect(by_ref.get(c["ref"]), "container-tag:" + c["name"])
-        for f in [x for x in c["compose"].split(",") if x]:
-            refs, how = compose_refs(f)
-            if refs is None:
-                blockers.append("live compose %s of %s: %s" % (f, c["name"], how))
-                continue
-            for r in refs:
-                if not protect(by_ref.get(r), "live-compose:" + c["name"]):
-                    notes.append("live compose %s references absent image %s" % (f, r))
+        protect(lookup(c["ref"]), "container-tag:" + c["name"])
+        if c["compose"]:
+            groups.setdefault((c["project"], c["workdir"], c["envfile"], c["compose"]), []).append(c["name"])
+    live = []
+    for (project, workdir, envfile, files), names in sorted(groups.items()):
+        refs, how = live_compose_images(project, workdir, envfile, files)
+        if refs is None:
+            blockers.append("live compose %s (%s): %s" % (files, ",".join(names), how))
+            continue
+        live.append({"project": project, "files": files, "containers": names, "images": refs})
+        for r in refs:
+            if not protect(lookup(r), "live-compose:" + project):
+                notes.append("live compose %s references absent image %s" % (files, r))
     dirs = [d for d in RELEASES.iterdir() if d.is_dir()]
     now = time.time()
     grace_s = grace_hours * 3600
@@ -245,14 +276,20 @@ def plan(grace_hours, keep):
     for k in PRODUCTS:
         done = sorted((d for d in dirs if activated(d, k) is not None), key=lambda d: activated(d, k), reverse=True)
         chosen, present = [], 0
-        for d in done[:ROLLBACK_SCAN_LIMIT]:
+        if not done:
+            family = [r for v in imgs.values() for r in v["refs"] if PRODUCT_FAMILY[k].match(r.rsplit(":", 1)[0])]
+            if family:
+                blockers.append("%s: images exist but no successful release history, rollback retention cannot be proven" % k)
+            else:
+                notes.append("%s: no release history and no images of its family" % k)
+        for d in done:
             meta = release_meta(d, [k], blockers)
             if meta is None:
                 chosen.append({"release": d.name, "status": "metadata invalid"})
                 break
-            ids = {by_ref[r] for r in meta["refs"] if r in by_ref} | {i for i in meta["ids"] if i in imgs}
+            ids = {lookup(r) for r in meta["refs"] if lookup(r)} | {i for i in meta["ids"] if i in imgs}
             main_ref = meta["main"][k]
-            has_main = any(r in by_ref for r in main_ref)
+            has_main = any(lookup(r) for r in main_ref)
             if not chosen and not has_main:
                 blockers.append("%s: current %s image %s absent" % (d.name, k, ",".join(sorted(main_ref))))
             for i in ids:
@@ -263,8 +300,15 @@ def plan(grace_hours, keep):
                 present += 1
             if present >= keep:
                 break
-        if present < min(keep, len(done)) and not any(c["status"] == "metadata invalid" for c in chosen):
-            notes.append("%s: only %d deployments with present images found in last %d" % (k, present, ROLLBACK_SCAN_LIMIT))
+        invalid = any(c["status"] == "metadata invalid" for c in chosen)
+        if done and not invalid:
+            if len(done) >= keep and present < keep:
+                blockers.append("%s: only %d of required %d successful deployments (current + %d rollbacks) have their images"
+                                % (k, present, keep, keep - 1))
+            elif len(done) < keep and present < len(done):
+                blockers.append("%s: short history (%d releases) and not every release image is present" % (k, len(done)))
+            elif len(done) < keep:
+                notes.append("%s: short history, all %d successful releases retained" % (k, len(done)))
         selected[k] = chosen
     for d in dirs:
         try:
@@ -286,7 +330,7 @@ def plan(grace_hours, keep):
         if meta is None:
             continue
         for r in meta["refs"]:
-            protect(by_ref.get(r), "fresh-release:" + d.name)
+            protect(lookup(r), "fresh-release:" + d.name)
         for i in meta["ids"]:
             protect(i, "fresh-release:" + d.name)
     limit = datetime.now(timezone.utc) - timedelta(hours=grace_hours)
@@ -303,7 +347,7 @@ def plan(grace_hours, keep):
         else:
             kept_other.append({"id": iid, "refs": v["refs"], "reason": "not a release image family"})
     return {"protected": {k: sorted(v) for k, v in protected.items()}, "selectedReleases": selected,
-            "blockers": blockers, "notes": notes, "candidates": sorted(candidates, key=lambda c: c["created"]),
+            "liveCompose": live, "blockers": blockers, "notes": notes, "candidates": sorted(candidates, key=lambda c: c["created"]),
             "keptOther": kept_other, "images": len(imgs), "containers": len(conts)}
 
 
