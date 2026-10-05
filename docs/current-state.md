@@ -23,6 +23,8 @@ API и sync стояли ≈2 мин 12 с. Тесты до выкладки, р
 
 ## Dev
 
+05.10.2026 10:15: `cons4-dev-20261005` после `p14c` — backend `43d86ab1650f01238f7cc6f6d97c8b9f00a6076e`, CRM `6457d2adaf45d9e9070ad6a76f33343bafff2736` (консолидация локальных пакетов, включает release2 `558986e`/`76ad506`), master-app `62ea7965e3bc3b8b3e4a1f9eac1056c4d213fda2`, client-app `9a2cbd1787e73db09eb0d64e964e8eb9c40f276b`, website `fa90db7238a0a5eb17835838e99940b829916422`, БД `0204_hr_action_request_links`, `YCLIENTS_READ_ONLY=true`. Состав совпадает с `test`. Тесты не проводились (см. CHANGELOG 05.10). Prod не менялся: RC6.
+
 05.10.2026 02:04: `p14c-dev-20261005` после `p14b-dev-20261005` (00:19) — backend `7ec52fd2acc922535619ef0197564b19a4937a4f`, CRM `21a42adcaf183722d2df60da0621e40d42ab3c99`, master-app `62ea7965e3bc3b8b3e4a1f9eac1056c4d213fda2`, client-app `9a2cbd1787e73db09eb0d64e964e8eb9c40f276b`, website `fa90db7238a0a5eb17835838e99940b829916422`, БД `0204_hr_action_request_links`, `YCLIENTS_READ_ONLY=true` (партия 14, см. CHANGELOG 05.10). Prod не менялся: RC6.
 
 04.10.2026: codex-owner-thoughts-20261004 — backend 1d2cc93f479bb03c4f77c53cd6910b36a05617c9, CRM 0ce3e32e60190e9f7c80fdd5e82f69e216b1981b (кнопка буфера в заголовке и «Мысли Кирилла», SUM-214). prepare/backend/crm exit 0, api/adminapp healthy, RestartCount=0; БД 0204_hr_action_request_links без миграций; master/client/website — состав u21n3 ниже. Тесты не проводились, реальное замечание не отправлялось. Prod не менялся.
