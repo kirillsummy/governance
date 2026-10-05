@@ -9,7 +9,7 @@ YouTrack, изменения — в [CHANGELOG](../CHANGELOG.md), датиров
 
 Прямое поручение 05.10.2026: состав Dev `s194-dev-20261005` после проверок
 ([SUM-211](https://summy.youtrack.cloud/issue/SUM-211)). Работают backend
-`dfde65b4526fe6a329e9f6455f8d408308d04078` (`dev`, `v0.4.0`), CRM
+`dfde65b4526fe6a329e9f6455f8d408308d04078` (`v0.4.0`; `dev` = `9528afe` — сверху только лимит CI 60 мин), CRM
 `792d123e765b0c784c2c2aeccef519d62fa879b7` (`main`, `v0.180.0`), master-app
 `04643caaee3111c00a292b06db07270396b44895` (`feature/react-client`, `v0.82.0`),
 website `fa90db7238a0a5eb17835838e99940b829916422` (`main`, `v2.33.0`); БД

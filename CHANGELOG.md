@@ -1,9 +1,18 @@
 # Changelog
 
+## 05.10.2026 — Prod S194: CI выпущенных SHA и лимит полного контура backend ([SUM-211](https://summy.youtrack.cloud/issue/SUM-211))
+
+- **GitHub Actions по выпущенным SHA** (чтение Codex через подключение `523uran523`, 12:29 UTC):
+  - success — CRM `792d123` (CI и карантин), master-app `04643ca`, website `fa90db7`;
+  - **cancelled** — backend `dfde65b` ([run 37302567733](https://github.com/kirillsummy/backend/actions/runs/37302567733)): лимит 30 мин полного контура истёк на денежных тестах UTC, всё до них success;
+  - **запусков нет** — client-app `9a2cbd1`: CI client-app только ручной ([политика веток](docs/branches.md)).
+- **backend** `dev` `dfde65b` → `9528afe57535d1741c7bff391f3e2958daccbdf5`: `timeout-minutes` полного контура 30 → 60, код и образ не меняются, Prod остаётся на `dfde65b` (`v0.4.0`). `test` `08d71b7` → `3a0903c53bb367f81dc8fb261015eb15edb8c385` — слияние. Dev не обновлялся: файл CI в образ не входит.
+- Результат прогона `9528afe` и ручной прогон client-app ждут штатного входа `gh` под `523uran523` (установлен `gh` 2.102.0, вход — человеком в браузере).
+
 ## 05.10.2026 — Prod S194: завершение оформления ([SUM-211](https://summy.youtrack.cloud/issue/SUM-211))
 
 - Документ выпуска опубликован в `main` (`f597807`) слиянием со свежим `main`; записи Dev `cfi`/`csa` параллельных потоков сохранены выше `s194fix`.
-- CI production-веток для выпущенных SHA не прочитан — нет доступа к GitHub Actions с этого ПК; результат неизвестен (подробно — [документ выпуска](docs/releases/production-s194-2026-10-05.md#завершение-05102026)).
+- CI production-веток — результаты в записи «CI выпущенных SHA» выше и в [документе выпуска](docs/releases/production-s194-2026-10-05.md#завершение-05102026).
 - YouTrack:
   - SUM-211 — снята устаревшая «Блокировка»;
   - SUM-210 — раздел «какие части на Prod», стадия «На тесте»;
