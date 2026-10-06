@@ -37,6 +37,8 @@ website `fa90db7238a0a5eb17835838e99940b829916422` (`main`, `v2.33.0`); БД
 
 ## Dev
 
+06.10.2026 12:49: `sfx4-dev-20261006` — backend `402d6aa06550dd29c0d604383495e34402b598c7`, CRM `c59a9eacd9c79ded132f768157ed9a9a1d1d6b1c` (UX1–UX3), client-app `e4b0ecb647b908b5f76209c1296e7b223b24cf5d`; master-app `4c7e4f6`, website `645216f` без изменений; БД `0227` без изменений; exit 0. Не входит в R1006. Кассовые транзакции YClients 481570 на Dev — с 2023-07-01 (дозагрузка 06.10). Тесты не проводились.
+
 06.10.2026 11:45: `sfx2-dev-20261006` — backend `3abc1bbe81c13a8da82cbb5e89c47fa695465f14` (исправления подготовки Prod и гарантированный минимум), CRM `29d1e5ec64d040476d610103fcbd0763e2a91c31`, master-app `9ce7716fac64df12f67485bffabe8a6194d19c47`, client-app `cf102a88b90bffa63423bf91ac5ce0afcf9a4988`; website `645216f` без изменений; БД `0226` → `0227_guarantee_after_month_end`, копия до миграции проверена `pg_restore`; exit 0. Кандидат Prod R1006 ([SUM-219](https://summy.youtrack.cloud/issue/SUM-219)). Проверены только миграции БД.
 
 06.10.2026 10:07: `sfx-dev-20261006` — backend `96d2059492fbfdd240667e41c50cf503304aad2f` (импорт дат рождения из закрытого реестра), master-app `b52fe132ab451edfae7791dff35a50803e5159bb` и client-app `ff726b7a90c1d5e4e791a7ac7ca8915cdb0ce66b` (вход разработчика как в CRM), website `645216f6609953f327270d253399af8eef11cf12`; CRM `65d80f61cda19339c3a7cdd4a41f372166092821` без изменений; БД `0226_hr_documents` без изменений; exit 0. Даты рождения на Dev: 15 загружено 06.10.2026 (added 15, повторная сверка exists 15), 2 ждут года. Тесты не проводились.
