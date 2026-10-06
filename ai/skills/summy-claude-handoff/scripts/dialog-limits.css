@@ -77,7 +77,8 @@
 .session-command-panel #copy-status{margin:8px 0 0;color:#a5b8cc;font-size:12px}
 #composer label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
 #composer textarea{grid-row:1}
-#composer #send{grid-row:1;width:96px;height:96px;padding:10px;border-radius:0;white-space:normal;line-height:1.4}
+#composer #send{grid-row:1;width:96px;height:96px;padding:10px;border:1px solid #46556b;border-radius:8px;background:#25364d;color:#e9edf2;font:13px/1.4 system-ui,Segoe UI,sans-serif;white-space:normal}
+#composer #send:hover:not(:disabled){background:#314660}
 .clarify-input-box{position:relative;grid-column:1;grid-row:1;min-width:0}
 #composer textarea{height:96px;min-height:96px;max-height:96px;resize:none;overflow-y:auto;scrollbar-width:none}
 #composer textarea::-webkit-scrollbar{display:none}
