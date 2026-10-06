@@ -21,6 +21,11 @@ const migratedKey = 'summy-claude-dialog-session:v2-migrated';
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const labels = { working: 'Работает', waiting: 'Ждёт ответ', idle: 'Запуск завершён', failed: 'Ошибка запуска',
   stopped: 'Прервался', unknown: 'Состояние не проверено', offline: 'Не подключен' };
+const sessionGroups = new Map([
+  ['working', 'В работе'], ['waiting', 'Ждут ответа'], ['idle', 'Завершённые запуски'],
+  ['failed', 'С ошибкой'], ['stopped', 'Прерванные'],
+  ['unknown', 'Состояние не проверено'], ['offline', 'Не подключены'],
+]);
 const messageStates = { queued: 'В очереди работающего запуска', waiting: 'Ждёт возможности доставки', starting: 'Запускаем продолжение сессии',
   sending: 'Передаётся в CLI', sent: 'Передано в CLI, ждём квитанцию', acknowledged: 'Получено Claude (квитанция CLI)',
   answered: 'Получено и отвечено', failed: 'Не доставлено' };
@@ -125,7 +130,7 @@ function element(tag, className, text) {
 
 function sessionLabel(session) {
   const task = Array.from(String(session.task || 'Claude').trim());
-  return task.slice(0, 60).join('') + (task.length > 60 ? '…' : '') + ' · ' + (labels[session.status] || labels.offline);
+  return task.slice(0, 60).join('') + (task.length > 60 ? '…' : '');
 }
 
 function setConnection(text, error) {
@@ -163,14 +168,27 @@ function restorePendingDraft(session) {
 }
 
 function renderOptions(nextId) {
-  const signature = sessions.map(session => session.id + '|' + sessionLabel(session)).join('\n');
+  const signature = JSON.stringify(sessions.map(session => [session.id, session.status, sessionLabel(session)]));
   if (sessionSelect.dataset.signature !== signature) {
     const focused = document.activeElement === sessionSelect;
-    sessionSelect.replaceChildren(...sessions.map(session => {
+    const groups = new Map();
+    for (const session of sessions) {
+      const status = sessionGroups.has(session.status) ? session.status : 'unknown';
+      if (!groups.has(status)) groups.set(status, []);
       const option = element('option', '', sessionLabel(session));
       option.value = session.id;
-      return option;
-    }));
+      groups.get(status).push(option);
+    }
+    const nodes = [];
+    for (const [status, label] of sessionGroups) {
+      const options = groups.get(status);
+      if (!options?.length) continue;
+      const group = element('optgroup');
+      group.label = label + ' (' + options.length + ')';
+      group.append(...options);
+      nodes.push(group);
+    }
+    sessionSelect.replaceChildren(...nodes);
     sessionSelect.dataset.signature = signature;
     if (focused) sessionSelect.focus();
   }

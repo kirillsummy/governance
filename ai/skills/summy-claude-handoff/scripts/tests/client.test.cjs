@@ -29,11 +29,12 @@ class FakeElement {
   replaceChildren(...nodes) { this.children = nodes; }
   append(...nodes) { this.children.push(...nodes); }
   close() {} showModal() {} focus() {}
-  get options() { return this.children; }
+  get options() { return this.children.flatMap(node => node.children.length ? node.children : [node]); }
 }
 
 function loadTab({ session, local, sessions, posts }) {
   const elements = new Map();
+  const intervals = [];
   const document = {
     title: '', activeElement: null, body: { scrollHeight: 0 },
     getElementById(id) { if (!elements.has(id)) elements.set(id, new FakeElement(id)); return elements.get(id); },
@@ -46,21 +47,45 @@ function loadTab({ session, local, sessions, posts }) {
       return { ok: true, status: 201, json: async () => ({ message: { state: 'queued' } }) };
     }
     let body;
-    if (url.startsWith('/api/sessions')) body = { sessions: sessions.map(id => ({ id, task: 'Поток ' + id.slice(0, 4), status: 'idle' })) };
+    if (url.startsWith('/api/sessions')) body = { sessions: sessions.map(value => typeof value === 'string'
+      ? { id: value, task: 'Поток ' + value.slice(0, 4), status: 'idle' } : value) };
     else if (url.startsWith('/api/dialog')) body = { id: new URLSearchParams(url.split('?')[1]).get('session'), status: 'idle', task: 'Поток', messages: [] };
     else body = { delivery: { mode: 'resume', text: '' }, messages: [] };
     return { ok: true, status: 200, json: async () => body };
   };
   const context = vm.createContext({
     document, window: { innerHeight: 0, scrollY: 0, scrollTo() {} }, fetch, sessionStorage: session, localStorage: local,
-    navigator: {}, crypto: globalThis.crypto, Intl, URLSearchParams, setInterval: () => 0, console,
+    navigator: {}, crypto: globalThis.crypto, Intl, URLSearchParams, setInterval: fn => { intervals.push(fn); return intervals.length; }, console,
   });
   vm.runInContext(SOURCE, context);
   return { select: document.getElementById('session-select'), textarea: document.getElementById('clarify-text'),
-    composer: document.getElementById('composer') };
+    composer: document.getElementById('composer'), refresh: () => intervals[0]() };
 }
 
 const settle = () => new Promise(resolve => setTimeout(resolve, 30));
+
+test('смена статуса переносит поток в другую группу и сохраняет выбранный поток', async () => {
+  const sessions = [
+    { id: X, task: 'Завершённый запуск', status: 'idle' },
+    { id: Y, task: 'Текущая работа', status: 'working' },
+    { id: Z, task: 'Неизвестный статус', status: 'future-status' },
+  ];
+  const session = new FakeStorage();
+  session.setItem('summy-claude-dialog-session:v2', X);
+  const tab = loadTab({ session, local: new FakeStorage(), sessions, posts: [] });
+  await settle();
+  assert.deepEqual(Array.from(tab.select.children, group => group.label),
+    ['В работе (1)', 'Завершённые запуски (1)', 'Состояние не проверено (1)']);
+  assert.equal(tab.select.value, X);
+  assert.equal(tab.select.children[0].children[0].textContent, 'Текущая работа');
+  sessions[0].status = 'working';
+  await tab.refresh();
+  await settle();
+  assert.deepEqual(Array.from(tab.select.children, group => group.label),
+    ['В работе (2)', 'Состояние не проверено (1)']);
+  assert.deepEqual(Array.from(tab.select.options, option => option.value), [X, Y, Z]);
+  assert.equal(tab.select.value, X);
+});
 
 test('выбор потока у каждой вкладки свой: чужая вкладка и перезагрузка его не меняют', async () => {
   const local = new FakeStorage();
