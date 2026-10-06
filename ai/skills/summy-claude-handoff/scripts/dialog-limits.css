@@ -54,3 +54,11 @@
 .session-info-panel #connection{margin:0;font:inherit}
 .session-info-panel>dl{border-top:1px solid #303947;margin-top:12px;padding-top:12px}
 @media(max-width:360px){.session-info-fields{grid-template-columns:1fr;gap:3px}.session-info-fields dd{margin-bottom:8px}}
+#composer .inner{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 12px;align-items:center}
+#composer label{grid-column:1/-1}
+#composer textarea{grid-column:1;grid-row:2;min-height:96px}
+#composer .row{display:contents}
+#composer #send{grid-column:2;grid-row:2;padding:12px 18px}
+#composer #clarify-hint,#composer #delivery{display:none}
+#composer #send-status{grid-column:1/-1}
+@media(max-width:360px){#composer .inner{gap:8px}#composer #send{padding:10px}}
