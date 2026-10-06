@@ -4,7 +4,10 @@
 #session-select{flex:0 1 540px;min-width:0;max-width:100%;background:#222a35;color:#e9edf2;border:1px solid #46556b;border-radius:7px;padding:7px 9px;font:13px/1.4 system-ui,Segoe UI,sans-serif}
 #open-session{flex:none;padding:7px 10px;border-radius:7px;font:12px/1.4 system-ui,Segoe UI,sans-serif;white-space:nowrap}
 .viewer-sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-#claude-limits{margin:0;padding:14px 20px 13px;background:#111823;border-bottom:1px solid #303947;color:#e9edf2;font:13px/1.4 system-ui,Segoe UI,sans-serif}
+.claude-limits-menu{position:relative;flex:none;margin-left:auto}
+.claude-limits-toggle{padding:7px 10px;font-size:12px;white-space:nowrap}
+#claude-limits[hidden]{display:none}
+#claude-limits{position:absolute;top:100%;right:0;width:min(620px,calc(100vw - 40px));max-height:calc(100dvh - 140px);overflow:auto;z-index:5;margin:0;padding:14px 20px 13px;background:#111823;border:1px solid #46556b;border-radius:12px;box-shadow:0 14px 40px #0008;color:#e9edf2;font:13px/1.4 system-ui,Segoe UI,sans-serif}
 .claude-limits-heading{display:flex;align-items:center;flex-wrap:wrap;gap:8px 12px;margin:0 auto 10px;max-width:1120px}
 .claude-limits-heading h2{margin:0;font-size:14px;font-weight:650}
 .claude-limits-freshness{font-size:11px;color:#a5b8cc}
