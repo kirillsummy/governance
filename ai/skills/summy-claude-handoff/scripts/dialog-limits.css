@@ -41,3 +41,16 @@
 .claude-limit-window.is-stale .claude-limit-window-state{color:#cfb187}
 @media(max-width:520px){#viewer-toolbar header{padding:10px 14px}#session-select{flex-basis:100%;font-size:12px}#open-session{padding:5px 9px;font-size:11px}#claude-limits{padding:10px 14px}.claude-limits-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.claude-limits-heading{gap:5px 8px}.claude-limits-freshness{font-size:10px}.claude-limit-window{padding:8px}.claude-limit-values{font-size:11px}}
 @media(max-width:360px){.claude-limits-grid{grid-template-columns:1fr}}
+.session-info-menu{position:relative;flex:none;margin-left:auto}
+.session-info-toggle{padding:7px 10px;font-size:12px;white-space:nowrap}
+.session-info-toggle.is-error{color:#f0a08a;border-color:#83505a}
+.session-info-panel[hidden]{display:none}
+.session-info-panel{position:absolute;top:100%;right:0;z-index:5;width:min(500px,calc(100vw - 40px));max-height:calc(100dvh - 140px);overflow:auto;padding:16px;background:#111823;border:1px solid #46556b;border-radius:12px;box-shadow:0 14px 40px #0008;font:13px/1.5 system-ui,Segoe UI,sans-serif}
+.session-info-panel h2{margin:0 0 12px;font-size:15px}
+.session-info-panel #session-state{margin:0;padding:0;font:inherit}
+.session-info-fields{display:grid;grid-template-columns:120px minmax(0,1fr);gap:8px 12px;margin:0}
+.session-info-fields dt{color:#a5b8cc}
+.session-info-fields dd{margin:0;overflow-wrap:anywhere;color:#e9edf2}
+.session-info-panel #connection{margin:0;font:inherit}
+.session-info-panel>dl{border-top:1px solid #303947;margin-top:12px;padding-top:12px}
+@media(max-width:360px){.session-info-fields{grid-template-columns:1fr;gap:3px}.session-info-fields dd{margin-bottom:8px}}

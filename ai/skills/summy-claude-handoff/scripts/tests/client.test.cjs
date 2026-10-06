@@ -25,6 +25,8 @@ class FakeElement {
     this.classList = { add() {}, remove() {}, toggle() {} };
   }
   addEventListener(type, fn) { (this.listeners[type] ||= []).push(fn); }
+  setAttribute(name, value) { (this.attributes ||= {})[name] = String(value); }
+  insertBefore(node, before) { const index = this.children.indexOf(before); this.children.splice(index < 0 ? this.children.length : index, 0, node); }
   dispatch(type, event = {}) { for (const fn of this.listeners[type] || []) fn({ preventDefault() {}, ...event }); }
   replaceChildren(...nodes) { this.children = nodes; }
   append(...nodes) { this.children.push(...nodes); }
@@ -40,7 +42,9 @@ function loadTab({ session, local, sessions, posts }) {
     getElementById(id) { if (!elements.has(id)) elements.set(id, new FakeElement(id)); return elements.get(id); },
     querySelector: () => ({ content: 'token' }),
     createElement: () => new FakeElement(),
+    addEventListener() {},
   };
+  document.getElementById('connection').parentNode = new FakeElement();
   const fetch = async (url, options = {}) => {
     if (options.method === 'POST') {
       posts.push(JSON.parse(options.body));
@@ -54,7 +58,7 @@ function loadTab({ session, local, sessions, posts }) {
     return { ok: true, status: 200, json: async () => body };
   };
   const context = vm.createContext({
-    document, window: { innerHeight: 0, scrollY: 0, scrollTo() {} }, fetch, sessionStorage: session, localStorage: local,
+    document, window: { innerHeight: 0, scrollY: 0, scrollTo() {}, addEventListener() {} }, fetch, sessionStorage: session, localStorage: local,
     navigator: {}, crypto: globalThis.crypto, Intl, URLSearchParams, setInterval: fn => { intervals.push(fn); return intervals.length; }, console,
   });
   vm.runInContext(SOURCE, context);

@@ -136,6 +136,79 @@ function sessionLabel(session) {
 function setConnection(text, error) {
   connection.textContent = text;
   connection.classList.toggle('is-error', !!error);
+  infoButton.classList.toggle('is-error', !!error);
+}
+
+const infoMenu = element('div', 'session-info-menu');
+const infoButton = element('button', 'session-info-toggle', 'Info ▾');
+infoButton.type = 'button';
+infoButton.setAttribute('aria-haspopup', 'dialog');
+infoButton.setAttribute('aria-controls', 'session-info-panel');
+infoButton.setAttribute('aria-expanded', 'false');
+const infoPanel = element('section', 'session-info-panel');
+infoPanel.id = 'session-info-panel';
+infoPanel.hidden = true;
+infoPanel.setAttribute('role', 'dialog');
+infoPanel.setAttribute('aria-labelledby', 'session-info-title');
+const infoTitle = element('h2', '', 'Информация о потоке');
+infoTitle.id = 'session-info-title';
+const infoUpdate = element('dl', 'session-info-fields');
+const updateValue = element('dd');
+connection.parentNode.insertBefore(infoMenu, connection);
+updateValue.append(connection);
+infoUpdate.append(element('dt', '', 'Обновление'), updateValue);
+infoPanel.append(infoTitle, sessionState, infoUpdate);
+infoMenu.append(infoButton, infoPanel);
+
+function closeInfo() {
+  infoPanel.hidden = true;
+  infoButton.setAttribute('aria-expanded', 'false');
+}
+
+function positionInfo() {
+  if (infoPanel.hidden) return;
+  const right = infoMenu.getBoundingClientRect().right;
+  const width = infoPanel.getBoundingClientRect().width;
+  const left = Math.max(12, Math.min(right - width, document.documentElement.clientWidth - width - 12));
+  infoPanel.style.right = (right - left - width) + 'px';
+}
+
+infoButton.addEventListener('click', () => {
+  infoPanel.hidden = !infoPanel.hidden;
+  infoButton.setAttribute('aria-expanded', String(!infoPanel.hidden));
+  positionInfo();
+});
+window.addEventListener('resize', positionInfo);
+infoMenu.addEventListener('pointerleave', event => {
+  if (event.pointerType !== 'touch') closeInfo();
+});
+infoMenu.addEventListener('focusout', event => {
+  if (event.relatedTarget && !infoMenu.contains(event.relatedTarget)) closeInfo();
+});
+document.addEventListener('pointerdown', event => {
+  if (!infoPanel.hidden && !infoMenu.contains(event.target)) closeInfo();
+});
+infoMenu.addEventListener('keydown', event => {
+  if (!infoPanel.hidden && event.key === 'Escape') {
+    closeInfo();
+    infoButton.focus();
+  }
+});
+
+function renderSessionInfo(state) {
+  const fields = element('dl', 'session-info-fields');
+  const add = (label, value) => {
+    if (value) fields.append(element('dt', '', label), element('dd', '', value));
+  };
+  add('Состояние', labels[state.status] || labels.offline);
+  add('Примечание', state.statusNote);
+  add('Этап', state.phase);
+  add('Запуск', state.runName);
+  if (state.runName) add('Управление', state.managed ? 'Управляемый запуск' : 'Обычный запуск');
+  if (state.launchedAt) add('Начат', dateTime.format(new Date(state.launchedAt)));
+  if (state.endedAt) add('Завершён', dateTime.format(new Date(state.endedAt)));
+  if (state.statusUpdatedAt) add('Статус обновлён', dateTime.format(new Date(state.statusUpdatedAt)));
+  sessionState.replaceChildren(fields);
 }
 
 function newDraftId() {
@@ -204,6 +277,7 @@ function selectSession(id) {
   previousHistory = '';
   sessionButton.disabled = true;
   sessionCommand.textContent = '';
+  sessionState.replaceChildren(element('p', '', id ? 'Загрузка сведений…' : 'Нет выбранного потока.'));
   sessionDialog.close();
   newDraftId();
   textarea.value = '';
@@ -251,17 +325,6 @@ async function refreshSessions() {
   }
 }
 
-function stateLine(state) {
-  const parts = [labels[state.status] || labels.offline];
-  if (state.statusNote) parts.push(state.statusNote);
-  if (state.phase) parts.push('этап: ' + state.phase);
-  if (state.runName) parts.push('запуск ' + state.runName + (state.managed ? ' (управляемый)' : ''));
-  if (state.launchedAt) parts.push('начат ' + dateTime.format(new Date(state.launchedAt)));
-  if (state.endedAt) parts.push('завершён ' + dateTime.format(new Date(state.endedAt)));
-  if (state.statusUpdatedAt) parts.push('статус от ' + dateTime.format(new Date(state.statusUpdatedAt)));
-  return parts.join(' · ');
-}
-
 async function refreshDialog() {
   if (!selectedId) return;
   const id = selectedId;
@@ -272,7 +335,7 @@ async function refreshDialog() {
     const session = sessions.find(item => item.id === id);
     if (session) Object.assign(session, { status: state.status, task: state.task || session.task, accepting: state.accepting });
     renderOptions(id);
-    sessionState.textContent = stateLine(state);
+    renderSessionInfo(state);
     sessionButton.disabled = !state.resumeCommand;
     sessionCommand.textContent = state.resumeCommand || '';
     document.getElementById('session-note').textContent = state.status === 'working'
