@@ -142,13 +142,12 @@ function setConnection(text, error) {
 const infoMenu = element('div', 'session-info-menu');
 const infoButton = element('button', 'session-info-toggle', 'Info ▾');
 infoButton.type = 'button';
-infoButton.setAttribute('aria-haspopup', 'dialog');
 infoButton.setAttribute('aria-controls', 'session-info-panel');
 infoButton.setAttribute('aria-expanded', 'false');
 const infoPanel = element('section', 'session-info-panel');
 infoPanel.id = 'session-info-panel';
 infoPanel.hidden = true;
-infoPanel.setAttribute('role', 'dialog');
+infoPanel.setAttribute('role', 'region');
 infoPanel.setAttribute('aria-labelledby', 'session-info-title');
 const infoTitle = element('h2', '', 'Информация о потоке');
 infoTitle.id = 'session-info-title';
