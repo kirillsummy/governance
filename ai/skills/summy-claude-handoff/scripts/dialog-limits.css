@@ -41,3 +41,51 @@
 .claude-limit-window.is-stale .claude-limit-window-state{color:#cfb187}
 @media(max-width:520px){#viewer-toolbar header{padding:10px 14px}#session-select{flex-basis:100%;font-size:12px}#open-session{padding:5px 9px;font-size:11px}#claude-limits{padding:10px 14px}.claude-limits-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.claude-limits-heading{gap:5px 8px}.claude-limits-freshness{font-size:10px}.claude-limit-window{padding:8px}.claude-limit-values{font-size:11px}}
 @media(max-width:360px){.claude-limits-grid{grid-template-columns:1fr}}
+.session-info-menu{position:relative;flex:none;margin-left:auto}
+.session-info-toggle{padding:7px 10px;font-size:12px;white-space:nowrap}
+.session-info-toggle.is-error{color:#f0a08a;border-color:#83505a}
+.session-info-panel[hidden]{display:none}
+.session-info-panel{position:absolute;top:100%;right:0;z-index:5;width:min(500px,calc(100vw - 40px));max-height:calc(100dvh - 140px);overflow:auto;padding:16px;background:#111823;border:1px solid #46556b;border-radius:12px;box-shadow:0 14px 40px #0008;font:13px/1.5 system-ui,Segoe UI,sans-serif}
+.session-info-panel h2{margin:0 0 12px;font-size:15px}
+.session-info-panel #session-state{margin:0;padding:0;font:inherit}
+.session-info-fields{display:grid;grid-template-columns:120px minmax(0,1fr);gap:8px 12px;margin:0}
+.session-info-fields dt{color:#a5b8cc}
+.session-info-fields dd{margin:0;overflow-wrap:anywhere;color:#e9edf2}
+.session-info-panel #connection{margin:0;font:inherit}
+.session-info-panel>dl{border-top:1px solid #303947;margin-top:12px;padding-top:12px}
+@media(max-width:360px){.session-info-fields{grid-template-columns:1fr;gap:3px}.session-info-fields dd{margin-bottom:8px}}
+#composer .inner{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 12px;align-items:center}
+#composer label{grid-column:1/-1}
+#composer textarea{grid-column:1;grid-row:2;min-height:96px}
+#composer .row{display:contents}
+#composer #send{grid-column:2;grid-row:2;padding:12px 18px}
+#composer #clarify-hint,#composer #delivery{display:none}
+#composer #send-status{grid-column:1/-1}
+@media(max-width:360px){#composer .inner{gap:8px}#composer #send{padding:10px}}
+.viewer-session-controls #open-session,.viewer-session-controls .session-info-toggle,.viewer-session-controls .claude-limits-toggle{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:8px 12px;border:1px solid #46556b;border-radius:8px;background:#25364d;color:#e9edf2;font:13px/1.4 system-ui,Segoe UI,sans-serif;white-space:nowrap}
+.viewer-session-controls #open-session:hover:not(:disabled),.viewer-session-controls .session-info-toggle:hover,.viewer-session-controls .claude-limits-toggle:hover{background:#314660}
+.session-command-menu{position:relative;flex:none}
+.session-command-panel[hidden]{display:none}
+.session-command-panel{position:absolute;top:100%;left:0;z-index:5;width:min(620px,calc(100vw - 40px));max-height:calc(100dvh - 140px);overflow:auto;padding:16px;background:#111823;border:1px solid #46556b;border-radius:12px;box-shadow:0 14px 40px #0008;font:13px/1.5 system-ui,Segoe UI,sans-serif}
+.session-command-panel p{margin:0 0 12px}
+.session-command-panel #session-note:empty,.session-command-panel #copy-status:empty{display:none}
+.session-command-panel #session-note{color:#e5b674}
+.session-command-box{position:relative}
+.session-command-panel #session-command{margin:0;padding:36px 14px 14px;background:#0d1117;border-radius:10px;white-space:pre-wrap;overflow-wrap:anywhere;font:12px/1.6 Consolas,monospace}
+.session-command-panel #copy-session{position:absolute;top:6px;right:6px;width:28px;height:28px;padding:0;border:0;background:transparent;color:#a9bfe0;font-size:20px}
+.session-command-panel #copy-session:hover{background:#25364d;color:#e9edf2}
+.session-command-panel #copy-status{margin:8px 0 0;color:#a5b8cc;font-size:12px}
+#composer label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+#composer textarea{grid-row:1}
+#composer #send{grid-row:1;width:96px;height:96px;padding:10px;border:1px solid #46556b;border-radius:8px;background:#25364d;color:#e9edf2;font:13px/1.4 system-ui,Segoe UI,sans-serif;white-space:normal}
+#composer #send:hover:not(:disabled){background:#314660}
+.clarify-input-box{position:relative;grid-column:1;grid-row:1;min-width:0}
+#composer textarea{height:96px;min-height:96px;max-height:96px;resize:none;overflow-y:auto;scrollbar-width:none}
+#composer textarea::-webkit-scrollbar{display:none}
+#composer .clarify-input-box.has-overflow textarea{padding-right:26px}
+#composer .clarify-scroll{position:absolute;right:5px;width:18px;height:20px;padding:0;border:0;background:transparent;color:#929aa5;font-size:16px;line-height:1}
+#composer .clarify-scroll[hidden]{display:none}
+#composer .clarify-scroll-up{top:5px}
+#composer .clarify-scroll-down{bottom:5px}
+#composer .clarify-scroll:hover:not(:disabled){color:#d4dbe5;background:#222a35}
+.viewer-session-controls .session-info-toggle.is-error{color:#f0a08a;border-color:#83505a}
