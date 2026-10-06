@@ -37,16 +37,18 @@ class FakeElement {
 function loadTab({ session, local, sessions, posts }) {
   const elements = new Map();
   const intervals = [];
+  const created = [];
   const document = {
     title: '', activeElement: null, body: { scrollHeight: 0 },
     getElementById(id) { if (!elements.has(id)) elements.set(id, new FakeElement(id)); return elements.get(id); },
     querySelector: () => ({ content: 'token' }),
-    createElement: () => new FakeElement(),
+    createElement: () => { const node = new FakeElement(); created.push(node); return node; },
     addEventListener() {},
   };
   document.getElementById('connection').parentNode = new FakeElement();
   document.getElementById('open-session').parentNode = new FakeElement();
   document.getElementById('clarify-text').parentNode = new FakeElement();
+  document.getElementById('session-select').parentNode = new FakeElement();
   const fetch = async (url, options = {}) => {
     if (options.method === 'POST') {
       posts.push(JSON.parse(options.body));
@@ -54,8 +56,12 @@ function loadTab({ session, local, sessions, posts }) {
     }
     let body;
     if (url.startsWith('/api/sessions')) body = { sessions: sessions.map(value => typeof value === 'string'
-      ? { id: value, task: 'Поток ' + value.slice(0, 4), status: 'idle' } : value) };
-    else if (url.startsWith('/api/dialog')) body = { id: new URLSearchParams(url.split('?')[1]).get('session'), status: 'idle', task: 'Поток', messages: [] };
+      ? { id: value, task: 'Поток ' + value.slice(0, 4), status: 'working' } : value) };
+    else if (url.startsWith('/api/dialog')) {
+      const id = new URLSearchParams(url.split('?')[1]).get('session');
+      const record = sessions.find(value => typeof value === 'object' && value.id === id);
+      body = { id, status: record?.status || 'working', task: record?.task || 'Поток', endedAt: record?.endedAt, messages: [] };
+    }
     else body = { delivery: { mode: 'resume', text: '' }, messages: [] };
     return { ok: true, status: 200, json: async () => body };
   };
@@ -65,10 +71,28 @@ function loadTab({ session, local, sessions, posts }) {
   });
   vm.runInContext(SOURCE, context);
   return { select: document.getElementById('session-select'), textarea: document.getElementById('clarify-text'),
-    composer: document.getElementById('composer'), refresh: () => intervals[0]() };
+    composer: document.getElementById('composer'), refresh: () => intervals[0](),
+    runHistory: created.find(node => node.className === 'run-history-list') };
 }
 
 const settle = () => new Promise(resolve => setTimeout(resolve, 30));
+
+test('завершение выбранного потока сохраняет черновик и переносит название и время в историю', async () => {
+  const sessions = [{ id: X, task: 'Длинное название потока', status: 'working' }, { id: Y, task: 'Другой поток', status: 'waiting' }];
+  const tab = loadTab({ session: new FakeStorage(), local: new FakeStorage(), sessions, posts: [] });
+  await settle();
+  tab.textarea.value = 'Неотправленный черновик';
+  sessions[0].status = 'idle';
+  sessions[0].endedAt = '2026-10-06T13:00:00Z';
+  await tab.refresh();
+  await settle();
+  assert.equal(tab.select.value, X);
+  assert.equal(tab.textarea.value, 'Неотправленный черновик');
+  assert.equal(tab.select.options[0].disabled, true);
+  assert.equal(tab.runHistory.children[0].children[0].textContent, 'Длинное название потока');
+  assert.notEqual(tab.runHistory.children[0].children[1].textContent, 'Время завершения не записано');
+  assert.equal(tab.select.options.some(option => option.textContent === 'Длинное название потока'), false);
+});
 
 test('смена статуса переносит поток в другую группу и сохраняет выбранный поток', async () => {
   const sessions = [
@@ -80,10 +104,10 @@ test('смена статуса переносит поток в другую г
   session.setItem('summy-claude-dialog-session:v2', X);
   const tab = loadTab({ session, local: new FakeStorage(), sessions, posts: [] });
   await settle();
-  assert.deepEqual(Array.from(tab.select.children, group => group.label),
-    ['В работе (1)', 'Завершённые запуски (1)', 'Состояние не проверено (1)']);
+  assert.deepEqual(Array.from(tab.select.children).filter(group => group.label).map(group => group.label),
+    ['В работе (1)', 'Состояние не проверено (1)']);
   assert.equal(tab.select.value, X);
-  assert.equal(tab.select.children[0].children[0].textContent, 'Текущая работа');
+  assert.equal(tab.select.children[1].children[0].textContent, 'Текущая работа');
   sessions[0].status = 'working';
   await tab.refresh();
   await settle();
