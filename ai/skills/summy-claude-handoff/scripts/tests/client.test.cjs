@@ -45,6 +45,8 @@ function loadTab({ session, local, sessions, posts }) {
     addEventListener() {},
   };
   document.getElementById('connection').parentNode = new FakeElement();
+  document.getElementById('open-session').parentNode = new FakeElement();
+  document.getElementById('clarify-text').parentNode = new FakeElement();
   const fetch = async (url, options = {}) => {
     if (options.method === 'POST') {
       posts.push(JSON.parse(options.body));

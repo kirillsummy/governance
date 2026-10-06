@@ -217,6 +217,86 @@ function newDraftId() {
   draftSession = selectedId;
 }
 
+const sessionMenu = element('div', 'session-command-menu');
+const sessionPopup = element('section', 'session-command-panel');
+sessionPopup.id = 'session-command-panel';
+sessionPopup.hidden = true;
+sessionPopup.setAttribute('role', 'region');
+sessionPopup.setAttribute('aria-labelledby', 'session-command-guide');
+const commandGuide = element('p', '', 'Откройте терминал, вставьте команду и нажмите Enter.');
+commandGuide.id = 'session-command-guide';
+const commandBox = element('div', 'session-command-box');
+const copyButton = document.getElementById('copy-session');
+copyButton.textContent = '⧉';
+copyButton.setAttribute('aria-label', 'Скопировать команду');
+copyButton.title = 'Скопировать команду';
+const copyStatus = document.getElementById('copy-status');
+sessionButton.parentNode.insertBefore(sessionMenu, sessionButton);
+sessionMenu.append(sessionButton, sessionPopup);
+commandBox.append(sessionCommand, copyButton);
+sessionPopup.append(commandGuide, document.getElementById('session-note'), commandBox, copyStatus);
+sessionDialog.hidden = true;
+sessionButton.textContent = 'Перейти в сессию ▾';
+sessionButton.setAttribute('aria-controls', sessionPopup.id);
+sessionButton.setAttribute('aria-expanded', 'false');
+sendButton.textContent = 'Отправить уточнение';
+
+const inputBox = element('div', 'clarify-input-box');
+textarea.parentNode.insertBefore(inputBox, textarea);
+const scrollUp = element('button', 'clarify-scroll clarify-scroll-up', '▴');
+const scrollDown = element('button', 'clarify-scroll clarify-scroll-down', '▾');
+for (const [button, label] of [[scrollUp, 'Прокрутить текст вверх'], [scrollDown, 'Прокрутить текст вниз']]) {
+  button.type = 'button';
+  button.setAttribute('aria-label', label);
+  button.hidden = true;
+  button.addEventListener('mousedown', event => event.preventDefault());
+}
+inputBox.append(textarea, scrollUp, scrollDown);
+
+function updateTextareaScroll() {
+  const overflow = textarea.scrollHeight > textarea.clientHeight + 1;
+  inputBox.classList.toggle('has-overflow', overflow);
+  scrollUp.hidden = scrollDown.hidden = !overflow;
+  scrollUp.disabled = textarea.scrollTop <= 1;
+  scrollDown.disabled = textarea.scrollTop + textarea.clientHeight >= textarea.scrollHeight - 1;
+}
+
+scrollUp.addEventListener('click', () => textarea.scrollBy({ top: -48, behavior: 'smooth' }));
+scrollDown.addEventListener('click', () => textarea.scrollBy({ top: 48, behavior: 'smooth' }));
+textarea.addEventListener('input', updateTextareaScroll);
+textarea.addEventListener('scroll', updateTextareaScroll);
+window.addEventListener('resize', updateTextareaScroll);
+
+function closeSessionMenu() {
+  sessionPopup.hidden = true;
+  sessionButton.setAttribute('aria-expanded', 'false');
+}
+
+function positionSessionMenu() {
+  if (sessionPopup.hidden) return;
+  const left = sessionMenu.getBoundingClientRect().left;
+  const width = sessionPopup.getBoundingClientRect().width;
+  const target = Math.max(12, Math.min(left, document.documentElement.clientWidth - width - 12));
+  sessionPopup.style.left = (target - left) + 'px';
+}
+
+sessionMenu.addEventListener('pointerleave', event => {
+  if (event.pointerType !== 'touch') closeSessionMenu();
+});
+sessionMenu.addEventListener('focusout', event => {
+  if (event.relatedTarget && !sessionMenu.contains(event.relatedTarget)) closeSessionMenu();
+});
+document.addEventListener('pointerdown', event => {
+  if (!sessionPopup.hidden && !sessionMenu.contains(event.target)) closeSessionMenu();
+});
+sessionMenu.addEventListener('keydown', event => {
+  if (!sessionPopup.hidden && event.key === 'Escape') {
+    closeSessionMenu();
+    sessionButton.focus();
+  }
+});
+window.addEventListener('resize', positionSessionMenu);
+
 function savePendingDraft(session, id, text) {
   if (!UUID.test(session || '')) return;
   try { sessionStorage.setItem(draftPrefix + session, JSON.stringify({ session, id, text })); } catch {}
@@ -277,7 +357,7 @@ function selectSession(id) {
   sessionButton.disabled = true;
   sessionCommand.textContent = '';
   sessionState.replaceChildren(element('p', '', id ? 'Загрузка сведений…' : 'Нет выбранного потока.'));
-  sessionDialog.close();
+  closeSessionMenu();
   newDraftId();
   textarea.value = '';
   sendStatus.textContent = '';
@@ -338,8 +418,8 @@ async function refreshDialog() {
     sessionButton.disabled = !state.resumeCommand;
     sessionCommand.textContent = state.resumeCommand || '';
     document.getElementById('session-note').textContent = state.status === 'working'
-      ? 'Claude сейчас работает. Не продолжайте эту сессию в терминале параллельно — отправьте уточнение через поле внизу.'
-      : 'Команда продолжит выбранную сессию с сохранённой историей.';
+      ? 'Поток работает. Не запускайте его параллельно — отправьте уточнение через поле внизу.'
+      : '';
     const key = JSON.stringify([id, state.task, state.messages]);
     if (key === previousDialog) return;
     previousDialog = key;
@@ -403,6 +483,7 @@ function updateComposer() {
   const enabled = !!selectedId && !sending;
   textarea.disabled = !selectedId;
   sendButton.disabled = !enabled || !textarea.value.trim();
+  updateTextareaScroll();
 }
 
 async function submit() {
@@ -463,14 +544,20 @@ sessionSelect.addEventListener('change', () => {
   writeSelection(savedSelection);
   selectSession(sessionSelect.value);
 });
-sessionButton.addEventListener('click', () => sessionDialog.showModal());
-document.getElementById('close-session').addEventListener('click', () => sessionDialog.close());
+sessionButton.addEventListener('click', () => {
+  sessionPopup.hidden = !sessionPopup.hidden;
+  sessionButton.setAttribute('aria-expanded', String(!sessionPopup.hidden));
+  copyStatus.textContent = '';
+  positionSessionMenu();
+});
 document.getElementById('copy-session').addEventListener('click', async () => {
+  const id = selectedId;
+  const command = sessionCommand.textContent;
   try {
-    await navigator.clipboard.writeText(sessionCommand.textContent);
-    document.getElementById('copy-status').textContent = 'Скопировано.';
+    await navigator.clipboard.writeText(command);
+    if (id === selectedId && command === sessionCommand.textContent) copyStatus.textContent = 'Скопировано.';
   } catch {
-    document.getElementById('copy-status').textContent = 'Выделите и скопируйте команду вручную.';
+    if (id === selectedId && command === sessionCommand.textContent) copyStatus.textContent = 'Выделите и скопируйте команду вручную.';
   }
 });
 
