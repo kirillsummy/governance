@@ -4,7 +4,6 @@
   const container = document.getElementById('claude-limits');
   if (!container) return;
 
-  const refreshEveryMs = 30_000;
   const staleAfterMs = 5 * 60_000;
   const percentFormat = new Intl.NumberFormat('ru-RU', { maximumFractionDigits: 1 });
   const dateFormat = new Intl.DateTimeFormat('ru-RU', {
@@ -14,6 +13,62 @@
   let requestPending = false;
   let failed = false;
   let pendingRefreshPoll = null;
+  let activeRequest = null;
+  let opened = false;
+  let displayTimer = null;
+
+  const wrapper = document.createElement('div');
+  wrapper.className = 'claude-limits-menu';
+  const toggle = document.createElement('button');
+  toggle.type = 'button';
+  toggle.className = 'claude-limits-toggle';
+  toggle.textContent = 'Лимиты Claude ▾';
+  toggle.setAttribute('aria-haspopup', 'dialog');
+  toggle.setAttribute('aria-controls', container.id);
+  toggle.setAttribute('aria-expanded', 'false');
+  const controls = document.querySelector('.viewer-session-controls');
+  if (controls) controls.append(wrapper);
+  else container.parentNode.insertBefore(wrapper, container);
+  wrapper.append(toggle, container);
+  container.hidden = true;
+  container.setAttribute('role', 'dialog');
+
+  function closeLimits() {
+    opened = false;
+    container.hidden = true;
+    toggle.setAttribute('aria-expanded', 'false');
+    clearTimeout(pendingRefreshPoll);
+    clearInterval(displayTimer);
+    displayTimer = null;
+    activeRequest?.abort();
+    activeRequest = null;
+    requestPending = false;
+  }
+
+  toggle.addEventListener('click', () => {
+    if (opened) { closeLimits(); return; }
+    opened = true;
+    container.hidden = false;
+    toggle.setAttribute('aria-expanded', 'true');
+    render();
+    displayTimer = setInterval(() => { if (opened) render(); }, 15_000);
+    refreshLimits(true);
+  });
+  wrapper.addEventListener('pointerleave', event => {
+    if (event.pointerType !== 'touch') closeLimits();
+  });
+  wrapper.addEventListener('focusout', event => {
+    if (event.relatedTarget && !wrapper.contains(event.relatedTarget)) closeLimits();
+  });
+  document.addEventListener('pointerdown', event => {
+    if (opened && !wrapper.contains(event.target)) closeLimits();
+  });
+  wrapper.addEventListener('keydown', event => {
+    if (opened && event.key === 'Escape') {
+      closeLimits();
+      toggle.focus();
+    }
+  });
 
   function element(tag, className, text) {
     const node = document.createElement(tag);
@@ -151,13 +206,14 @@
   }
 
   async function refreshLimits(force = false) {
-    if (requestPending) return;
+    if (!opened || requestPending) return;
     clearTimeout(pendingRefreshPoll);
     requestPending = true;
     refreshButton.disabled = true;
     container.setAttribute('aria-busy', 'true');
     if (sample === null) render();
     const controller = new AbortController();
+    activeRequest = controller;
     const timeout = setTimeout(() => controller.abort(), 10_000);
     try {
       const response = await fetch(force ? '/api/limits?refresh=1' : '/api/limits', { cache: 'no-store', signal: controller.signal });
@@ -166,22 +222,21 @@
       if (!result || typeof result !== 'object' || !Array.isArray(result.windows)) {
         throw new Error('Invalid limits response');
       }
+      if (controller.signal.aborted) return;
       sample = result;
       failed = false;
     } catch {
-      failed = true;
+      if (activeRequest === controller && (!controller.signal.aborted || opened)) failed = true;
     } finally {
       clearTimeout(timeout);
+      if (activeRequest !== controller) return;
       requestPending = false;
+      activeRequest = null;
       render();
-      if (sample?.refreshing && !failed) pendingRefreshPoll = setTimeout(() => refreshLimits(), 3_000);
+      if (opened && sample?.refreshing && !failed) pendingRefreshPoll = setTimeout(() => refreshLimits(), 3_000);
     }
   }
 
   refreshButton.addEventListener('click', () => refreshLimits(true));
   render();
-  refreshLimits();
-  setInterval(refreshLimits, refreshEveryMs);
-
-  setInterval(render, 15_000);
 })();
