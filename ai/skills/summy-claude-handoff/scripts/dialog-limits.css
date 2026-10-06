@@ -89,3 +89,17 @@
 #composer .clarify-scroll-down{bottom:5px}
 #composer .clarify-scroll:hover:not(:disabled){color:#d4dbe5;background:#222a35}
 .viewer-session-controls .session-info-toggle.is-error{color:#f0a08a;border-color:#83505a}
+.session-picker{display:flex;align-items:center;gap:8px;flex:1 1 100%;min-width:0}
+.session-picker #session-select{flex:1 1 0;min-width:0;width:100%}
+.run-history-menu{position:relative;flex:none}
+.viewer-session-controls .run-history-toggle{min-height:36px;padding:8px 12px;border:1px solid #46556b;border-radius:8px;background:#25364d;color:#e9edf2;font:13px/1.4 system-ui,Segoe UI,sans-serif;white-space:nowrap}
+.viewer-session-controls .run-history-toggle:hover{background:#314660}
+.run-history-panel[hidden]{display:none}
+.run-history-panel{position:absolute;top:100%;right:0;z-index:5;width:min(620px,calc(100vw - 40px));max-height:calc(100dvh - 140px);overflow:auto;padding:16px;background:#111823;border:1px solid #46556b;border-radius:12px;box-shadow:0 14px 40px #0008;font:13px/1.5 system-ui,Segoe UI,sans-serif}
+.run-history-panel h2{margin:0 0 12px;font-size:15px}
+.run-history-list{list-style:none;margin:0;padding:0}
+.run-history-list li{display:grid;grid-template-columns:minmax(0,1fr) 140px;gap:8px;padding:10px 0;border-top:1px solid #303947}
+.run-history-list li:first-child{border-top:0}
+.run-history-name{overflow-wrap:anywhere}
+.run-history-time{color:#a5b8cc;text-align:right}
+@media(max-width:420px){.run-history-list li{grid-template-columns:1fr;gap:3px}.run-history-time{text-align:left}}

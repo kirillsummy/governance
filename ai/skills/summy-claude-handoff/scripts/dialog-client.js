@@ -320,11 +320,13 @@ function restorePendingDraft(session) {
 }
 
 function renderOptions(nextId) {
-  const signature = JSON.stringify(sessions.map(session => [session.id, session.status, sessionLabel(session)]));
+  const active = sessions.filter(session => session.status !== 'idle');
+  const archivedSelection = sessions.some(session => session.id === nextId && session.status === 'idle');
+  const signature = JSON.stringify([active.map(session => [session.id, session.status, sessionLabel(session)]), archivedSelection ? nextId : '']);
   if (sessionSelect.dataset.signature !== signature) {
     const focused = document.activeElement === sessionSelect;
     const groups = new Map();
-    for (const session of sessions) {
+    for (const session of active) {
       const status = sessionGroups.has(session.status) ? session.status : 'unknown';
       if (!groups.has(status)) groups.set(status, []);
       const option = element('option', '', sessionLabel(session));
@@ -332,6 +334,12 @@ function renderOptions(nextId) {
       groups.get(status).push(option);
     }
     const nodes = [];
+    if (archivedSelection || !active.length) {
+      const placeholder = element('option', '', archivedSelection ? 'Выбранный поток завершён — см. Историю' : 'Нет активных потоков');
+      placeholder.value = archivedSelection ? nextId : '';
+      placeholder.disabled = true;
+      nodes.push(placeholder);
+    }
     for (const [status, label] of sessionGroups) {
       const options = groups.get(status);
       if (!options?.length) continue;
@@ -345,8 +353,68 @@ function renderOptions(nextId) {
     if (focused) sessionSelect.focus();
   }
   sessionSelect.value = nextId;
-  sessionSelect.disabled = !sessions.length;
+  sessionSelect.disabled = !active.length;
 }
+
+const sessionPicker = element('div', 'session-picker');
+const runHistoryMenu = element('div', 'run-history-menu');
+const runHistoryButton = element('button', 'run-history-toggle', 'История ▾');
+runHistoryButton.type = 'button';
+runHistoryButton.setAttribute('aria-controls', 'run-history-panel');
+runHistoryButton.setAttribute('aria-expanded', 'false');
+const runHistoryPanel = element('section', 'run-history-panel');
+runHistoryPanel.id = 'run-history-panel';
+runHistoryPanel.hidden = true;
+runHistoryPanel.setAttribute('aria-labelledby', 'run-history-title');
+const runHistoryTitle = element('h2', '', 'История запусков');
+runHistoryTitle.id = 'run-history-title';
+const runHistoryList = element('ul', 'run-history-list');
+sessionSelect.parentNode.insertBefore(sessionPicker, sessionSelect);
+sessionPicker.append(sessionSelect, runHistoryMenu);
+runHistoryMenu.append(runHistoryButton, runHistoryPanel);
+runHistoryPanel.append(runHistoryTitle, runHistoryList);
+
+function renderRunHistory() {
+  const archived = sessions.filter(session => session.status === 'idle')
+    .sort((a, b) => (Date.parse(b.endedAt) || 0) - (Date.parse(a.endedAt) || 0));
+  const signature = JSON.stringify(archived.map(session => [session.id, session.task, session.endedAt]));
+  if (runHistoryList.dataset.signature === signature) return;
+  const items = archived.map(session => {
+    const item = element('li');
+    const ended = Date.parse(session.endedAt);
+    item.append(element('div', 'run-history-name', session.task),
+      element('div', 'run-history-time', Number.isFinite(ended) ? dateTime.format(new Date(ended)) : 'Время завершения не записано'));
+    return item;
+  });
+  runHistoryList.replaceChildren(...(items.length ? items : [element('li', '', 'Пока нет завершённых запусков.')]));
+  runHistoryList.dataset.signature = signature;
+  runHistoryButton.textContent = 'История (' + archived.length + ') ▾';
+}
+
+function closeRunHistory() {
+  runHistoryPanel.hidden = true;
+  runHistoryButton.setAttribute('aria-expanded', 'false');
+}
+
+runHistoryButton.addEventListener('click', () => {
+  runHistoryPanel.hidden = !runHistoryPanel.hidden;
+  runHistoryButton.setAttribute('aria-expanded', String(!runHistoryPanel.hidden));
+});
+runHistoryMenu.addEventListener('pointerleave', event => {
+  if (event.pointerType !== 'touch') closeRunHistory();
+});
+runHistoryMenu.addEventListener('focusout', event => {
+  if (event.relatedTarget && !runHistoryMenu.contains(event.relatedTarget)) closeRunHistory();
+});
+document.addEventListener('pointerdown', event => {
+  if (!runHistoryPanel.hidden && !runHistoryMenu.contains(event.target)) closeRunHistory();
+});
+runHistoryMenu.addEventListener('keydown', event => {
+  if (!runHistoryPanel.hidden && event.key === 'Escape') {
+    closeRunHistory();
+    runHistoryButton.focus();
+  }
+});
 
 function selectSession(id) {
   if (id === selectedId) return;
@@ -393,8 +461,9 @@ async function refreshSessions() {
     if (selectedId && !exists(selectedId)) {
       sessions.push({ id: selectedId, task: 'Выбранный поток временно не найден в реестре', status: 'unknown' });
     }
-    const nextId = selectedId || (exists(savedSelection) ? savedSelection : sessions[0]?.id || '');
+    const nextId = selectedId || (exists(savedSelection) ? savedSelection : sessions.find(session => session.status !== 'idle')?.id || '');
     renderOptions(nextId);
+    renderRunHistory();
     const note = state.processesError ? ' · процессы: ' + state.processesError : '';
     setConnection('Обновлено ' + time.format(new Date()) + note, !!state.processesError);
     selectSession(nextId);
@@ -412,8 +481,9 @@ async function refreshDialog() {
     const state = await getJson('/api/dialog?session=' + encodeURIComponent(id));
     if (id !== selectedId || current !== generation || state.id !== id) return;
     const session = sessions.find(item => item.id === id);
-    if (session) Object.assign(session, { status: state.status, task: state.task || session.task, accepting: state.accepting });
+    if (session) Object.assign(session, { status: state.status, task: state.task || session.task, accepting: state.accepting, endedAt: state.endedAt });
     renderOptions(id);
+    renderRunHistory();
     renderSessionInfo(state);
     sessionButton.disabled = !state.resumeCommand;
     sessionCommand.textContent = state.resumeCommand || '';
