@@ -87,3 +87,4 @@
 #composer .clarify-scroll-up{top:5px}
 #composer .clarify-scroll-down{bottom:5px}
 #composer .clarify-scroll:hover:not(:disabled){color:#d4dbe5;background:#222a35}
+.viewer-session-controls .session-info-toggle.is-error{color:#f0a08a;border-color:#83505a}
