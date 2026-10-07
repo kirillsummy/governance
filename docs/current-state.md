@@ -50,6 +50,25 @@ master-app — показ и обжалование штрафа. [SUM-220 7-110
 
 ## Dev
 
+07.10.2026 17:03 МСК: `crm-visual-dev-20261007` — backend
+`fc39b9bf13cd7b6c8efc7241d0b05227c2fb6bde`, CRM
+`8d09aa7998b079eb86b55d84bc7a9e7a647fe78b`; prepare/backend/CRM exit 0,
+ACTIVE backend 17:02:40, CRM 17:03:23. Снимок 17:04:38 подтвердил совпадение
+VERSION/OCI revisions и целевых SHA, API/CRM running/healthy, sync running,
+RestartCount 0. БД `0260_penalty_reversal_paid_item` без изменения: миграции
+этим выпуском не запускались, `0257 → 0260` относится к предыдущей поставке
+SUM-220. Master-app `6d17b1552d8f18baa271ec3575b8b12a3b5faec3`, client-app
+`40dd98694485fa0db184ff764e32872a47662340`, website
+`645216f6609953f327270d253399af8eef11cf12` и остальные шесть контейнеров
+сохранены; свежие env/compose, `PHOTO_PROOF_V2_ENABLED=true` и
+`YCLIENTS_READ_ONLY=true` сохранены. Компактные экраны CRM, история заметок
+о клиенте, complaint из YClients 1–3, birthday recipients администраторы
+и календарь пяти видов — [состав, образы, целостность и откат](releases/dev-crm-visual-fixes-2026-10-07.md).
+Необходимые delivery builds выполнены; тесты приложения, проверочные сборки,
+HTTP и пользовательские сценарии не проводились. Реальные CRUD, финансовые
+операции и ручная отправка PUSH ради проверки не запускались. Prod этой
+задачей не менялся.
+
 07.10.2026 17:03 МСК: общая поставка `crm-visual-dev-20261007` включает быстрые переходы по всем звеньям верхней цепочки CRM (`e14ea6c6`), опубликованный и активный SHA `8d09aa7998b079eb86b55d84bc7a9e7a647fe78b`. В этом чате независимо прочитаны VERSION сервера и контейнера, OCI revision, `READY`/`ACTIVE crm` и состояние `adminapp` running/healthy, RestartCount 0. Образ `sha256:579dec4153e3b3dc1a90e7caf9bfea3a52734e0c32230134068c4261c8fe342a`; контейнер `a3cfff64f34b`. Exit codes wrapper общей поставки отдельно не получены. Повторное переключение той же версии не потребовалось. Миграций этой правки нет; БД общего выпуска `0260_penalty_reversal_paid_item`. Откат — сценарий работающего выпуска с его `crm-prev` и `adminapp:pre-crm-visual-dev-20261007`. Тесты и ручные сценарии не проводились. [Контракт переходов](../contracts/crm-navigation.md#переходы-по-цепочке-разделов-07102026), [результат](https://summy.youtrack.cloud/issue/SUM-210).
 
 07.10.2026 16:34 МСК: `sum220-origin-test-20261007` — подтверждён состав
