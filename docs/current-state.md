@@ -24,6 +24,18 @@ YouTrack, изменения — в [CHANGELOG](../CHANGELOG.md), датиров
 
 ## Dev
 
+07.10.2026 15:31 МСК: независимая сверка `processes-dev-20261007` — backend
+`468da262786b8fca7da4e55a6089dba75dec3dd0`, CRM
+`93460c9619fa28003f421bdb4809e79c7ffa7263`, БД
+`0257_process_map_review_claim`. Выпуск включил проверенные исправления
+рекламаций и дежурств `5094768`/`ba1d9269`; они не переключались повторно и
+среда не возвращалась к старой схеме. VERSION/метки образов, health/readiness,
+двери CRM и процессов, внутренний master API и настройки камеры подтверждены.
+Таблица штрафов: 8 подходящих записей связаны с 7 видами рекламаций.
+Локальные адресные проверки этих процессов на текущих потомках: backend
+50 passed, CRM 162 passed. Подробности — [SUM-221](https://summy.youtrack.cloud/issue/SUM-221)
+и [документ выпуска](releases/production-processes-2026-10-07.md).
+
 06.10.2026 18:57: `sfx15-dev-20261006` — backend `965d1c22ad06fe47678452ac74d227c260a3b6a5`, БД `0245` → `0247_document_folders` (копия проверена `pg_restore`; `process_types` +1 — сид вида «сообщение о поломке»); CRM `b4c264891451af2ac5d533834165f0419ea48cee` (`sfx14`); master-app `af33ca8`, client-app `e4b0ecb`, website `645216f`; exit 0. SUM-220 — доставка на Dev по готовности, Prod на паузе. Проверены только миграции БД.
 
 06.10.2026 17:18: `sfx6-dev-20261006` — backend `5be05eba29b85f6cd70b20bcf9771683fdd73adb` (оптимизация БД DB1/DB2); остальные продукты как в `sfx5b`; БД `0233` → `0235_client_views_cte_materialization`, копия проверена `pg_restore`; exit 0. Проверены только миграции БД.
