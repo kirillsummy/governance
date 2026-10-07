@@ -50,6 +50,8 @@ master-app — показ и обжалование штрафа. [SUM-220 7-110
 
 ## Dev
 
+07.10.2026 22:23 МСК: `origin-test-dev-20261007c` — весь `origin/test` по прямому поручению владельца, без тестов, с обязательной проверкой миграции. Backend `ba578c58103d43ee3036880ed3f903f99fb0e23b`, CRM `b2c23dcb729f35c9b1b357ca615b204e5d70b567`, master-app `50d0d756802ae09317990d842780958be30a19c8`, client-app `7e39c434000fa604b4037d5557f11e4f1e015849`; website `645216f6609953f327270d253399af8eef11cf12` уже совпадал. prepare/backend/crm/master/client exit 0. БД `0260_penalty_reversal_paid_item` → `0261_master_arrival_deliveries`: дамп `/opt/summy-test/backups/origin-test-dev-20261007c-before-0261.dump` 51 758 480 байт, SHA-256 `a1c9cc58590c2988494341ddfc88c2824c308aaed4e14ada039aee6ef3cd6300`, `pg_restore` прошёл; счётчики 16 таблиц сохранились, таблица и два индекса `master_arrival_deliveries` на месте, строк 0, невалидных индексов 0. `/health` ok с версией backend, пять контейнеров running, RestartCount 0. `YCLIENTS_READ_ONLY=true` в API и sync, поэтому досылка прихода в YClients не запускается; `PHOTO_PROOF_V2_ENABLED=true` сохранён. Перед выпуском с согласия владельца удалены только docker-образы без имени (5,3 ГБ). Незавершённый чужой `process-debug-20261007-dev-final` (остановлен на проверке схемы, не переключался) не затронут. Тесты, HTTP экранов и сценарии не проводились; Prod не менялся.
+
 07.10.2026 17:03 МСК: `crm-visual-dev-20261007` — backend
 `fc39b9bf13cd7b6c8efc7241d0b05227c2fb6bde`, CRM
 `8d09aa7998b079eb86b55d84bc7a9e7a647fe78b`; prepare/backend/CRM exit 0,
