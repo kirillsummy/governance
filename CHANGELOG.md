@@ -1,5 +1,10 @@
 # Changelog
 
+## 07.10.2026 — Мастер: отметка «Клиент оплатил мне наличными» выключена
+
+- Решение владельца в треде: сейчас функция работать не должна. Backend `test` `028eb97`: настройка `CLIENT_CASH_AT_CLOSE_ENABLED` (по умолчанию выключена), отказ `client_cash_disabled`, поле `client_cash_at_close_enabled` карточки записи. Master-app `test` `451dd1b`: отметка скрыта без разрешения backend. [Контракт](contracts/cash-earnings-payout.md) (SUM-194).
+- Проверки: backend `test_master_appointment_close.py` + `test_master_appointments.py` 40/40; master-app `CloseCompactForm`, `CloseAppointment`, `gateway` 65/65; локальный стенд — в полной форме закрытия отметки нет. Доставлено: test. Dev и Prod не менялись.
+
 ## 07.10.2026 — CRM: компактные экраны и связанные backend правила доставлены на Dev
 
 - Прямые поручения владельца в текущем чате: последовательно собрать небольшие исправления с локальным показом; после подготовки разрешена доставка текущего пакета на Dev. Prod этой задачей не менялся.
