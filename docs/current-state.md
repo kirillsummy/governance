@@ -9,10 +9,10 @@ YouTrack, изменения — в [CHANGELOG](../CHANGELOG.md), датиров
 
 Прямое поручение владельца 07.10.2026: весь состав Dev `ot-dev-20261007b`
 без тестов, с обязательной проверкой миграций ([SUM-219](https://summy.youtrack.cloud/issue/SUM-219)).
-Работают backend `7202dfb66fa7c00f8000f935726feb1be9b7416a`, CRM
-`786bd287d4b725e93b2c9d4bcf1d909ef418c40f`, master-app
-`ed75c38b151a0572eea28c8b34577b1220f93771`; БД `0253_manual_complaint_decision`,
-вход CRM `gateway`. client-app `e4b0ecb647b908b5f76209c1296e7b223b24cf5d` только
+Работают backend `7202dfb66fa7c00f8000f935726feb1be9b7416a` (`dev`, `v0.5.0`), CRM
+`786bd287d4b725e93b2c9d4bcf1d909ef418c40f` (`main`, `v0.181.0`), master-app
+`ed75c38b151a0572eea28c8b34577b1220f93771` (`feature/react-client`, `v0.83.0`); БД `0253_manual_complaint_decision`,
+вход CRM `gateway`. client-app `e4b0ecb647b908b5f76209c1296e7b223b24cf5d` (`main`, `v0.3.0`) только
 поставлен, клиентский вход не включён. Сайт не менялся — GRADE2
 `f6dd7b8d5e7cc211b953062beb42028272d777f2` (`main`, `v2.33.2`). Включено
 автозакрытие оплаченных визитов (`YCLIENTS_PAID_AUTO_CLOSE_ENABLED=true` с
