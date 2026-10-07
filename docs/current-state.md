@@ -22,6 +22,29 @@ YouTrack, изменения — в [CHANGELOG](../CHANGELOG.md), датиров
 Прежний Prod — [S194](releases/production-s194-2026-10-05.md) с сайтом GRADE2;
 более ранние — [журнал](history/current-state-log-2026-10-02.md) и [релизы](releases/).
 
+## Опубликованный test — SUM-220, 07.10.2026
+
+Удалённые `test` после публикации технического остатка SUM-220: backend
+`1fe1fc29e6261390857e5323362f6118855ac68f` (Alembic head
+`0260_penalty_reversal_paid_item`), CRM
+`187e6c7181b80fa0df5e99595fd191621a7a2aa7` (снимок gateway API из backend `1fe1fc29`), master-app
+`6d17b1552d8f18baa271ec3575b8b12a3b5faec3`. Указанные коммиты
+опубликованы; на Dev эти SHA не доставлялись. Полные SHA backend и master-app
+сверены с удалёнными ветками, CRM — при push `187e6c71`; перед выпуском
+повторить сверку всех удалённых ссылок.
+
+В опубликованном backend — филиальная область управляющего для склада,
+закупок, доставки и действующих кадровых операций (`0259`), запрет правки
+сетевых материалов и техкарт при сохранении чтения, проверка Кирилла для
+редактора решений, отмена и обжалование рублёвого штрафа (`0260`) и узкие
+исправления процесса R3/R5. CRM содержит экраны и потребительские типы,
+master-app — показ и обжалование штрафа. [SUM-220 7-1105](https://summy.youtrack.cloud/issue/SUM-220?focusedComment=7-1105)
+фиксирует границы, проверки и остатки. Статьи базы решений и ACL YouTrack
+не исправлены; редактор ждёт подтверждённых настроек Кирилла.
+
+[Сверка SUM-220](history/sum220-test-audit-2026-10-07.md) — исторический
+снимок первой публикации, а не актуальный статус. Состояние Prod R1007 — выше.
+
 ## Dev
 
 07.10.2026 15:31 МСК: независимая сверка `processes-dev-20261007` — backend
@@ -35,6 +58,12 @@ YouTrack, изменения — в [CHANGELOG](../CHANGELOG.md), датиров
 Локальные адресные проверки этих процессов на текущих потомках: backend
 50 passed, CRM 162 passed. Подробности — [SUM-221](https://summy.youtrack.cloud/issue/SUM-221)
 и [документ выпуска](releases/production-processes-2026-10-07.md).
+
+07.10.2026 15:19 МСК: `processes-dev-20261007` — backend `468da262786b8fca7da4e55a6089dba75dec3dd0`, CRM `93460c9619fa28003f421bdb4809e79c7ffa7263`; prepare/backend/crm exit 0, БД `0254 → 0257`. API/CRM healthy, sync running, рестартов 0; проверены gateway-вход и чтение процессов/отчётов уборки владельцем, управляющим, администратором. Локальный планировщик включён при сохранённом `YCLIENTS_READ_ONLY=true`, внешний push выключен. Копия БД проверена, счётчики сохранены. master-app/client-app/website прежние, Prod этой задачей не менялся. 177 серверных + отдельные миграционные/каталоговые проверки, 255 UI; границы и полные SHA — [выпуск](releases/dev-processes-2026-10-07.md), [матрица 25 видов](reviews/crm-processes-2026-10-07.md).
+
+07.10.2026 14:59 МСК: `knowledge-ui-20261007` — CRM `74806fd06c77f0d57d671105680a8d3af02ad680` (единый список базы знаний, верхняя вкладка бизнес-решений, Markdown текста и истории); prepare/crm exit 0. VERSION и метка образа совпадают с SHA, образ `sha256:a079d49f4c85056892f85887f62e5c37a2e973f91735da5df965b03f0b766112`; `adminapp` running/healthy, RestartCount 0. БД `0254_complaint_penalty_catalog` без изменений. При независимом чтении 15:00 МСК остальные VERSION: backend `9dfe5317977b5eb449de0166db283a891547a3b2`, master-app `ed75c38b151a0572eea28c8b34577b1220f93771`, client-app `e4b0ecb647b908b5f76209c1296e7b223b24cf5d`, website `645216f6609953f327270d253399af8eef11cf12`; они этой задачей не обновлялись. Тесты не проводились; Prod этой задачей не менялся. Результат — [SUM-210](https://summy.youtrack.cloud/issue/SUM-210), изменение — [CHANGELOG](../CHANGELOG.md#07102026--crm-единый-список-базы-знаний-и-markdown).
+
+07.10.2026 12:43 МСК: `sum220-all-test-dev-20261007` — состав `test` SUM-220 после публикации штрафного пакета, по прямому поручению владельца ([SUM-220 7-1096](https://summy.youtrack.cloud/issue/SUM-220?focusedComment=7-1096)): prepare, backend и crm exit 0, БД доведена до `0254_complaint_penalty_catalog`, перед миграцией сохранён полный дамп. Штатный read-only снимок 12:52:49 МСК: backend VERSION `9dfe5317977b5eb449de0166db283a891547a3b2`, CRM VERSION `3b0163cea78e2b6c482271dd9bd32c3211950572`, master-app `ed75c38b151a0572eea28c8b34577b1220f93771`, client-app `e4b0ecb647b908b5f76209c1296e7b223b24cf5d`, website `645216f6609953f327270d253399af8eef11cf12`; БД `0254_complaint_penalty_catalog`; выпуск ACTIVE, последняя запись 12:43:34 МСК, замок свободен; adminapp и API healthy, sync, master, client, БД и minio запущены. Снимок подтверждает версии, ревизию БД и состояние контейнеров; тесты и прохождение карточек не проводились. CRM позже заменена `knowledge-ui-20261007` (выше).
 
 06.10.2026 18:57: `sfx15-dev-20261006` — backend `965d1c22ad06fe47678452ac74d227c260a3b6a5`, БД `0245` → `0247_document_folders` (копия проверена `pg_restore`; `process_types` +1 — сид вида «сообщение о поломке»); CRM `b4c264891451af2ac5d533834165f0419ea48cee` (`sfx14`); master-app `af33ca8`, client-app `e4b0ecb`, website `645216f`; exit 0. SUM-220 — доставка на Dev по готовности, Prod на паузе. Проверены только миграции БД.
 
