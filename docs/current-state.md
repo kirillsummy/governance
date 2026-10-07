@@ -5,35 +5,22 @@ YouTrack, изменения — в [CHANGELOG](../CHANGELOG.md), датиров
 02.10.2026 — в [журнале](history/current-state-log-2026-10-02.md). Перед
 выводом о среде сверяй живое состояние: VERSION, образы, ревизию БД.
 
-## Prod: S194 с 05.10.2026 14:20 МСК, сайт — GRADE2 с 16:27
+## Prod: R1007 с 07.10.2026 13:10 МСК
 
-05.10.2026 16:27 МСК поверх GRADE1 выпущен повторный фикс только сайта:
-website `f6dd7b8d5e7cc211b953062beb42028272d777f2` (`main`, `v2.33.2`,
-VERSION `GRADE2+f6dd7b8…`, BUILD_ID `r9TLuFCjDWfmdap3tT8T5`).
-`MastersCatalog.zapisi` сохраняет актуальный объект мастера от сервера при
-фильтрации каталога; GRADE1 доставил источник грейда, но оставил старые объекты
-в карточках. После обновления страницы у Дианы Мальцевой каталог и профиль
-показывают 4 звезды; рейтинг 4,88 не менялся. Dev и Prod exit 0,
-продуктовые тесты и отдельные проверочные сборки не запускались.
-Остальные продукты — S194 ниже. Источник — [SUM-215](https://summy.youtrack.cloud/issue/SUM-215),
-подробности в [CHANGELOG](../CHANGELOG.md); предыдущая версия —
-[GRADE1](releases/production-grade1-2026-10-05.md).
-
-Прямое поручение 05.10.2026: состав Dev `s194-dev-20261005` после проверок
-([SUM-211](https://summy.youtrack.cloud/issue/SUM-211)). Работают backend
-`dfde65b4526fe6a329e9f6455f8d408308d04078` (`v0.4.0`; `dev` = `9528afe` — сверху только лимит CI 60 мин), CRM
-`792d123e765b0c784c2c2aeccef519d62fa879b7` (`main`, `v0.180.0`), master-app
-`04643caaee3111c00a292b06db07270396b44895` (`feature/react-client`, `v0.82.0`),
-website `fa90db7238a0a5eb17835838e99940b829916422` (`main`, `v2.33.0`); БД
-`0204_hr_action_request_links`, вход CRM `gateway`. client-app
-`9a2cbd1787e73db09eb0d64e964e8eb9c40f276b` (`main`, `v0.2.0`) только поставлен,
-клиентский вход не включён. Это Dev-состав `bb86c7f`/`d100b4f`/`9040821` плюс
-исправления подготовки (lint, типы, тесты, снимок OpenAPI). Все фазы exit 0,
-проверка после выкладки 50/50, API и sync стояли ≈2 мин 25 с. Проверки,
-репетиция 0166→0204 на копии Prod, копия БД, флаги SUM-194 и откат — в
-[документе выпуска](releases/production-s194-2026-10-05.md). Прежний Prod —
-[RC6](releases/production-rc6-2026-10-02.md); более ранние —
-[журнал](history/current-state-log-2026-10-02.md) и [релизы](releases/).
+Прямое поручение владельца 07.10.2026: весь состав Dev `ot-dev-20261007b`
+без тестов, с обязательной проверкой миграций ([SUM-219](https://summy.youtrack.cloud/issue/SUM-219)).
+Работают backend `7202dfb66fa7c00f8000f935726feb1be9b7416a`, CRM
+`786bd287d4b725e93b2c9d4bcf1d909ef418c40f`, master-app
+`ed75c38b151a0572eea28c8b34577b1220f93771`; БД `0253_manual_complaint_decision`,
+вход CRM `gateway`. client-app `e4b0ecb647b908b5f76209c1296e7b223b24cf5d` только
+поставлен, клиентский вход не включён. Сайт не менялся — GRADE2
+`f6dd7b8d5e7cc211b953062beb42028272d777f2` (`main`, `v2.33.2`). Включено
+автозакрытие оплаченных визитов (`YCLIENTS_PAID_AUTO_CLOSE_ENABLED=true` с
+2026-10-06); остальные выключатели как в S194. Все фазы exit 0, проверка после
+выкладки 50/50, API и sync стояли ≈1 мин 15 с. Репетиции 0204→0253, копия БД,
+деньги без выключателя и откат — в [документе выпуска](releases/production-r1007-2026-10-07.md).
+Прежний Prod — [S194](releases/production-s194-2026-10-05.md) с сайтом GRADE2;
+более ранние — [журнал](history/current-state-log-2026-10-02.md) и [релизы](releases/).
 
 ## Dev
 
