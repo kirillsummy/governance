@@ -2,6 +2,42 @@
 
 [Вход в DOC](../AGENTS.md) · [Источники и SHA](sources.md)
 
+## Барьеры планирования денежных VIEW: ревизия `0268` (08.10.2026)
+
+Предшественник — `0267_studio_closure_hours_push`. Баг
+[SUM-228](https://summy.youtrack.cloud/issue/SUM-228). Начиная с 0262
+PostgreSQL раскрывал вложенные денежные VIEW в один план на ~25 тыс. узлов:
+
+| VIEW | Память планировщика на 0267 |
+|---|---|
+| `contract_v1_earnings_sources` | ~2 ГБ |
+| `contract_v1_earnings_balance` | ~2,3 ГБ |
+| `payroll_bonus_policy_deltas` | ~1,8 ГБ |
+
+До 0262 `contract_v1_earnings_sources` планировался за 64 МБ. На Dev с 3,9 ГБ
+ОЗУ такие запросы вешали сервер.
+
+`0268_payroll_view_plan_barriers` меняет только способ раскрытия видов:
+- `payroll_bonus_month_state` и `payroll_bonus_components` читаются через
+  plpgsql-функции `payroll_bonus_month_state_rows()` и
+  `payroll_bonus_components_rows()` (STABLE, `search_path` закреплён) поверх
+  видов `*_body`; тела видов — дословно из 0265;
+- `payroll_bonus_primary_guarantee` берёт components одним общим
+  `MATERIALIZED`, `contract_v1_earnings_sources` так же берёт
+  `payroll_earnings_desired`.
+
+Столбцы, формулы и данные не меняются. Downgrade возвращает прежние
+определения байт-в-байт.
+
+Цена решения: фильтр по мастеру и месяцу не проталкивается внутрь barrier, и
+components и month_state считаются по всем мастерам и месяцам. На снимке БД
+06.10 это 360 и 220 строк, около 0,6 с на вызов. Пик памяти процесса на запрос
+сентябрьской таблицы снизился с 2,4 ГБ до ~0,37 ГБ, время — с 5–7 с до ~2 с.
+
+Новые ссылки на тяжёлые денежные VIEW проверяют через `EXPLAIN (MEMORY)`:
+один и тот же вид не должен раскрываться в плане многократно. Assertions —
+`db/migration-asserts-0268.json`.
+
 ## Закрытие часов студией и push мастеру: ревизия `0267` (08.10.2026)
 
 Предшественник — `0266_studio_schedule_closures`.
