@@ -60,6 +60,35 @@ master-app — показ и обжалование штрафа. [SUM-220 7-110
 
 ## Dev
 
+08.10.2026 21:01 МСК: исправлен баг
+[SUM-228](https://summy.youtrack.cloud/issue/SUM-228). Работают:
+- backend `0c7b9fb661c1c72e70b4270e61069a58da7a0e1d` (выпуск
+  `payroll-summary-fix-20261008`, БД `0268_payroll_view_plan_barriers`);
+- CRM `612af8202b94bd4caefdadec72cad6e4e5d226ae` (выпуск
+  `payroll-summary-fix-20261008b`);
+- master-app `d7f27f3f`, client-app `d96822cf`, website `645216f6` — без
+  изменений.
+
+VERSION совпадает с OCI revision образов и с `test`. `YCLIENTS_READ_ONLY=true`
+сохранён у api и sync.
+
+Перед миграцией снята копия `backups/payroll-summary-fix-20261008-before-0268.dump`.
+После миграции:
+- 8 SQL assertions прошли;
+- 5 снимков истории совпали;
+- счётчики 20 таблиц не изменились.
+
+Контейнеру postgres поставлен лимит памяти 1600m без свопа (поток
+стабилизации Dev, 20:32).
+
+Проверено адресно:
+- `/api/payroll-salary?period=2026-09` — 200 за 10,5 с, 187 строк;
+- пик памяти postgres — 280 МиБ;
+- планирование `contract_v1_earnings_sources` — 78 МБ.
+
+Повторное зависание 19:23–20:26 вызвали запросы зарплаты на 0267: сервер
+восстановился без перезагрузки, когда глобальный OOM убил процесс postgres.
+
 08.10.2026 19:09 МСК: `all-test-dev-20261008b` — по прямому поручению владельца
 «Залей на дев все камиты из теста» доставлен весь `test`. Работают backend
 `1dbf932d6129b6007efff3a0f5217ad4b90e1402`, CRM
