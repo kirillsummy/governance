@@ -2,6 +2,21 @@
 
 [Вход в DOC](../AGENTS.md) · [Источники и SHA](sources.md)
 
+## Закрытие часов студией и push мастеру: ревизия `0267` (08.10.2026)
+
+Предшественник — `0266_studio_schedule_closures`.
+`0267_studio_closure_hours_push`: nullable `provided_slots jsonb` у
+`schedule_studio_closure_commands` (снимок исходной смены, массив; страж
+переходов сделан неизменяемым и для него); новые таблицы
+`master_push_subscriptions` (подписки мастера, отзыв `revoked_at`),
+`master_notifications` (одна строка на событие, `dedupe_key` уникален,
+`push_state`) и `master_push_deliveries` (попытки по подписке). Данные не
+меняются, seed нет: +3 пустые таблицы, +1 столбец. Downgrade отказывает при
+уведомлениях, подписках или снимках смены. Assertions —
+`db/migration-asserts-0267.json`. На одноразовой PostgreSQL 18 миграции
+0001→0267 применены для генерации снимка схемы; тесты не запускались. На Dev
+не выполнялась (Dev по задаче отключён владельцем).
+
 ## Единая зарплата мастеров: ревизии `0265` и `0266` (08.10.2026)
 
 Предшественник — `0264_card_payments`. `0265_payroll_unified_bonus`:

@@ -5,7 +5,9 @@
 ## Единая таблица зарплаты мастеров и «Закрыть график» (08.10.2026)
 
 Те же условия доступа, что у таблицы бонусов ниже: service token, живая
-CRM-сессия, управляющий в своих филиалах или Кирилл. Правила —
+CRM-сессия, управляющий в своих филиалах или Кирилл; команды и сводку
+закрытий часов — ещё администратор своего филиала (решение владельца
+08.10.2026). Правила —
 [payroll-v1](../contracts/payroll-v1.md#единая-таблица-зарплата-и-бонусы-мастеров-08102026).
 
 | Ручка | Поведение |
@@ -15,8 +17,10 @@ CRM-сессия, управляющий в своих филиалах или �
 | `GET /v1/payroll/table/{staff_id}/policy` | Та же строка одного мастера (профиль) |
 | `PATCH /v1/payroll/table/{staff_id}/policy` | Режимы бонусов, вариант и личный порог возвращаемости текущего месяца, `expected_policy_id`; сумма ГМ не принимается (`422 guarantee_amount_from_grade`) |
 | `POST /v1/payroll/table/repeat-threshold` | Общий порог варианта 1 всем мастерам области: `command_id`, порог, причина; справочник грейдов не меняется |
-| `POST /v1/schedule/studio-closures` | Команда «Закрыть график»: `request_id`, мастер, дата, интервал, причина; статусы `pending/sent/failed/blocked_read_only` |
-| `GET /v1/schedule/studio-closures`, `GET …/{request_id}`, `POST …/{request_id}/reconcile` | Список и статус команд; сверка неизвестного результата с YClients до любого повтора |
+| `POST /v1/schedule/studio-closures` | Команда «Закрыть график»: `request_id`, мастер, дата, интервал внутри предоставленной смены, причина; статусы `pending/sent/failed/blocked_read_only`; отказы `no_provided_schedule`, `outside_provided_schedule`, `blocked_by_records`, `closure_overlap`, `closure_in_past` |
+| `GET /v1/schedule/studio-closures`, `GET …/{request_id}`, `POST …/{request_id}/reconcile` | Список и статус команд (снимок смены `provided`, `push_state`); для одного дня — `day`: предоставлено, закрыто, доступно; сверка неизвестного результата с YClients до любого повтора |
+| `GET /v1/schedule/studio-closures/summary` | Сводка «Сотрудников»: `date_from/date_to` (до 366 дней), `location_id`, `staff_id`, `status=sent|all`, `limit/offset`; итоги минут по мастерам, доступные филиалы |
+| `GET /v1/master/push/config`, `PUT /v1/master/push/subscription`, `POST /v1/master/push/subscription/revoke`, `GET /v1/master/notifications` | Приложение мастера (сессия мастера): ключ VAPID, подписка и отзыв web push, уведомления с `push_state` |
 
 Ручные начисления — прежний `POST /v1/payroll/bonus-board/{staff_id}/manual-awards`
 с новой категорией `primary_activity`. Прежние ручки ниже сохранены для
