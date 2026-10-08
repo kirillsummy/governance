@@ -2,6 +2,27 @@
 
 [Вход в DOC](../AGENTS.md) · [Архитектура](architecture/README.md)
 
+## Единая таблица зарплаты мастеров и «Закрыть график» (08.10.2026)
+
+Те же условия доступа, что у таблицы бонусов ниже: service token, живая
+CRM-сессия, управляющий в своих филиалах или Кирилл. Правила —
+[payroll-v1](../contracts/payroll-v1.md#единая-таблица-зарплата-и-бонусы-мастеров-08102026).
+
+| Ручка | Поведение |
+|---|---|
+| `GET /v1/payroll/table/access` | Право и доступные филиалы |
+| `GET /v1/payroll/table` | Строки мастеров: база, пять бонусов (режим `auto/on/off`, источник, состояние условия, суммы), ЗП + бонусы, штрафы, итог, итоги; ровно один из `period=YYYY-MM`, `year=YYYY`, `date_from+date_to` (до 366 дней); `location`, `staff_id`, `q`, `limit/offset` |
+| `GET /v1/payroll/table/{staff_id}/policy` | Та же строка одного мастера (профиль) |
+| `PATCH /v1/payroll/table/{staff_id}/policy` | Режимы бонусов, вариант и личный порог возвращаемости текущего месяца, `expected_policy_id`; сумма ГМ не принимается (`422 guarantee_amount_from_grade`) |
+| `POST /v1/payroll/table/repeat-threshold` | Общий порог варианта 1 всем мастерам области: `command_id`, порог, причина; справочник грейдов не меняется |
+| `POST /v1/schedule/studio-closures` | Команда «Закрыть график»: `request_id`, мастер, дата, интервал, причина; статусы `pending/sent/failed/blocked_read_only` |
+| `GET /v1/schedule/studio-closures`, `GET …/{request_id}`, `POST …/{request_id}/reconcile` | Список и статус команд; сверка неизвестного результата с YClients до любого повтора |
+
+Ручные начисления — прежний `POST /v1/payroll/bonus-board/{staff_id}/manual-awards`
+с новой категорией `primary_activity`. Прежние ручки ниже сохранены для
+совместимости; в `GET /v1/payroll/bonuses` суммы «Активности» и «Скорости»
+могут быть `null` (неизвестно).
+
 ## Таблица бонусов мастеров (08.10.2026)
 
 Все ручки требуют service token и живую CRM-сессию. Доступ имеют
