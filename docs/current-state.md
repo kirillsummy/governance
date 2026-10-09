@@ -86,6 +86,13 @@ master-app — показ и обжалование штрафа. [SUM-220 7-110
 
 ## Dev
 
+09.10.2026 21:41 МСК: «Зарплата · Клининг» — одна компактная страница без подменю и
+подзаголовков ([CHANGELOG](../CHANGELOG.md), [SUM-210](https://summy.youtrack.cloud/issue/SUM-210#focus=Comments-7-1208.0-0)). CRM
+`08639d9dc6bed4996c8d9dbcd4b0ed217f4801c6` (test `b343d605`) впервые на Dev в
+`payout-label-dev-20261009` (`3bf3ce85`), сейчас в работающей CRM
+`8763cc0b90fe48d37aaf12c0c7756366d94fd7a7` (`auth-ready-20261009`). API, права и
+деньги не менялись. Тесты не проводились; Prod не менялся.
+
 09.10.2026 21:35 МСК: зарплата — «Остаток к выплате» вместо «Долг SUMMY»
 ([CHANGELOG](../CHANGELOG.md), [payroll-v1](../contracts/payroll-v1.md), [SUM-210](https://summy.youtrack.cloud/issue/SUM-210#focus=Comments-7-1209.0-0)).
 Впервые на Dev — выпуском `payout-label-dev-20261009` (CRM
