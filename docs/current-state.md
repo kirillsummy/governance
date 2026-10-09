@@ -86,6 +86,15 @@ master-app — показ и обжалование штрафа. [SUM-220 7-110
 
 ## Dev
 
+09.10.2026 22:47 МСК: вход разработчика на Dev выключен во всех приложениях с 21:03 —
+`/login_dev` CRM отвечает 404 по решению SUM-96 №53, а не из-за сбоя
+([контракт](../contracts/test-developer-access.md#включение-и-граница-среды)). Шаг `sms`
+выпуска `auth-ready-20261009` включил реальный SigmaSMS для приёмки SUMMY ID и снял флаги
+входа разработчика в api, `adminapp`, master BFF и client; живые env это подтверждают,
+`/v1/test-developer/available` — 404. Работающая CRM
+`921fcc509ea266b9a2c8fae8f18f2d5251af9931` (выпуск `crm-login-copy-921fcc50`) этот режим
+сохранила. Код и сервер не менялись; тесты не проводились.
+
 09.10.2026 22:00 МСК: общий выпуск `speed-gel-dev-20261009b` — «Скорость» +50 ₽ за маникюр с гель-лаком
 и все переданные части компоновки и зарплаты ([CHANGELOG](../CHANGELOG.md), [payroll-v1](../contracts/payroll-v1.md), [SUM-210](https://summy.youtrack.cloud/issue/SUM-210#focus=Comments-7-1211.0-0)).
 Работают backend `d451dee28a23930c627b315bf1397998e56bfb78` (api `b84b35e6841a`, sync `4c9f3d6fd447`)

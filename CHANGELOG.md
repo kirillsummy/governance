@@ -1,5 +1,11 @@
 # Changelog
 
+## 09.10.2026 — Dev: 404 `/login_dev` CRM — вход разработчика выключен решением №53, не сбой
+
+- Поручение 09.10.2026: восстановить вход разработчика CRM на Dev (`/login_dev` → 404, `/login` → 200). Причина установлена по живому Dev: в 21:03 МСК шаг `sms` выпуска `auth-ready-20261009` включил реальный SigmaSMS для приёмки SUMMY ID и снял `TEST_DEVELOPER_ENABLED` (api), `ADMINAPP_TEST_DEVELOPER_ENABLED`, master BFF `TEST_DEVELOPER_ENABLED` и `CLIENT_TEST_DEVELOPER_ENABLED`, очистив `TEST_DEVELOPER_COPY_TEXT`. Флаги сверены по compose-файлам выпусков и env контейнеров, значения секретов не читались. Backend отвечает 404 на `/v1/test-developer/available`, поэтому `src/app/login_dev/page.tsx` вызывает `notFound()`. Последующие выпуски `speed-gel-dev-20261009b` и `crm-login-copy-921fcc50` (CRM `921fcc509ea266b9a2c8fae8f18f2d5251af9931`) этот режим сохранили.
+- Это зафиксированное решение SUM-96 №53 ([SUM-130, 7-1205](https://summy.youtrack.cloud/issue/SUM-130#focus=Comments-7-1205.0-0); backend `docs/sigmasms.md`: «Режим разработчика несовместим с реальными SMS»). Startup guard backend запрещает вход разработчика при `STAND_ALLOW_SIGMASMS` или провайдере, отличном от `stand`. Восстановление требует либо вернуть Dev на SMS sink, отменив решение владельца, либо ослабить guard, что запрещено. Поэтому код, env и контейнеры не менялись, публикаций в `test` и выкладки нет.
+- Канон приведён к реальности: [контракт SUM-104](contracts/test-developer-access.md#включение-и-граница-среды) и [текущее состояние](docs/current-state.md#dev). Тесты не проводились; Prod не менялся.
+
 ## 09.10.2026 — Dev: «Скорость» +50 ₽ за маникюр с гель-лаком и общий выпуск частей компоновки и зарплаты (SUM-203)
 
 - Уточнение владельца 09.10.2026: «Какая сумма за скорость — просто же +50 на гель-лак, нет?». Канон — [payroll-v1](contracts/payroll-v1.md#единая-таблица-зарплата-и-бонусы-мастеров-08102026). В основном перечне `0265` «Скорость» была только у «Наращивание 1.5 / 2D» (норматив 1 ч 30), маникюр пропущен.

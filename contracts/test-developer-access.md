@@ -10,6 +10,8 @@
 
 Перед включением оператор сверяет фактические env без вывода секретов, PostgreSQL endpoint и `alembic_version`, MinIO endpoint, compose overrides и работающие образы. Проверка только Git-ветки или VERSION недостаточна. Если внешнее направление не подтверждено как безопасное, механизм оставляют выключенным.
 
+**Состояние Dev с 09.10.2026 21:03 МСК — механизм выключен.** Для приёмки SUMMY ID на Dev включён реальный SigmaSMS (`ID_SMS_PROVIDER=sigmasms`, `STAND_ALLOW_SIGMASMS=true`, суточный лимит), поэтому шаг `sms` выпуска `auth-ready-20261009` снял `TEST_DEVELOPER_ENABLED` в backend, `ADMINAPP_TEST_DEVELOPER_ENABLED`, `TEST_DEVELOPER_ENABLED` master-app и `CLIENT_TEST_DEVELOPER_ENABLED` и очистил `TEST_DEVELOPER_COPY_TEXT`. Это решение SUM-96 №53 ([SUM-130, 7-1205](https://summy.youtrack.cloud/issue/SUM-130#focus=Comments-7-1205.0-0)), а не сбой: backend не регистрирует `/v1/test-developer/*`, вход разработчика недоступен во всех трёх приложениях, а `/login_dev` CRM по построению отвечает 404. Startup guard backend не допускает вход разработчика вместе с реальными SMS; ослаблять его нельзя. Вернуть вход можно только отдельным решением владельца о возврате Dev на локальный SMS sink (без реквизитов SigmaSMS в API), затем включением флагов в обратном порядке раздела «Изоляция и откат» и сверкой env по абзацу выше.
+
 ## Протокол
 
 1. BFF передаёт логин и пароль серверному `/login`; backend ограничивает попытки и выдаёт случайный токен разработчика на 30 минут. BFF держит его в `HttpOnly` cookie. Продуктовая сессия ещё не выдаётся.
