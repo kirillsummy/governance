@@ -86,6 +86,12 @@ master-app — показ и обжалование штрафа. [SUM-220 7-110
 
 ## Dev
 
+10.10.2026 00:49 МСК: выпуск `ui-canon-dev-20261010b` (только CRM) — единый компактный вид CRM
+([контракт](../contracts/crm-navigation.md#единый-компактный-вид-crm-10102026),
+[SUM-210](https://summy.youtrack.cloud/issue/SUM-210#focus=Comments-7-1257.0-0)). Работает CRM `5b10e7951334885a8e321658c8a34a21d815d4ea`
+(`adminapp` `9ba969bf4269` healthy, RestartCount 0) поверх выпуска `payroll-toggle-dev-20261010c`; коммиты SUM-203 п.2/п.5 из `test`
+(CRM `aa7cbe23`…`e685ecd8`) на Dev не доставлены — ждут backend `94e5338b`. БД `0277_custom_role_deletion` и остальные продукты не менялись. Тесты не проводились.
+
 10.10.2026 00:10 МСК: выпуск `evbd-dev-20261010` (backend + CRM) — справа на «Событиях»
 дни рождения на 7 дней и медкнижки, день рождения без года ([контракт](../contracts/staff-birthdays.md#источник-даты-и-область),
 [SUM-210](https://summy.youtrack.cloud/issue/SUM-210#focus=Comments-7-1255.0-0)). Работают backend `959103313a8882ecb0eafc5a45c14d142d0f55aa` (api `2c85e5e4f56d` healthy, sync `ac52118af757`) и
