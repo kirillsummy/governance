@@ -1,5 +1,12 @@
 # Changelog
 
+## 09.10.2026 — CRM test: зарплата — «Остаток к выплате» вместо «Долг SUMMY» (SUM-203)
+
+- Поручение владельца 09.10.2026 (восьмая дополнительная правка компоновки CRM): величину `debt` в «Зарплате и бонусах» назвать «Остаток к выплате». Канон — [payroll-v1](contracts/payroll-v1.md), п. 12.
+- CRM test `77628ab38cc018f5d69f315a8ffffcf753805d99` (коммит `1555cee3ee82ff491059e58b3e8a60651e9971ef` + merge свежего test `b8107fa6`): `SALARY_COLUMN_TITLE.debt` в `salary-header-info.tsx` — общий источник шапки колонки, popover/aria-label, списка скрываемых полей и «Итого»; итог журнала мастера в `salary-master-journal.tsx`. Подсказка «Итог − Выплачено за тот же период» прежняя.
+- Только подпись: `debt_rub`, `debt_known_rub`, `debt_state`, суммы, «не определено», знак (переплата не обрезается), сортировка, фильтры, выплаты, права, BFF и backend не менялись; `salary-table.tsx` не правился. Отдельного CSV/XLSX экспорта таблицы в CRM нет. Миграций нет; backend, master-app, client-app, website не менялись.
+- Проверки: тесты не проводились. Dev: с ~17:44 МСК SSH и HTTPS Dev не отвечают; выкладка ожидает восстановления. Prod не менялся. [Ход](https://summy.youtrack.cloud/issue/SUM-203#focus=Comments-7-1200.0-0).
+
 ## 09.10.2026 — CRM test: «Процессы → События» — дежурства, дни рождения и сроки медкнижек (SUM-210)
 
 - Поручение 09.10.2026 (пятое дополнение компоновки CRM): события сотрудников встроены в экран дежурств; пункт и заголовок — «События»; «Сотрудники → События» сняты. Канон — [crm-navigation](contracts/crm-navigation.md#процессы--события-дежурства-и-события-сотрудников-09102026), [staff-events](contracts/staff-events.md), [staff-birthdays](contracts/staff-birthdays.md).
