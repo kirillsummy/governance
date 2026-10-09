@@ -86,6 +86,19 @@ master-app — показ и обжалование штрафа. [SUM-220 7-110
 
 ## Dev
 
+09.10.2026 22:00 МСК: общий выпуск `speed-gel-dev-20261009b` — «Скорость» +50 ₽ за маникюр с гель-лаком
+и все переданные части компоновки и зарплаты ([CHANGELOG](../CHANGELOG.md), [payroll-v1](../contracts/payroll-v1.md), [SUM-210](https://summy.youtrack.cloud/issue/SUM-210#focus=Comments-7-1211.0-0)).
+Работают backend `d451dee28a23930c627b315bf1397998e56bfb78` (api `b84b35e6841a`, sync `4c9f3d6fd447`)
+и CRM `a072aa960d0de4d73aef63f7c76864249eb59238` (`adminapp` `25d80efc5c19`). Образы
+`summy-speed-gel-dev-20261009b-*`, OCI revision = SHA, healthy, RestartCount 0.
+БД `0274_payroll_speed_gel_polish`: asserts и снимки истории равны, снимок схемы совпадает с живой БД.
+master-app `79db16f2`, client-app `d96822cf`, website `645216f6` без изменений.
+В этих головах — бонусы по месяцам (`0273`), «Администраторы», «Клининг», автообновление,
+«События», аналитика, только действующие мастера, «Остаток к выплате».
+Записи этих частей ниже, где сказано «Dev не развёрнуто», устарели.
+Первая попытка `speed-gel-dev-20261009` (21:45) откатилась сама — права каталогов архива.
+Тесты не проводились; Prod не менялся.
+
 09.10.2026 21:41 МСК: «Зарплата · Клининг» — одна компактная страница без подменю и
 подзаголовков ([CHANGELOG](../CHANGELOG.md), [SUM-210](https://summy.youtrack.cloud/issue/SUM-210#focus=Comments-7-1208.0-0)). CRM
 `08639d9dc6bed4996c8d9dbcd4b0ed217f4801c6` (test `b343d605`) впервые на Dev в
