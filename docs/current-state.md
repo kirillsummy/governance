@@ -86,6 +86,19 @@ master-app — показ и обжалование штрафа. [SUM-220 7-110
 
 ## Dev
 
+09.10.2026 21:36 МСК (снимок потока «Аналитика»): вся аналитика вне Дашборда —
+подпунктами «Аналитики» ([CHANGELOG](../CHANGELOG.md),
+[crm-navigation](../contracts/crm-navigation.md#вся-аналитика--в-аналитике-09102026)).
+Работает CRM `8763cc0b90fe48d37aaf12c0c7756366d94fd7a7` (выпуск
+`auth-ready-20261009`, VERSION = OCI revision; `adminapp` healthy, RestartCount 0),
+в которой есть CRM `a52a7f5e` этого переноса; впервые он попал на Dev выпуском
+`payout-label-dev-20261009` (CRM `3bf3ce85`, 19:46). Backend
+`fdf5b6948aac835619fb21fbddf8071a021cdd61`, БД
+`0273_payroll_speed_month_assignment`, master-app `79db16f2`, client-app
+`d96822cf`, website `645216f6` — состояние соседних выпусков после
+перезагрузки Dev в 19:38, здесь только зафиксировано. Тесты не проводились;
+Prod не менялся.
+
 09.10.2026 17:33 МСК (последний снимок менеджера): «Мастера» — обычные
 галочки бонусов за прошлый/текущий/будущий месяц, ГМ только от грейда
 ([CHANGELOG](../CHANGELOG.md), [payroll-v1](../contracts/payroll-v1.md)).
