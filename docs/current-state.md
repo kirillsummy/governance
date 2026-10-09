@@ -86,6 +86,10 @@ master-app — показ и обжалование штрафа. [SUM-220 7-110
 
 ## Dev
 
+10.10.2026 01:37 МСК: выпуск `ui-visual-dev-20261010b` (только CRM) — «Сбросить» фильтра диалогов в чатах
+([SUM-210](https://summy.youtrack.cloud/issue/SUM-210#focus=Comments-7-1266.0-0)). Работает CRM `22131fc66dbff5bebe7bea2be6ed6635dc8679f4`
+(`adminapp` `83d135f4d263` healthy, RestartCount 0), backend `dc68196dee46915feccc2e694261a38c4875e8fc`; БД `0277_custom_role_deletion`. Тесты не проводились.
+
 10.10.2026 01:29 МСК: выпуск `ui-visual-dev-20261010` (только CRM) — исправления визуальной приёмки единого вида CRM
 ([SUM-210](https://summy.youtrack.cloud/issue/SUM-210#focus=Comments-7-1264.0-0)). Работает CRM `a79385e293931823a1e5938ceea347f118c78f6e`
 (`adminapp` `663277f4b95f` healthy, RestartCount 0) поверх `payroll-interactive-dev-20261010` (backend `dc68196dee46915feccc2e694261a38c4875e8fc`);
