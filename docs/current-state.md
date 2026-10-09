@@ -86,6 +86,14 @@ master-app — показ и обжалование штрафа. [SUM-220 7-110
 
 ## Dev
 
+09.10.2026 21:35 МСК: зарплата — «Остаток к выплате» вместо «Долг SUMMY»
+([CHANGELOG](../CHANGELOG.md), [payroll-v1](../contracts/payroll-v1.md), [SUM-210](https://summy.youtrack.cloud/issue/SUM-210#focus=Comments-7-1209.0-0)).
+Впервые на Dev — выпуском `payout-label-dev-20261009` (CRM
+`3bf3ce850e0e55b98cdd38486f9e29c5dc5f9e05`, 19:46, exit 0); в работающей CRM
+`8763cc0b90fe48d37aaf12c0c7756366d94fd7a7` (`auth-ready-20261009`, `adminapp`
+healthy, RestartCount 0) правка `1555cee3` сохранена. Остальной состав — как в
+снимке ниже. Тесты не проводились; Prod не менялся.
+
 09.10.2026 21:36 МСК (снимок потока «Аналитика»): вся аналитика вне Дашборда —
 подпунктами «Аналитики» ([CHANGELOG](../CHANGELOG.md),
 [crm-navigation](../contracts/crm-navigation.md#вся-аналитика--в-аналитике-09102026)).
