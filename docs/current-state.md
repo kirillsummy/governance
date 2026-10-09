@@ -86,6 +86,12 @@ master-app — показ и обжалование штрафа. [SUM-220 7-110
 
 ## Dev
 
+10.10.2026 00:10 МСК: выпуск `evbd-dev-20261010` (backend + CRM) — справа на «Событиях»
+дни рождения на 7 дней и медкнижки, день рождения без года ([контракт](../contracts/staff-birthdays.md#источник-даты-и-область),
+[SUM-210](https://summy.youtrack.cloud/issue/SUM-210#focus=Comments-7-1255.0-0)). Работают backend `959103313a8882ecb0eafc5a45c14d142d0f55aa` (api `2c85e5e4f56d` healthy, sync `ac52118af757`) и
+CRM `56d5cee0ca0fa26146ebf801d3c4f1da8be013d2` (`adminapp` `11992e6a12e4` healthy), RestartCount 0; БД `0276_staff_birthday_no_year`.
+В профилях Dev 17 дат рождения из таблицы: 15 полных и 2 без года. Тесты не проводились.
+
 09.10.2026 23:49 МСК: выпуск `analytics-compact-dev-20261009` (только CRM) — «Аналитика» пятью
 пунктами с вкладками ([контракт](../contracts/crm-navigation.md#аналитика-пять-пунктов-с-вкладками-09102026),
 [SUM-210](https://summy.youtrack.cloud/issue/SUM-210#focus=Comments-7-1254.0-0)). Работает CRM `737dfd51eb43ad9aa9dd942d9423fa187ea1dac4` (`adminapp` `6200d803114c` healthy, RestartCount 0);
