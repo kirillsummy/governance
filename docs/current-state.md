@@ -86,6 +86,11 @@ master-app — показ и обжалование штрафа. [SUM-220 7-110
 
 ## Dev
 
+09.10.2026 23:49 МСК: выпуск `analytics-compact-dev-20261009` (только CRM) — «Аналитика» пятью
+пунктами с вкладками ([контракт](../contracts/crm-navigation.md#аналитика-пять-пунктов-с-вкладками-09102026),
+[SUM-210](https://summy.youtrack.cloud/issue/SUM-210#focus=Comments-7-1254.0-0)). Работает CRM `737dfd51eb43ad9aa9dd942d9423fa187ea1dac4` (`adminapp` `6200d803114c` healthy, RestartCount 0);
+БД `0275_custom_crm_roles` и остальные продукты не менялись. Тесты не проводились.
+
 09.10.2026 22:47 МСК: вход разработчика на Dev выключен во всех приложениях с 21:03 —
 `/login_dev` CRM отвечает 404 по решению SUM-96 №53, а не из-за сбоя
 ([контракт](../contracts/test-developer-access.md#включение-и-граница-среды)). Шаг `sms`
