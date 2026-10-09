@@ -8,7 +8,7 @@
 - Dev: выпуск `payroll-interactive-dev-20261010` (backend + CRM) поверх `sum203w2-dev-20261010`, prepare/activate/verify exit 0, VERIFIED 01:26 МСК.
   - `summy-stand-api-1` `5a0529621d1e`, `summy-stand-sync-1` `4c738bd9690d`: образ `summy-payroll-interactive-dev-20261010-backend:dc68196`.
   - `adminapp` `3222218e955e`: образ `adminapp:crm-75aabde`.
-  - Все healthy, RestartCount 0. OCI revision и VERSION в контейнере и на хосте равны SHA, окружение прежнее.
+  - API и CRM healthy; sync running, healthcheck у него нет. RestartCount 0 у всех трёх. OCI revision и VERSION в контейнере и на хосте равны SHA, окружение прежнее.
   - БД `0277_custom_role_deletion` без изменений, снимок схемы совпадает. Прочие контейнеры не менялись.
   - Зарегистрирован для уборки (`config.json`, `manifest.targets`, `backend-active`, `crm-active`, `adminapp:pre-…`). Откат — `release.py rollback`.
 - Тесты не проводились. Реальные начисления сотрудников не проверялись, галочки не переключались. Prod не менялся. [Результат](https://summy.youtrack.cloud/issue/SUM-210#focus=Comments-7-1263.0-0).
