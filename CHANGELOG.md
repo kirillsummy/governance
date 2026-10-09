@@ -1,5 +1,13 @@
 # Changelog
 
+## 09.10.2026 — Dev: «Добавить сотрудника» внутри «Найма» (SUM-203)
+
+- Поручение 09.10.2026: действие «Добавить сотрудника» перенести из общей шапки страницы «Сотрудники» во вкладку «Найм»; форма, поля, `POST /api/account-access` `action=create-staff`, валидация и права не меняются, бизнес-процесс найма и роли не затрагиваются.
+- CRM test `1a9c687bb93dd1162ffe0b179b49b44c3dfc109c` (fast-forward от `c80004041520d7040f6184ae4c6932aadc952769`): `StaffList` без слота `actions`, шапка `/staff` — только заголовок; `/staff/hiring` показывает существующий `CreateStaff` (кнопка размера `sm`) рядом с переключателем «Вакансии / Отклики / Соискатели» на всех трёх вкладках, только для `owner`; `docs/security/AUTH.md` — путь «Сотрудники → Найм → Добавить сотрудника».
+- backend `d62271960b19e1596553afffb7218b2786e58e47`, master-app `79db16f2`, client-app `d96822cf`, website `645216f6` — без изменений; миграций нет.
+- Dev, выпуск `hiring-add-dev-20261009` (только CRM, шаблон и база — `payroll-checkbox-dev-20261009`), 17:25–17:28 МСК: prepare и crm — exit 0; VERSION `sha=1a9c687bb93dd1162ffe0b179b49b44c3dfc109c`, образ `summy-hiring-add-dev-20261009-crm:1a9c687bb93d` (OCI revision = SHA), `adminapp` healthy, RestartCount 0; БД `0272_payroll_legacy_month_overrides` не затронута.
+- Тесты не проводились; сборка CRM на Dev — деплойная. Prod не менялся. Остатков нет. [Результат](https://summy.youtrack.cloud/issue/SUM-210#focus=Comments-7-1189.0-0).
+
 ## 09.10.2026 — Dev: «Дежурства» — календарь и список графика, «Добавить день», отчёты к закрытию (SUM-203)
 
 - Поручение 09.10.2026: вкладка «Процессы → Дежурства» (`/processes/duties`) по согласованной HTML-компоновке, тема и компоненты — текущей CRM. Связанная история — FB-DUTY в [SUM-220](https://summy.youtrack.cloud/issue/SUM-220#focus=Comments-7-1093.0-0); [SUM-231](https://summy.youtrack.cloud/issue/SUM-231) завершена и не переоткрывалась.

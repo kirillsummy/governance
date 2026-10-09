@@ -72,6 +72,15 @@ master-app — показ и обжалование штрафа. [SUM-220 7-110
 
 ## Dev
 
+09.10.2026 17:28 МСК: «Добавить сотрудника» перенесено во вкладку «Найм»
+([CHANGELOG](../CHANGELOG.md), [SUM-210](https://summy.youtrack.cloud/issue/SUM-210#focus=Comments-7-1189.0-0)). Переключена
+только CRM `1a9c687bb93dd1162ffe0b179b49b44c3dfc109c` (выпуск
+`hiring-add-dev-20261009`, VERSION = OCI revision = свежий `test`) поверх
+соседнего выпуска `payroll-checkbox-dev-20261009`: backend
+`d62271960b19e1596553afffb7218b2786e58e47`, БД
+`0272_payroll_legacy_month_overrides`; master-app, client-app, website — как
+ниже. Тесты не проводились; Prod не менялся.
+
 09.10.2026 16:46 МСК: «Дежурства» — календарь и список графика, «Добавить день»,
 отчёты к закрытию ([CHANGELOG](../CHANGELOG.md), [SUM-210](https://summy.youtrack.cloud/issue/SUM-210#focus=Comments-7-1187.0-0)). Поверх
 выпуска ниже переключена только CRM `72c77d70366fb3304dc3a6da4f4d4095fc124b34`
