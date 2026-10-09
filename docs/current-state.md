@@ -64,8 +64,8 @@ master-app — показ и обжалование штрафа. [SUM-220 7-110
 по месяцам и ускорение таблицы, вместе со всем `test`
 ([CHANGELOG](../CHANGELOG.md), [payroll-v1](../contracts/payroll-v1.md#назначения-по-месяцам-09102026)).
 Работают (VERSION = OCI revision = свежий `test` всех пяти):
-- backend `f6873151f309665d3229246343e950d4affebca5` (выпуск
-  `payroll-controls-dev-20261009b`, БД `0270_payroll_bonus_targets`);
+- backend `60b6d7d66987ccb07ab451a4a3858a59c161904e` (13:03, выпуск
+  `payroll-controls-dev-20261009c`; до него `f6873151`), БД `0270_payroll_bonus_targets`;
 - CRM `83e25f910002b9add0b30acbb8d9d369c53cd1ea` (тот же выпуск);
 - master-app `79db16f26f2218c0f58c0cacd4b9cf86bb8d380b` (выпуск
   `payroll-controls-dev-20261009`);
