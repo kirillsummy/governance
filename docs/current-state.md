@@ -60,6 +60,23 @@ master-app — показ и обжалование штрафа. [SUM-220 7-110
 
 ## Dev
 
+09.10.2026 16:09 МСК: зарплата «Мастера» — один экран, «Выплачено»/«Долг SUMMY»,
+операции мастера, премии и штрафы текущим месяцем, пороги Кирилла
+([CHANGELOG](../CHANGELOG.md), [payroll-v1](../contracts/payroll-v1.md)).
+Работают (VERSION = OCI revision = свежий `test` всех пяти):
+- backend `4af883af929580b7d7623ffdd7c93131f0a321f4` (выпуск
+  `payroll-next-dev-20261009b`, БД `0271_payroll_threshold_versions`);
+- CRM `a5ae8399ca6626481dde20839354aee02dc8a004` (тот же выпуск);
+- master-app `79db16f26f2218c0f58c0cacd4b9cf86bb8d380b` (выпуск
+  `auth-complete-20261009`), client-app `d96822cf6624ee4cf907eb7a2d653c377d8300b7`,
+  website `645216f6609953f327270d253399af8eef11cf12`.
+
+Миграция `0270 → 0271`: копия проверена `pg_restore`, 7 assertions, 5 снимков
+истории совпали, счётчики без изменений. `YCLIENTS_READ_ONLY=true`,
+`YCLIENTS_LOGIN_ENABLED=false`, `PLATFORM_ID_ENABLED=true`, лимит памяти
+postgres 1600m. Реальных выплат, премий и штрафов при выпуске не было.
+Проверены только миграция БД и узкие сценарии по поручению; Prod не менялся.
+
 09.10.2026 12:41 МСК: «Зарплата и бонусы» — общий фильтр, назначения бонусов
 по месяцам и ускорение таблицы, вместе со всем `test`
 ([CHANGELOG](../CHANGELOG.md), [payroll-v1](../contracts/payroll-v1.md#назначения-по-месяцам-09102026)).
