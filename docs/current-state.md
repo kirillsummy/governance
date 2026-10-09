@@ -86,6 +86,12 @@ master-app — показ и обжалование штрафа. [SUM-220 7-110
 
 ## Dev
 
+10.10.2026 00:54 МСК: выпуск `sum203w2-dev-20261010` (backend + CRM) — SUM-203 п.1, 2, 4, 5 ([SUM-210](https://summy.youtrack.cloud/issue/SUM-210#focus=Comments-7-1261.0-0)).
+- Работают backend `4b5d3be2d6e962be40f14b2055c71f4f951748a8`: api `4038a7d8135e` healthy, sync `2813a2d9bc40`.
+- Работает CRM `0d08333798f0b4b8cbc9e22fd54ed6d619327ff7`: `adminapp` `80416252a211` healthy.
+- Выпуск включает CRM ui-canon, payroll-toggle и `53659941`. Процессы п.2 и склад п.5 из записи ниже теперь на Dev.
+- БД `0277_custom_role_deletion` без изменений. Тесты не проводились.
+
 10.10.2026 00:49 МСК: выпуск `ui-canon-dev-20261010b` (только CRM) — единый компактный вид CRM
 ([контракт](../contracts/crm-navigation.md#единый-компактный-вид-crm-10102026),
 [SUM-210](https://summy.youtrack.cloud/issue/SUM-210#focus=Comments-7-1257.0-0)). Работает CRM `5b10e7951334885a8e321658c8a34a21d815d4ea`
