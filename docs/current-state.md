@@ -60,6 +60,25 @@ master-app — показ и обжалование штрафа. [SUM-220 7-110
 
 ## Dev
 
+09.10.2026 11:56 МСК, выпуск `smallbugs-dev-20261009`: на Dev доставлены исправления
+[SUM-225](https://summy.youtrack.cloud/issue/SUM-225),
+[SUM-226](https://summy.youtrack.cloud/issue/SUM-226) и
+[SUM-227](https://summy.youtrack.cloud/issue/SUM-227). В том же backend по выбору
+владельца доставлен и [SUM-229](https://summy.youtrack.cloud/issue/SUM-229).
+Работают:
+- backend `8dd92497f02c8ce8d1a102238b5236ab9783267c`, БД `0269_primary_accounts`,
+  миграций нет;
+- master-app `6734eeb1cb9eda39773b48501af4e680e2d93085`;
+- CRM `20724d99074f589d8c03ca13c834056ed1241e43` (выпуск
+  `primary-accounts-crm-20261008`), client-app `d96822cf`, website `645216f6` —
+  без изменений.
+
+VERSION совпадает с OCI revision и `test`. api healthy; api, sync и bff — running,
+RestartCount 0. `YCLIENTS_READ_ONLY=true` у api и sync. Включённые флаги api
+сохранены: `PLATFORM_ID_ENABLED`, `PHOTO_PROOF_V2_ENABLED`, `TEST_DEVELOPER_ENABLED`.
+Лимит памяти postgres 1600m на месте. Сценарии не проверялись. Подробности — в
+[CHANGELOG](../CHANGELOG.md).
+
 08.10.2026 21:01 МСК: исправлен баг
 [SUM-228](https://summy.youtrack.cloud/issue/SUM-228). Работают:
 - backend `0c7b9fb661c1c72e70b4270e61069a58da7a0e1d` (выпуск
