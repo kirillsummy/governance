@@ -86,6 +86,11 @@ master-app — показ и обжалование штрафа. [SUM-220 7-110
 
 ## Dev
 
+10.10.2026 02:19 МСК: выпуск `ui-visual-dev-20261010e` (только CRM) — база клиентов компактно, окна инструментов без обрезания
+([SUM-210](https://summy.youtrack.cloud/issue/SUM-210#focus=Comments-7-1268.0-0)). Работает CRM `7a2a9179c8981e844275873d6451b2c2baa3498f`
+(`adminapp` `f02daacad817` healthy, RestartCount 0) поверх `payroll-default-dev-20261010`, backend `dc68196dee46915feccc2e694261a38c4875e8fc`;
+БД `0277_custom_role_deletion`. Тесты не проводились.
+
 10.10.2026 01:45 МСК: выпуск `payroll-default-dev-20261010` (только CRM) — «Зарплата → Мастера»: «Интерактивная» по умолчанию, «Сводная» в меню «Управление»
 ([SUM-210](https://summy.youtrack.cloud/issue/SUM-210#focus=Comments-7-1267.0-0)). Работает CRM `44710117d2525e81010ebef3db0658c1d9b83b84`
 (`adminapp` `cc591bd370a6` healthy, RestartCount 0), backend `dc68196dee46915feccc2e694261a38c4875e8fc`; БД `0277_custom_role_deletion`. Тесты не проводились.
