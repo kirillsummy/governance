@@ -72,6 +72,13 @@ master-app — показ и обжалование штрафа. [SUM-220 7-110
 
 ## Dev
 
+09.10.2026 16:46 МСК: «Дежурства» — календарь и список графика, «Добавить день»,
+отчёты к закрытию ([CHANGELOG](../CHANGELOG.md), [SUM-210](https://summy.youtrack.cloud/issue/SUM-210#focus=Comments-7-1187.0-0)). Поверх
+выпуска ниже переключена только CRM `72c77d70366fb3304dc3a6da4f4d4095fc124b34`
+(выпуск `duties-layout-dev-20261009`, VERSION = OCI revision = свежий `test`);
+backend, master-app, client-app, website и БД `0271` — как ниже. Тесты не
+проводились; Prod не менялся.
+
 09.10.2026 16:09 МСК: зарплата «Мастера» — один экран, «Выплачено»/«Долг SUMMY»,
 операции мастера, премии и штрафы текущим месяцем, пороги Кирилла
 ([CHANGELOG](../CHANGELOG.md), [payroll-v1](../contracts/payroll-v1.md)).
