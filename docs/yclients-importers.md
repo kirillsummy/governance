@@ -47,7 +47,7 @@ YouTrack при его подготовке не менялись и не выз
 | `clients` | `import_yclients_clients.py` | сутки | — | `clients`, `client_contacts` (DELETE+INSERT), `appointments.client_id` |
 | `schedule` | `import_yclients_schedule.py` | час | −1…+90 дн | `staff_schedules`, `data_quality_issues` |
 | `resource_schedule` | `import_yclients_resource_schedule.py` | час | −1…+90 дн | `resource_schedules` |
-| `transactions` | `import_yclients_transactions.py` | час | −7…0 дн | только `raw_objects` + `external_refs` (сырьём, в core не моделируется); только компания 481570 |
+| `transactions` | `import_yclients_transactions.py` | час | −7…0 дн | только `raw_objects` + `external_refs` (сырьём, в core не моделируется); компании 481570 и 386571 (386571 — с SUM-229, решение владельца 09.10.2026; на Prod — после выкладки) |
 | `reviews` | `import_yclients_comments.py` | час | — | `staff_reviews` |
 
 Задания с источником `platform` (`paid_auto_close`, `loyalty_cards`,
@@ -60,7 +60,7 @@ YouTrack при его подготовке не менялись и не выз
 `CATALOG_LIST_LIMIT`, `CATALOG_MAX_PAGES`, `CATALOG_PAGE_SIZE` (каталог),
 `SWEEP_DAYS` (уборка удалённых); транзакции дополнительно читают
 `YCLIENTS_TX_START`/`YCLIENTS_TX_END`, `YCLIENTS_TX_BEHIND_DAYS`,
-`YCLIENTS_TRANSACTIONS_PATH`; список компаний — `COMPANIES` в скрипте (481570).
+`YCLIENTS_TRANSACTIONS_PATH`; список компаний — `COMPANIES` в скрипте (481570, 386571 — SUM-229).
 Отдельного `.env.transactions.local` нет с 04.10.2026 (И2).
 
 ## 3. Чего импортёры не берут
@@ -69,8 +69,11 @@ YouTrack при его подготовке не менялись и не выз
 - Абонементы и депозиты с остатками и сроками — нужна проверка прав
   интеграционного токена (R112, QA-1/D12).
 - Склад, товары, продажи товаров — в зеркало не импортируются.
-- Транзакции второй компании (386571) — исключены решением владельца
-  23.07.2026; финансы в core не моделируются.
+- Финансы в core не моделируются. Транзакции второй компании (386571) были
+  исключены решением владельца 23.07.2026; решением 09.10.2026 исключение
+  снято ([SUM-229](https://summy.youtrack.cloud/issue/SUM-229)): в `test`
+  собираются обе компании, на Prod — после выкладки и разовой догрузки
+  истории с 01.07.2026.
 - Карты лояльности YClients читаются не импортёром, а заданием
   `loyalty_cards` через `app/domains/clients/loyalty_members.py`.
 
