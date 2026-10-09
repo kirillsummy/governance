@@ -86,6 +86,11 @@ master-app — показ и обжалование штрафа. [SUM-220 7-110
 
 ## Dev
 
+10.10.2026 01:29 МСК: выпуск `ui-visual-dev-20261010` (только CRM) — исправления визуальной приёмки единого вида CRM
+([SUM-210](https://summy.youtrack.cloud/issue/SUM-210#focus=Comments-7-1264.0-0)). Работает CRM `a79385e293931823a1e5938ceea347f118c78f6e`
+(`adminapp` `663277f4b95f` healthy, RestartCount 0) поверх `payroll-interactive-dev-20261010` (backend `dc68196dee46915feccc2e694261a38c4875e8fc`);
+БД `0277_custom_role_deletion` не менялась. Тесты не проводились.
+
 10.10.2026 00:54 МСК: выпуск `sum203w2-dev-20261010` (backend + CRM) — SUM-203 п.1, 2, 4, 5 ([SUM-210](https://summy.youtrack.cloud/issue/SUM-210#focus=Comments-7-1261.0-0)).
 - Работают backend `4b5d3be2d6e962be40f14b2055c71f4f951748a8`: api `4038a7d8135e` healthy, sync `2813a2d9bc40`.
 - Работает CRM `0d08333798f0b4b8cbc9e22fd54ed6d619327ff7`: `adminapp` `80416252a211` healthy.
