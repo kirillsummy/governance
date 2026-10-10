@@ -1,5 +1,27 @@
 # Changelog
 
+## 10.10.2026 — Prod PRODSMS: оба способа входа CRM и мастера (SUM-232)
+
+- По поручению владельца SMS/ID и прежний вход по логину поддерживаются вместе;
+  действующие сессии/cookie/TTL и текущие запреты доступа сохранены. Канон —
+  [два способа входа](contracts/login-methods.md), [документ выпуска](docs/releases/production-prodsms-2026-10-10.md).
+- Exact Prod: backend `1c00e5f2c9aa6893dc375547524cd067ec3652f7` (`dev`, `v0.8.0`, PR90),
+  CRM `fcbe4a1cac3283ca646f44d1e9d4238482a8c0ee` (`main`, `v0.184.0`, PR189),
+  master `6c916e930c6ee106c86bd208ed15ecde658c5d8b` (`feature/react-client`, `v0.86.0`, PR105).
+  Production и test refs подтверждены non-force readback; все3 PR closed/merged с exact candidate SHA.
+- Full CI: backend2867MSK+274UTC, CRM2379, master346web+51BFF; обязательные builds зелёные.
+  Release guards50/12/5, native3 build0, изолированный runtime141/141, Prod prepare/activate/verify0.
+  Verify07:56:55МСК, DB0271 без миграций; свежая копия БД полностью прочитана, rollback не применялся.
+- Исправлены только упаковка0755/canonical CRM VERSION и own internal приёмочный HTTP
+  при прежних product SHA/CI/source bytes. Прежние b/c/d/e отказы сохранены; return c nativebuild0
+  завершён успешно, следующий packaging отказал по CRM VERSION. Client/website прежние.
+- Return test и общий Dev проверены08:04:06МСК: backend `33ac9f49688fc0092748cec696d365e053fe0b41`, CRM
+  `217f459395995a0b9f0766fdcaa420827ea70fd0`, master `6c916e930c6ee106c86bd208ed15ecde658c5d8b`;
+  native prepare/activate/verify0, DB0277, поздние функции, stand/developer/SMS flags и прочие контейнеры сохранены.
+  Тесты на Dev не проводились; дополнительный `/login_dev` functional smoke не запускался.
+- Публичные CRM/master страницы TLS200 показывают оба варианта; реальные SMS/внешние логины
+  и browser secure-cookie при release-приёмке не проверялись. Полные доказательства и восстановление — в документе выпуска.
+
 ## 10.10.2026 — подготовка PRODSMS-20261010: два способа входа CRM и мастера (SUM-232)
 
 - Прямое поручение владельца: перенести рабочий SMS-вход Ильи на Prod для CRM и мастера,
