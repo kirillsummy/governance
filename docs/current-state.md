@@ -5,7 +5,22 @@ YouTrack, изменения — в [CHANGELOG](../CHANGELOG.md), датиров
 02.10.2026 — в [журнале](history/current-state-log-2026-10-02.md). Перед
 выводом о среде сверяй живое состояние: VERSION, образы, ревизию БД.
 
-## Prod: PRODSMS с 10.10.2026 07:56:55 МСК
+## Prod: R1010 с 10.10.2026 16:03 МСК
+
+Итоговый проверенный состав SUM-233 (кандидат A5 = Dev). Работают backend
+`2e37c6ccdf6b436246661d7fc92df6638e878b45` (`dev`, `v0.9.0`), CRM
+`b6802a00de77c73982dc374b1cab3a68b88436f4` (`main`, `v0.185.0`), master-app
+`ed876ab69f34262fb793aaaff2ff3555fa0ab00f` (`feature/react-client`, `v0.87.0`), client-app
+`fcdce75cee94cfbf8b21815a24b0882ee3f926ea` (`main`, `v0.5.0`), website
+`69565a6bac332df4921637a7d54bdaad2ad54fad` (`main`, `v2.34.0`, BUILD_ID `x3y4onUhyy9WbSfQ03YpW`).
+БД `0271_payroll_threshold_versions` → `0277_custom_role_deletion`. Полный CI пяти продуктов и
+репетиция на копии Prod зелёные; свежая копия БД `summy-2026-10-10-1600.dump` проверена и в S3.
+Overlay выпуска — `/root/releases/r1010-20261010/private`; откат — прежние образы и overlay PRODSMS,
+backend без downgrade. Пользовательские сценарии после выпуска не проводились.
+[Документ выпуска](releases/production-r1010-2026-10-10.md),
+[SUM-233](https://summy.youtrack.cloud/issue/SUM-233).
+
+### Предыдущий Prod: PRODSMS с 10.10.2026 07:56:55 МСК
 
 По поручению владельца включён SMS/ID-вход CRM и приложения мастера с вариантами
 «По номеру телефона» и «По логину и паролю». Работают backend

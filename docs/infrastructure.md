@@ -90,16 +90,17 @@ compose/`STAND.md`. Более поздняя локальная памятка 
 Фактические production-версии после переключения 28.09, миграция 0116→0143,
 сохранённые каталоги и пределы отката записаны в
 [отчёте выкладки RC2](releases/production-rc2-deployment-2026-09-28.md).
-Действующий production-состав PRODSMS с 10.10.2026 07:56:55 МСК, свежая копия БД,
-exact images и пределы восстановления — в [документе выпуска](releases/production-prodsms-2026-10-10.md).
-Прежний состав — [R1009](releases/production-r1009-2026-10-09.md), ранее
+Действующий production-состав R1010 с 10.10.2026 16:03 МСК, свежая копия БД,
+exact images и пределы восстановления — в [документе выпуска](releases/production-r1010-2026-10-10.md).
+Прежний состав — [PRODSMS](releases/production-prodsms-2026-10-10.md), ранее [R1009](releases/production-r1009-2026-10-09.md), ранее
 [R1007](releases/production-r1007-2026-10-07.md) / [S194](releases/production-s194-2026-10-05.md).
 Сайт GRADE2 прежний; [текущее состояние](current-state.md). Рабочие private overlays
 выпуска выбирают immutable images; original compose/env неизменны, live VERSION
 обновлён, предыдущие VERSION bytes сохранены приватно. Старый compose
 сам по себе не выбирает новые образы. Ниже — историческая исходная конфигурация.
 
-Действующий release root — `/root/releases/prodsms-codex-20261010e2`, immutable cfg ID —
+Действующий release root — `/root/releases/r1010-20261010` (overlay в `private/` — копии
+PRODSMS с новыми образами); прежний — `/root/releases/prodsms-codex-20261010e2`, immutable cfg ID —
 `prodsms-codex-20261010e`. Master BFF: project directory `/home/kirill/master-bff/bff`,
 original compose `/home/kirill/master-bff/bff/docker-compose.bff.yml`, env
 `/home/kirill/master-bff/bff/.env`, project `bff`; live overlay —
