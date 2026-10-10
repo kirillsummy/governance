@@ -90,12 +90,21 @@ compose/`STAND.md`. Более поздняя локальная памятка 
 Фактические production-версии после переключения 28.09, миграция 0116→0143,
 сохранённые каталоги и пределы отката записаны в
 [отчёте выкладки RC2](releases/production-rc2-deployment-2026-09-28.md).
-Действующий production-состав с 07.10.2026, репетиции миграций, копия БД
-и откат — в [документе выпуска R1007](releases/production-r1007-2026-10-07.md)
-(прежний — [S194](releases/production-s194-2026-10-05.md)); сайт — хотфикс GRADE2
-от 05.10.2026 (см. [текущее состояние](current-state.md)).
-Нижеследующие ссылки описывают историческую исходную конфигурацию и не
-подменяют этот датированный runtime-срез.
+Действующий production-состав PRODSMS с 10.10.2026 07:56:55 МСК, свежая копия БД,
+exact images и пределы восстановления — в [документе выпуска](releases/production-prodsms-2026-10-10.md).
+Прежний состав — [R1009](releases/production-r1009-2026-10-09.md), ранее
+[R1007](releases/production-r1007-2026-10-07.md) / [S194](releases/production-s194-2026-10-05.md).
+Сайт GRADE2 прежний; [текущее состояние](current-state.md). Рабочие private overlays
+выпуска выбирают immutable images; original compose/env неизменны, live VERSION
+обновлён, предыдущие VERSION bytes сохранены приватно. Старый compose
+сам по себе не выбирает новые образы. Ниже — историческая исходная конфигурация.
+
+Действующий release root — `/root/releases/prodsms-codex-20261010e2`, immutable cfg ID —
+`prodsms-codex-20261010e`. Master BFF: project directory `/home/kirill/master-bff/bff`,
+original compose `/home/kirill/master-bff/bff/docker-compose.bff.yml`, env
+`/home/kirill/master-bff/bff/.env`, project `bff`; live overlay —
+`/root/releases/prodsms-codex-20261010e2/private/master.overlay.json`.
+Live master VERSION `/home/kirill/master-bff/VERSION` не задаёт compose project directory.
 
 - Backend: контейнер api и отдельный sync; api опубликован на loopback хоста, внутренняя сеть summy-internal и DNS gateway. PostgreSQL и S3 настраиваются через env. Runbook описывает управляемый PostgreSQL Timeweb и S3; compose всё ещё содержит MinIO. Это нельзя превращать в утверждение о фактическом составе контейнеров без runtime-инвентаризации. [backend/docker-compose.prod.yml](https://github.com/kirillsummy/backend/blob/bbfe5e5e22ca2eedbaf58db2899a60c4cdfa70f3/docker-compose.prod.yml), [backend/docs/DEPLOY.md](https://github.com/kirillsummy/backend/blob/bbfe5e5e22ca2eedbaf58db2899a60c4cdfa70f3/docs/DEPLOY.md).
 - Мастер: собранный web/dist обслуживает Node BFF; reverse proxy → BFF → gateway. Версия из APP_VERSION или VERSION_FILE; health отдельно проверяет наличие оболочки. [master-app/bff/README.md](https://github.com/kirillsummy/master-app/blob/84f3d0a74584c549ed50070f0f3fbc2eee0f5515/bff/README.md).
@@ -423,10 +432,15 @@ Production-ветки указаны в [ветках](branches.md). Релиз 
 перенацеливаются в том же заходе; схема БД Prod меняется только через журнал
 миграций своего репозитория.
 
-Backend `/health` читает VERSION; `/ready` проверяет БД. Master `/healthz` проверяет
-оболочку и версию. CRM `/api/health` использует свой формат VERSION; не переносить
-его в backend, где ожидается одна строка. Runbook сайта и master содержит исторические
-детали — перед релизом требуется сверка с текущим владельцем окружения.
+Backend `/health` читает точный VERSION `<fullSHA>\n`; `/ready` проверяет БД.
+CRM `/api/health` использует `version=<release>+<fullSHA>\nsha=<fullSHA>\n`;
+logical health VERSION — `<release>+<fullSHA>`. Master `/healthz` проверяет оболочку
+и runtime APP_VERSION `<release>+<fullSHA>`. Контекст сборки, архив и live VERSION
+связаны точными байтами/хешами; rollback возвращает original bytes. Формат CRM
+не переносить в backend. Health не подтверждает все пользовательские сценарии.
+Упаковочные исправления PRODSMS описаны в [документе выпуска](releases/production-prodsms-2026-10-10.md).
+Runbook сайта и master содержит исторические детали — перед релизом требуется
+сверка с текущим владельцем окружения.
 
 Откат orders: отключить флаги/worker и сохранить аудит. Не сносить таблицы ради
 успешного downgrade: ограничения 0119/0120 намеренно защищают данные.

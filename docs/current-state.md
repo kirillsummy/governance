@@ -5,7 +5,28 @@ YouTrack, изменения — в [CHANGELOG](../CHANGELOG.md), датиров
 02.10.2026 — в [журнале](history/current-state-log-2026-10-02.md). Перед
 выводом о среде сверяй живое состояние: VERSION, образы, ревизию БД.
 
-## Prod: R1009 с 09.10.2026 17:40 МСК
+## Prod: PRODSMS с 10.10.2026 07:56:55 МСК
+
+По поручению владельца включён SMS/ID-вход CRM и приложения мастера с вариантами
+«По номеру телефона» и «По логину и паролю». Работают backend
+`1c00e5f2c9aa6893dc375547524cd067ec3652f7` (`dev`, `v0.8.0`), CRM
+`fcbe4a1cac3283ca646f44d1e9d4238482a8c0ee` (`main`, `v0.184.0`), master-app
+`6c916e930c6ee106c86bd208ed15ecde658c5d8b` (`feature/react-client`, `v0.86.0`);
+production refs/теги подтверждены non-force readback. Прежний вход, действующие сессии,
+cookie и TTL сохранены; блокировка, увольнение и отзыв доступа запрещают оба входа.
+Схема `0271_payroll_threshold_versions` прежняя, миграций нет. Client-app
+`d96822cf6624ee4cf907eb7a2d653c377d8300b7` и website GRADE2
+`f6dd7b8d5e7cc211b953062beb42028272d777f2` прежние. Full CI точных кандидатов,
+изолированная runtime-приёмка141/141 и actual Prod prepare/activate/verify завершены.
+В 07:58 МСК обе публичные страницы ответили TLS200 и показали оба варианта; реальные
+SMS/внешние логины и browser secure-cookie при release-приёмке не проверялись.
+Свежая копия БД полностью прочитана; rollback не применялся. Рабочие private overlays
+выпуска выбирают immutable images, original compose/env неизменны; live VERSION обновлён, его прежние байты сохранены приватно.
+Включение SMS/ID этим выпуском относится к CRM и мастеру; статус включённости client-app прежний.
+[Документ выпуска](releases/production-prodsms-2026-10-10.md),
+[SUM-232](https://summy.youtrack.cloud/issue/SUM-232).
+
+### Предыдущий Prod: R1009 с 09.10.2026 17:40 МСК
 
 Поручение владельца 09.10.2026: весь `origin/test` (= Dev) без тестов, с репетицией миграций.
 Работают backend `4af883af929580b7d7623ffdd7c93131f0a321f4` (`dev`, `v0.7.0`), CRM
@@ -85,6 +106,20 @@ master-app — показ и обжалование штрафа. [SUM-220 7-110
 снимок первой публикации, а не актуальный статус. Состояние Prod R1008 — выше.
 
 ## Dev
+
+10.10.2026 08:04:06 МСК: обязательный возврат PRODSMS подготовки, выпуск
+`prodsms-return-dev-20261010d`. Работают backend/test
+`33ac9f49688fc0092748cec696d365e053fe0b41`, CRM/test
+`217f459395995a0b9f0766fdcaa420827ea70fd0`, master-app/test
+`6c916e930c6ee106c86bd208ed15ecde658c5d8b`; refs и native prepare/activate/verify
+сверены. БД `0277_custom_role_deletion` прежняя; custom roles/revocation, Analytics,
+Events/дни рождения/компактные экраны и Dev developer/SMS flags сохранены.
+Все4 API/sync/CRM/master running, RestartCount0, env/ports/mounts/networks прежние;
+API/CRM healthy, у sync/master Dockerhealthcheck не настроен. Client/website и
+прочие контейнеры не менялись. Тесты на Dev не проводились. Источник и env gates
+Dev stand доступа восстановлены; дополнительный `/login_dev` HTTP/functional smoke не запускался.
+[Документ выпуска](releases/production-prodsms-2026-10-10.md),
+[SUM-232](https://summy.youtrack.cloud/issue/SUM-232).
 
 10.10.2026 02:19 МСК: выпуск `ui-visual-dev-20261010e` (только CRM) — база клиентов компактно, окна инструментов без обрезания
 ([SUM-210](https://summy.youtrack.cloud/issue/SUM-210#focus=Comments-7-1268.0-0)). Работает CRM `7a2a9179c8981e844275873d6451b2c2baa3498f`
@@ -718,6 +753,6 @@ P27 с классификацией рекламаций находятся в �
 ## Включённость функций
 
 Поставка выключенного кода не означает включения функции. На Prod client-app
-поставлен неактивно, клиентский вход и SMS не включены; включение ждёт
+поставлен неактивно, клиентский вход и клиентские SMS не включены; включение ждёт
 решения владельца о секретах ([SUM-192](https://summy.youtrack.cloud/issue/SUM-192)).
 Статусы отдельных контрактов — в [контрактах](../contracts/README.md).
