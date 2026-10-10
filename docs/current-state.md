@@ -107,6 +107,15 @@ master-app — показ и обжалование штрафа. [SUM-220 7-110
 
 ## Dev
 
+10.10.2026 15:33 МСК: кандидат итогового релиза A5 (SUM-233), выпуски `final-dev-20261010e`
+и `final-dev-20261010f`. Работают backend `2e37c6ccdf6b436246661d7fc92df6638e878b45`, CRM
+`b6802a00de77c73982dc374b1cab3a68b88436f4`, master-app `ed876ab69f34262fb793aaaff2ff3555fa0ab00f`,
+client-app `fcdce75cee94cfbf8b21815a24b0882ee3f926ea`, website
+`69565a6bac332df4921637a7d54bdaad2ad54fad` (BUILD_ID `dEcctNsrJq0spKySOP8ba`) — все равны
+`origin/test`; БД `0277_custom_role_deletion`. Полный CI пяти продуктов на этих SHA зелёный
+(вне Dev, в WSL); тесты на Dev не проводились. Prod не менялся. На Dev свободно 38 ГБ, уборка
+ежедневно — [инфраструктура](infrastructure.md#плановая-уборка-dev).
+
 10.10.2026 08:04:06 МСК: обязательный возврат PRODSMS подготовки, выпуск
 `prodsms-return-dev-20261010d`. Работают backend/test
 `33ac9f49688fc0092748cec696d365e053fe0b41`, CRM/test

@@ -1,10 +1,11 @@
 [Unit]
-Description=SUMMY Dev weekly cleanup of unused release images and caches (see governance docs/infrastructure.md)
+Description=SUMMY Dev daily cleanup: backup and release retention, unused release images and caches (see governance docs/infrastructure.md)
 Requires=docker.service
 After=docker.service
 
 [Service]
 Type=oneshot
+ExecStart=/usr/bin/python3 /opt/summy-test/maintenance/summy-dev-retention.py --apply
 ExecStart=/usr/bin/python3 /opt/summy-test/maintenance/summy-dev-cleanup.py --apply
 SuccessExitStatus=75
 Nice=10
