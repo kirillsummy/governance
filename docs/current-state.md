@@ -122,6 +122,12 @@ master-app — показ и обжалование штрафа. [SUM-220 7-110
 
 ## Dev
 
+10.10.2026 20:51 МСК: выпуск `dashboard-dev-20261010` (только CRM) — дашборд «Состояние бизнеса»
+([контракт](../contracts/crm-navigation.md#дашборд-состояние-бизнеса-10102026)). Работает CRM
+`b5ab90c3fbf7c9a2081ff2ded689eb86e0f71b00` = `origin/test` (`adminapp` healthy, RestartCount 0) поверх
+`final-dev-20261010g`; backend и остальные продукты прежние, БД `0277_custom_role_deletion`. Тесты на Dev
+не проводились; Prod не менялся.
+
 10.10.2026 15:33 МСК: кандидат итогового релиза A5 (SUM-233), выпуски `final-dev-20261010e`
 и `final-dev-20261010f`. Работают backend `2e37c6ccdf6b436246661d7fc92df6638e878b45`, CRM
 `b6802a00de77c73982dc374b1cab3a68b88436f4`, master-app `ed876ab69f34262fb793aaaff2ff3555fa0ab00f`,
