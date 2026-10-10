@@ -122,6 +122,11 @@ master-app — показ и обжалование штрафа. [SUM-220 7-110
 
 ## Dev
 
+10.10.2026 21:20 МСК: выпуск `dashboard-dev-20261010b` (только CRM) — свёрнутые «Последние процессы» и окно
+«Отчёты смен» на Дашборде. Работает CRM `5a966edcd39a19f4f2f2c7f3c21cecb3c0723f68` = `origin/test` (`adminapp` healthy,
+RestartCount 0) поверх `crm-two-streams-dev-20261010`; backend и остальные продукты прежние, БД
+`0277_custom_role_deletion`. Тесты на Dev не проводились; Prod не менялся.
+
 10.10.2026 20:51 МСК: выпуск `dashboard-dev-20261010` (только CRM) — дашборд «Состояние бизнеса»
 ([контракт](../contracts/crm-navigation.md#дашборд-состояние-бизнеса-10102026)). Работает CRM
 `b5ab90c3fbf7c9a2081ff2ded689eb86e0f71b00` = `origin/test` (`adminapp` healthy, RestartCount 0) поверх
